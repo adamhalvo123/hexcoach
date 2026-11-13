@@ -1,0 +1,1087 @@
+{
+  "runeProfiles": {
+    "electrocute_mage": {
+      "primary": "Domination",
+      "keystone": "Electrocute",
+      "primaryPerks": ["Cheap Shot", "Grisly Mementos", "Ultimate Hunter"],
+      "secondary": "Sorcery",
+      "secondaryPerks": ["Manaflow Band", "Scorch"],
+      "shards": [5008, 5008, 5001]
+    },
+    "comet_mage": {
+      "primary": "Sorcery",
+      "keystone": "Arcane Comet",
+      "primaryPerks": ["Manaflow Band", "Transcendence", "Scorch"],
+      "secondary": "Inspiration",
+      "secondaryPerks": ["Magical Footwear", "Cosmic Insight"],
+      "shards": [5008, 5008, 5001]
+    },
+    "lethal_tempo": {
+      "primary": "Precision",
+      "keystone": "Lethal Tempo",
+      "primaryPerks": ["Presence of Mind", "Legend: Alacrity", "Cut Down"],
+      "secondary": "Sorcery",
+      "secondaryPerks": ["Absolute Focus", "Gathering Storm"],
+      "shards": [5005, 5008, 5001]
+    },
+    "fleet_marksman": {
+      "primary": "Precision",
+      "keystone": "Fleet Footwork",
+      "primaryPerks": ["Absorb Life", "Legend: Bloodline", "Coup de Grace"],
+      "secondary": "Sorcery",
+      "secondaryPerks": ["Nimbus Cloak", "Gathering Storm"],
+      "shards": [5005, 5008, 5001]
+    },
+    "conqueror": {
+      "primary": "Precision",
+      "keystone": "Conqueror",
+      "primaryPerks": ["Triumph", "Legend: Alacrity", "Last Stand"],
+      "secondary": "Resolve",
+      "secondaryPerks": ["Second Wind", "Overgrowth"],
+      "shards": [5008, 5008, 5001]
+    },
+    "grasp": {
+      "primary": "Resolve",
+      "keystone": "Grasp of the Undying",
+      "primaryPerks": ["Demolish", "Second Wind", "Overgrowth"],
+      "secondary": "Precision",
+      "secondaryPerks": ["Triumph", "Last Stand"],
+      "shards": [5008, 5002, 5001]
+    },
+    "aftershock": {
+      "primary": "Resolve",
+      "keystone": "Aftershock",
+      "primaryPerks": ["Font of Life", "Bone Plating", "Unflinching"],
+      "secondary": "Inspiration",
+      "secondaryPerks": ["Hextech Flashtraption", "Cosmic Insight"],
+      "shards": [5007, 5002, 5001]
+    },
+    "aery": {
+      "primary": "Sorcery",
+      "keystone": "Summon Aery",
+      "primaryPerks": ["Manaflow Band", "Transcendence", "Scorch"],
+      "secondary": "Resolve",
+      "secondaryPerks": ["Font of Life", "Revitalize"],
+      "shards": [5007, 5008, 5001]
+    },
+    "electrocute": {
+      "primary": "Domination",
+      "keystone": "Electrocute",
+      "primaryPerks": ["Sudden Impact", "Grisly Mementos", "Relentless Hunter"],
+      "secondary": "Sorcery",
+      "secondaryPerks": ["Nimbus Cloak", "Scorch"],
+      "shards": [5008, 5008, 5001]
+    },
+    "hail_of_blades": {
+      "primary": "Domination",
+      "keystone": "Hail of Blades",
+      "primaryPerks": ["Cheap Shot", "Grisly Mementos", "Ultimate Hunter"],
+      "secondary": "Precision",
+      "secondaryPerks": ["Triumph", "Coup de Grace"],
+      "shards": [5005, 5008, 5001]
+    },
+    "first_strike": {
+      "primary": "Inspiration",
+      "keystone": "First Strike",
+      "primaryPerks": ["Magical Footwear", "Biscuit Delivery", "Cosmic Insight"],
+      "secondary": "Sorcery",
+      "secondaryPerks": ["Manaflow Band", "Gathering Storm"],
+      "shards": [5008, 5008, 5001]
+    },
+    "press_attack": {
+      "primary": "Precision",
+      "keystone": "Press the Attack",
+      "primaryPerks": ["Absorb Life", "Legend: Alacrity", "Cut Down"],
+      "secondary": "Inspiration",
+      "secondaryPerks": ["Magical Footwear", "Cosmic Insight"],
+      "shards": [5005, 5008, 5001]
+    }
+  },
+  "buildProfiles": {
+    "mage_burst": {
+      "starter": ["Doran's Ring", "Health Potion"],
+      "core": ["Luden's Echo", "Sorcerer's Shoes", "Rabadon's Deathcap", "Zhonya's Hourglass", "Void Staff"],
+      "situational": ["Shadowflame", "Morellonomicon", "Banshee's Veil", "Cosmic Drive", "Liandry's Torment"]
+    },
+    "mage_sustain": {
+      "starter": ["Doran's Ring", "Health Potion"],
+      "core": ["Blackfire Torch", "Sorcerer's Shoes", "Liandry's Torment", "Rabadon's Deathcap", "Void Staff"],
+      "situational": ["Zhonya's Hourglass", "Morellonomicon", "Cosmic Drive", "Rylai's Crystal Scepter"]
+    },
+    "mage_support": {
+      "starter": ["World Atlas", "Health Potion"],
+      "core": ["Zaz'Zak's Realmspike", "Sorcerer's Shoes", "Luden's Echo", "Shadowflame", "Zhonya's Hourglass"],
+      "situational": ["Morellonomicon", "Void Staff", "Rabadon's Deathcap", "Banshee's Veil"]
+    },
+    "marksman": {
+      "starter": ["Doran's Blade", "Health Potion"],
+      "core": ["Kraken Slayer", "Berserker's Greaves", "Infinity Edge", "Phantom Dancer", "Lord Dominik's Regards"],
+      "situational": ["Bloodthirster", "Guardian Angel", "Mercurial Scimitar", "The Collector"]
+    },
+    "marksman_hybrid": {
+      "starter": ["Doran's Blade", "Health Potion"],
+      "core": ["Kraken Slayer", "Berserker's Greaves", "Guinsoo's Rageblade", "Terminus", "Runaan's Hurricane"],
+      "situational": ["Blade of The Ruined King", "Wit's End", "Bloodthirster", "Lord Dominik's Regards"]
+    },
+    "fighter": {
+      "starter": ["Doran's Blade", "Health Potion"],
+      "core": ["Eclipse", "Plated Steelcaps", "Sundered Sky", "Black Cleaver", "Death's Dance"],
+      "situational": ["Sterak's Gage", "Maw of Malmortius", "Thornmail", "Guardian Angel"]
+    },
+    "fighter_bruiser": {
+      "starter": ["Doran's Blade", "Health Potion"],
+      "core": ["Trinity Force", "Plated Steelcaps", "Sundered Sky", "Spear of Shojin", "Sterak's Gage"],
+      "situational": ["Death's Dance", "Black Cleaver", "Hullbreaker", "Maw of Malmortius"]
+    },
+    "tank": {
+      "starter": ["Doran's Shield", "Health Potion"],
+      "core": ["Sunfire Aegis", "Plated Steelcaps", "Jak'Sho, The Protean", "Thornmail", "Spirit Visage"],
+      "situational": ["Randuin's Omen", "Kaenic Rookern", "Frozen Heart", "Unending Despair"]
+    },
+    "assassin": {
+      "starter": ["Doran's Blade", "Health Potion"],
+      "core": ["Profane Hydra", "Ionian Boots of Lucidity", "Youmuu's Ghostblade", "Edge of Night", "Serylda's Grudge"],
+      "situational": ["Voltaic Cyclosword", "Guardian Angel", "Maw of Malmortius", "Umbral Glaive"]
+    },
+    "enchanter": {
+      "starter": ["World Atlas", "Health Potion"],
+      "core": ["Moonstone Renewer", "Ionian Boots of Lucidity", "Ardent Censer", "Staff of Flowing Water", "Redemption"],
+      "situational": ["Mikael's Blessing", "Dawncore", "Echoes of Helia", "Shurelya's Battlesong"]
+    },
+    "tank_support": {
+      "starter": ["World Atlas", "Health Potion"],
+      "core": ["Locket of the Iron Solari", "Plated Steelcaps", "Knight's Vow", "Zeke's Convergence", "Redemption"],
+      "situational": ["Thornmail", "Frozen Heart", "Mikael's Blessing", "Shurelya's Battlesong"]
+    }
+  },
+  "champions": {
+    "Ahri": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "A",
+          "score": 82,
+          "build": "mage_burst",
+          "rune": "electrocute_mage",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Safe blind pick with strong pick potential and side-lane pressure.",
+          "counters": [
+            { "champion": "Yasuo", "reason": "Wind Wall blocks Charm and denies your main pick tool." },
+            { "champion": "Kassadin", "reason": "Outscales you and shrugs off magic damage after level 11." },
+            { "champion": "Fizz", "reason": "Can dodge Charm with Playful / Trickster and burst you." }
+          ],
+          "synergies": [
+            { "champion": "Vi", "reason": "Reliable lockdown lets you land Charm for free." },
+            { "champion": "Jarvan IV", "reason": "Cataclysm traps targets inside your full combo." },
+            { "champion": "Sejuani", "reason": "Ranged engage creates easy charm angles." }
+          ],
+          "tips": [
+            "Push the first two waves, then hover the river for a level 4 roam.",
+            "Keep one charm charge for the enemy jungler instead of using it on cooldown."
+          ]
+        }
+      }
+    },
+    "Syndra": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "S",
+          "score": 88,
+          "build": "mage_burst",
+          "rune": "comet_mage",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Top-tier lane bully with execute pressure and strong zone control.",
+          "counters": [
+            { "champion": "Fizz", "reason": "Dodges your spheres and closes the gap instantly." },
+            { "champion": "Zed", "reason": "Shadow pressure forces you to hold E or die." },
+            { "champion": "Yasuo", "reason": "Wind Wall eats your stun and counters your poke." }
+          ],
+          "synergies": [
+            { "champion": "Jarvan IV", "reason": "Lockdown guarantees a full sphere combo." },
+            { "champion": "Vi", "reason": "Point-and-click engage sets up your burst." }
+          ],
+          "tips": [
+            "Hold a sphere near the wave before trading so E always has a target.",
+            "Reset your mana with two points in Q before forcing an all-in."
+          ]
+        }
+      }
+    },
+    "Yasuo": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "A",
+          "score": 81,
+          "build": "fighter_bruiser",
+          "rune": "lethal_tempo",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "High-ceiling skirmisher. Strong with knock-up engage but punishable when behind.",
+          "counters": [
+            { "champion": "Malphite", "reason": "Armor stacking and unavoidable knock-up pressure." },
+            { "champion": "Pantheon", "reason": "Point-and-click stun and early lane dominance." },
+            { "champion": "Annie", "reason": "Guaranteed stun bursts you before you can wind-wall." }
+          ],
+          "synergies": [
+            { "champion": "Malphite", "reason": "Unstoppable R sets up Last Breath." },
+            { "champion": "Diana", "reason": "AoE pull gives you free ultimate setup." },
+            { "champion": "Gragas", "reason": "Body Slam and Explosive Cask create knock-ups." }
+          ],
+          "tips": [
+            "Track your E stacks before dashing into a trade; escape path matters more than damage.",
+            "Wind Wall is for the enemy's key spell, not for poke."
+          ]
+        }
+      }
+    },
+    "Yone": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "A",
+          "score": 83,
+          "build": "fighter_bruiser",
+          "rune": "lethal_tempo",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Strong sidelane duelist with reliable engage and mixed damage.",
+          "counters": [
+            { "champion": "Malphite", "reason": "Armor and hard engage deny your extended trades." },
+            { "champion": "Renekton", "reason": "Early lane bully who punishes your weak first levels." },
+            { "champion": "Pantheon", "reason": "Stun and early burst keep you off the wave." }
+          ],
+          "synergies": [
+            { "champion": "Malphite", "reason": "Knock-up into Fate Sealed is almost guaranteed." },
+            { "champion": "Diana", "reason": "Double AoE engage collapses teamfights." }
+          ],
+          "tips": [
+            "Use E to bait cooldowns, then re-engage with the snap-back threat still available.",
+            "Do not blind-pick into heavy armor without a mixed-damage threat beside you."
+          ]
+        }
+      }
+    },
+    "Akali": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "A",
+          "score": 80,
+          "build": "assassin",
+          "rune": "electrocute",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Elite flanker, but needs a lead and clean shroud usage.",
+          "counters": [
+            { "champion": "Galio", "reason": "Magic shield and taunt punish your dive pattern." },
+            { "champion": "Vex", "reason": "Anti-dash kit keeps you out of range." },
+            { "champion": "Pantheon", "reason": "Point-and-click stun and early pressure." }
+          ],
+          "synergies": [
+            { "champion": "Jarvan IV", "reason": "Flag and drag creates a free dive target." },
+            { "champion": "Vi", "reason": "Lockdown lets you land the full combo." }
+          ],
+          "tips": [
+            "Hold shroud until the enemy commits their key spell.",
+            "Play for side-lane picks once your first item is complete."
+          ]
+        }
+      }
+    },
+    "Lux": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "B",
+          "score": 76,
+          "build": "mage_burst",
+          "rune": "comet_mage",
+          "skillOrder": ["E", "Q", "W"],
+          "note": "Long-range burst mage with excellent pick potential but low mobility.",
+          "counters": [
+            { "champion": "Yasuo", "reason": "Wind Wall denies binding and most of your damage." },
+            { "champion": "Katarina", "reason": "Shunpo dodges skillshots and snowballs off your mistakes." },
+            { "champion": "Zed", "reason": "Assassin pressure forces you to stay under tower." }
+          ],
+          "synergies": [
+            { "champion": "Caitlyn", "reason": "Root sets up traps and long-range poke." },
+            { "champion": "Jhin", "reason": "Binding guarantees Curtain Call damage." }
+          ],
+          "tips": [
+            "Use E on the wave to push safely, but keep Q for the all-in.",
+            "Stand outside assassin jump range until they show on the map."
+          ]
+        },
+        "UTILITY": {
+          "tier": "B",
+          "score": 74,
+          "build": "mage_support",
+          "rune": "comet_mage",
+          "skillOrder": ["E", "Q", "W"],
+          "note": "Poke support with strong lane pressure; vulnerable to hard engage.",
+          "counters": [
+            { "champion": "Leona", "reason": "Hard engage closes the range gap instantly." },
+            { "champion": "Blitzcrank", "reason": "One hook ends the lane." },
+            { "champion": "Nautilus", "reason": "Point-and-click lockdown ignores your range advantage." }
+          ],
+          "synergies": [
+            { "champion": "Caitlyn", "reason": "Double long-range poke and trap setup." },
+            { "champion": "Jhin", "reason": "Root into Curtain Call is deadly." }
+          ],
+          "tips": [
+            "Push for level 2 and crash the wave before the enemy engage support can all-in.",
+            "Buy a control ward before your first roam."
+          ]
+        }
+      }
+    },
+    "Veigar": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "B",
+          "score": 78,
+          "build": "mage_burst",
+          "rune": "comet_mage",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Scaling pick that punishes low-mobility drafts; needs safe early waves.",
+          "counters": [
+            { "champion": "Zed", "reason": "Mobile assassin kills you before cage matters." },
+            { "champion": "Talon", "reason": "Roams and dives over walls to punish your immobility." },
+            { "champion": "Fizz", "reason": "Dodges cage and bursts through your health bar." }
+          ],
+          "synergies": [
+            { "champion": "Amumu", "reason": "AoE lockdown guarantees cage and W." },
+            { "champion": "Sejuani", "reason": "Ranged engage stacks your passive and traps targets." }
+          ],
+          "tips": [
+            "Stack Q on the wave, not on the enemy champion, until Lost Chapter.",
+            "Place the cage slightly behind the target so they walk into the stun."
+          ]
+        }
+      }
+    },
+    "Katarina": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "B",
+          "score": 77,
+          "build": "assassin",
+          "rune": "electrocute",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Snowball assassin with strong roams, but easily disrupted in lane.",
+          "counters": [
+            { "champion": "Galio", "reason": "Taunt and magic shield stop your channel." },
+            { "champion": "Vex", "reason": "Anti-dash fear zones you out." },
+            { "champion": "Pantheon", "reason": "Stun interrupts Death Lotus and wins early trades." }
+          ],
+          "synergies": [
+            { "champion": "Malphite", "reason": "Knock-up sets up a clean ultimate channel." },
+            { "champion": "Amumu", "reason": "AoE stun creates reset angles." }
+          ],
+          "tips": [
+            "Do not channel R until the enemy's interrupt is used.",
+            "Roam on dagger resets rather than forcing a losing lane."
+          ]
+        }
+      }
+    },
+    "Sylas": {
+      "roles": {
+        "MIDDLE": {
+          "tier": "B",
+          "score": 79,
+          "build": "mage_sustain",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Flexible skirmisher whose value scales with the enemy ultimate.",
+          "counters": [
+            { "champion": "Vex", "reason": "Anti-dash zone denies your engage." },
+            { "champion": "Kassadin", "reason": "Outscales and matches your mobility." },
+            { "champion": "Anivia", "reason": "Wall and zone control stop your chains." }
+          ],
+          "synergies": [
+            { "champion": "Jarvan IV", "reason": "Strong engage ultimate to steal and follow up." },
+            { "champion": "Malphite", "reason": "Unstoppable engage gives you a free dive." }
+          ],
+          "tips": [
+            "Look at the enemy draft before locking; the ultimate pool matters.",
+            "Hold E until the target commits a dash or flash."
+          ]
+        }
+      }
+    },
+    "Darius": {
+      "roles": {
+        "TOP": {
+          "tier": "A",
+          "score": 82,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Lane bully who snowballs hard but is kited by ranged tops.",
+          "counters": [
+            { "champion": "Quinn", "reason": "Ranged kiting and blind deny your axe trades." },
+            { "champion": "Vayne", "reason": "Condemn and mobility keep you out of hook range." },
+            { "champion": "Kayle", "reason": "Scales past you and kites with ranged waves." }
+          ],
+          "synergies": [
+            { "champion": "Zilean", "reason": "Speed and revive let you reach the backline." },
+            { "champion": "Sona", "reason": "Speed aura and sustain cover your immobility." }
+          ],
+          "tips": [
+            "Crash the third wave and cheater recall for a long sword advantage.",
+            "Save E for the enemy's escape, not for the first trade."
+          ]
+        }
+      }
+    },
+    "Garen": {
+      "roles": {
+        "TOP": {
+          "tier": "B",
+          "score": 76,
+          "build": "fighter_bruiser",
+          "rune": "grasp",
+          "skillOrder": ["E", "Q", "W"],
+          "note": "Simple, durable sidelaner who punishes melee matchups.",
+          "counters": [
+            { "champion": "Quinn", "reason": "Ranged poke and blind make every trade one-sided." },
+            { "champion": "Vayne", "reason": "Kiting and true damage ignore your durability." },
+            { "champion": "Teemo", "reason": "Blind and mushrooms deny your spin trades." }
+          ],
+          "synergies": [
+            { "champion": "Sona", "reason": "Movement speed lets you reach carries." },
+            { "champion": "Zilean", "reason": "Speed and revive compensate for your low range." }
+          ],
+          "tips": [
+            "Use Q to break slows before spinning away.",
+            "Play for the sidelane once your wave clear comes online."
+          ]
+        }
+      }
+    },
+    "Malphite": {
+      "roles": {
+        "TOP": {
+          "tier": "A",
+          "score": 84,
+          "build": "tank",
+          "rune": "grasp",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Premier anti-AD engage tank with one of the best teamfight ults.",
+          "counters": [
+            { "champion": "Vayne", "reason": "True damage and kiting ignore your armor stacking." },
+            { "champion": "Fiora", "reason": "Max-health true damage shreds a tank build." },
+            { "champion": "Gwen", "reason": "Magic damage and mobility bypass your strengths." }
+          ],
+          "synergies": [
+            { "champion": "Yasuo", "reason": "Unstoppable R enables Last Breath." },
+            { "champion": "Yone", "reason": "Knock-up combos into Fate Sealed." },
+            { "champion": "Orianna", "reason": "Ball on Malphite creates a guaranteed Shockwave." }
+          ],
+          "tips": [
+            "Hold R for the carry, not the first person you see.",
+            "Build armor early only when the enemy has two auto-attack threats."
+          ]
+        }
+      }
+    },
+    "Camille": {
+      "roles": {
+        "TOP": {
+          "tier": "A",
+          "score": 81,
+          "build": "fighter_bruiser",
+          "rune": "grasp",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Scaling diver with excellent pick and sidelane pressure.",
+          "counters": [
+            { "champion": "Jax", "reason": "Counter Strike blocks your Q and wins extended trades." },
+            { "champion": "Fiora", "reason": "Parry punishes your hookshot engage." },
+            { "champion": "Darius", "reason": "Early lane pressure and bleed punish your weak levels." }
+          ],
+          "synergies": [
+            { "champion": "Orianna", "reason": "Ball delivery and follow-up damage on your dive." },
+            { "champion": "Galio", "reason": "Hero's Entrance turns your pick into a teamfight." }
+          ],
+          "tips": [
+            "Use the second Q for the true-damage trade, not the first one.",
+            "Hookshot walls to escape more often than to engage."
+          ]
+        }
+      }
+    },
+    "Fiora": {
+      "roles": {
+        "TOP": {
+          "tier": "A",
+          "score": 80,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Duelist who wins sidelanes but struggles to engage teamfights.",
+          "counters": [
+            { "champion": "Malphite", "reason": "Armor and attack speed slow blunt your vitals." },
+            { "champion": "Poppy", "reason": "Steadfast Presence stops your dashes." },
+            { "champion": "Kayle", "reason": "Ranged scaling and invulnerability deny your all-in." }
+          ],
+          "synergies": [
+            { "champion": "Shen", "reason": "Stand United lets you splitpush with backup." },
+            { "champion": "Galio", "reason": "Global ultimate covers your side-lane pressure." }
+          ],
+          "tips": [
+            "Take short trades around vitals, then disengage before minions turn.",
+            "Parry the spell that starts the enemy combo, not the first auto."
+          ]
+        }
+      }
+    },
+    "Mordekaiser": {
+      "roles": {
+        "TOP": {
+          "tier": "B",
+          "score": 78,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Durable duelist who isolates key targets but is kited in open fights.",
+          "counters": [
+            { "champion": "Vayne", "reason": "Kiting and true damage make your ultimate a trap." },
+            { "champion": "Quinn", "reason": "Ranged pressure keeps you off the wave." },
+            { "champion": "Cassiopeia", "reason": "Grounding and sustained damage deny your engage." }
+          ],
+          "synergies": [
+            { "champion": "Amumu", "reason": "AoE lockdown lets you walk into range." },
+            { "champion": "Sejuani", "reason": "Engage sets up your isolation pick." }
+          ],
+          "tips": [
+            "Ult the champion whose damage you can actually survive.",
+            "Use W after the enemy commits burst, not before."
+          ]
+        }
+      }
+    },
+    "Aatrox": {
+      "roles": {
+        "TOP": {
+          "tier": "A",
+          "score": 79,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Teamfight drain tank with strong lane pressure and dive follow-up.",
+          "counters": [
+            { "champion": "Fiora", "reason": "Parry and vitals punish your Q timings." },
+            { "champion": "Camille", "reason": "Mobility and true damage win the sidelane." },
+            { "champion": "Irelia", "reason": "Dashes dodge your sweet spots." }
+          ],
+          "synergies": [
+            { "champion": "Sejuani", "reason": "Chain CC keeps enemies inside your Q." },
+            { "champion": "Jarvan IV", "reason": "Arena traps targets for your combo." }
+          ],
+          "tips": [
+            "Hold E to reposition the third Q, not to start the combo.",
+            "Take short trades until your ult makes extended fights favorable."
+          ]
+        }
+      }
+    },
+    "Lee Sin": {
+      "roles": {
+        "JUNGLE": {
+          "tier": "A",
+          "score": 83,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Early-game tempo jungler with elite pick tools and a high skill floor.",
+          "counters": [
+            { "champion": "Warwick", "reason": "Sustain and fear make early invades risky." },
+            { "champion": "Poppy", "reason": "Steadfast Presence blocks your Q dash." },
+            { "champion": "Jax", "reason": "Counter Strike wins the extended duel." }
+          ],
+          "synergies": [
+            { "champion": "Orianna", "reason": "Insec into Shockwave is a teamfight win condition." },
+            { "champion": "Syndra", "reason": "Kick a target into her stun and burst." }
+          ],
+          "tips": [
+            "Path to the lane with the best setup, not the one that is losing hardest.",
+            "Ward-hop during clears to keep tempo and stay healthy."
+          ]
+        }
+      }
+    },
+    "Vi": {
+      "roles": {
+        "JUNGLE": {
+          "tier": "A",
+          "score": 82,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Point-and-click engage that reliably removes a carry.",
+          "counters": [
+            { "champion": "Jax", "reason": "Counter Strike blocks your engage and wins duels." },
+            { "champion": "Poppy", "reason": "Anti-dash field stops your Q." },
+            { "champion": "Warwick", "reason": "Sustain makes early skirmishes unfavourable." }
+          ],
+          "synergies": [
+            { "champion": "Ahri", "reason": "Lockdown guarantees Charm." },
+            { "champion": "Syndra", "reason": "Free sphere combo on your ultimate." },
+            { "champion": "Orianna", "reason": "Ball follow-up on the locked target." }
+          ],
+          "tips": [
+            "Do not open with R if the enemy still has a spell shield or cleanse.",
+            "Charge Q behind vision before ganking."
+          ]
+        }
+      }
+    },
+    "Viego": {
+      "roles": {
+        "JUNGLE": {
+          "tier": "A",
+          "score": 80,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Reset-based skirmisher who snowballs fights but needs clean target selection.",
+          "counters": [
+            { "champion": "Warwick", "reason": "Sustain and suppression punish your early duels." },
+            { "champion": "Poppy", "reason": "Anti-dash field blocks your only engage." },
+            { "champion": "Sejuani", "reason": "Chain CC stops you before resets start." }
+          ],
+          "synergies": [
+            { "champion": "Malphite", "reason": "Knock-up starts your reset chain." },
+            { "champion": "Orianna", "reason": "AoE setup lets you take over fights." }
+          ],
+          "tips": [
+            "Play for the first reset; do not start fights you cannot finish.",
+            "Use E through walls to gank without spending flash."
+          ]
+        }
+      }
+    },
+    "Warwick": {
+      "roles": {
+        "JUNGLE": {
+          "tier": "B",
+          "score": 77,
+          "build": "fighter",
+          "rune": "conqueror",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Beginner-friendly sustain jungler with strong early ganks.",
+          "counters": [
+            { "champion": "Jax", "reason": "Counter Strike and scaling win the duel." },
+            { "champion": "Poppy", "reason": "Anti-dash field denies your gap close." },
+            { "champion": "Kled", "reason": "Grievous wounds and skirmish pressure match your sustain." }
+          ],
+          "synergies": [
+            { "champion": "Orianna", "reason": "Follow-up on your suppression." },
+            { "champion": "Malphite", "reason": "Double engage collapses fights." }
+          ],
+          "tips": [
+            "Use the blood trail to find low-health targets after a fight.",
+            "Hold E for the burst window instead of fear-engineering every gank."
+          ]
+        }
+      }
+    },
+    "Sejuani": {
+      "roles": {
+        "JUNGLE": {
+          "tier": "A",
+          "score": 81,
+          "build": "tank",
+          "rune": "aftershock",
+          "skillOrder": ["W", "E", "Q"],
+          "note": "Engage tank with reliable CC and excellent melee carry synergy.",
+          "counters": [
+            { "champion": "Kindred", "reason": "Ranged invades and ult deny your engage windows." },
+            { "champion": "Vayne", "reason": "True damage and kiting beat your tank stats." },
+            { "champion": "Trundle", "reason": "Subjugate steals your resistances." }
+          ],
+          "synergies": [
+            { "champion": "Yasuo", "reason": "Knock-ups enable Last Breath." },
+            { "champion": "Yone", "reason": "Chain engage into Fate Sealed." },
+            { "champion": "Samira", "reason": "CC sets up her ultimate." }
+          ],
+          "tips": [
+            "Stack your passive on the wave before engaging.",
+            "Use Q to break terrain only when the fight is already won."
+          ]
+        }
+      }
+    },
+    "Nocturne": {
+      "roles": {
+        "JUNGLE": {
+          "tier": "B",
+          "score": 78,
+          "build": "assassin",
+          "rune": "press_attack",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Pick-focused diver with map-wide pressure after level 6.",
+          "counters": [
+            { "champion": "Poppy", "reason": "Anti-dash field blocks your engage." },
+            { "champion": "Jax", "reason": "Counter Strike wins the extended duel." },
+            { "champion": "Warwick", "reason": "Sustain makes early skirmishes hard." }
+          ],
+          "synergies": [
+            { "champion": "Orianna", "reason": "Ball delivery on your ultimate." },
+            { "champion": "Galio", "reason": "Global follow-up turns your dive into a teamfight." }
+          ],
+          "tips": [
+            "Track vision before R; a blind dive into three people loses the game.",
+            "Spell shield is for the CC spell, not the first damage."
+          ]
+        }
+      }
+    },
+    "Jinx": {
+      "roles": {
+        "BOTTOM": {
+          "tier": "S",
+          "score": 87,
+          "build": "marksman",
+          "rune": "lethal_tempo",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Premier reset hypercarry with elite range and objective damage.",
+          "counters": [
+            { "champion": "Zed", "reason": "Assassin dive deletes you before you can DPS." },
+            { "champion": "Talon", "reason": "Wall jumps and burst bypass your range." },
+            { "champion": "Rengar", "reason": "Invisible one-shot from the fog." }
+          ],
+          "synergies": [
+            { "champion": "Thresh", "reason": "Lantern saves you from every dive." },
+            { "champion": "Lulu", "reason": "Shields and polymorph keep you alive." },
+            { "champion": "Braum", "reason": "Peel and passive stun protect your DPS window." }
+          ],
+          "tips": [
+            "Do not use Fishbones in every trade; mana and attack speed matter.",
+            "Stay at max rocket range until the enemy engage is used."
+          ]
+        }
+      }
+    },
+    "Kai'Sa": {
+      "roles": {
+        "BOTTOM": {
+          "tier": "A",
+          "score": 84,
+          "build": "marksman_hybrid",
+          "rune": "lethal_tempo",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Hybrid carry with strong dive follow-up and flexible build paths.",
+          "counters": [
+            { "champion": "Caitlyn", "reason": "Range advantage and traps punish your short range." },
+            { "champion": "Draven", "reason": "Early damage overwhelms your scaling curve." },
+            { "champion": "Zed", "reason": "Assassin burst before you finish your items." }
+          ],
+          "synergies": [
+            { "champion": "Nautilus", "reason": "Lockdown procs your passive and stacks." },
+            { "champion": "Leona", "reason": "Engage creates a free dive window." },
+            { "champion": "Lulu", "reason": "Attack speed and shields accelerate your DPS." }
+          ],
+          "tips": [
+            "Evolve Q first into squishy comps, E first when you need safety.",
+            "Do not ult into a fight unless a teammate can follow the dive."
+          ]
+        }
+      }
+    },
+    "Caitlyn": {
+      "roles": {
+        "BOTTOM": {
+          "tier": "A",
+          "score": 83,
+          "build": "marksman",
+          "rune": "fleet_marksman",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Lane dominator who converts range into tower pressure and picks.",
+          "counters": [
+            { "champion": "Draven", "reason": "All-in damage beats your poke if you misstep." },
+            { "champion": "Samira", "reason": "Wind Wall and all-in threat deny your traps." },
+            { "champion": "Zed", "reason": "Assassin pressure forces you off the wave." }
+          ],
+          "synergies": [
+            { "champion": "Lux", "reason": "Root sets up traps and Headshot." },
+            { "champion": "Morgana", "reason": "Binding and black shield cover your positioning." },
+            { "champion": "Thresh", "reason": "Hook and lantern create lane control." }
+          ],
+          "tips": [
+            "Place traps in the enemy's escape path, not under their feet.",
+            "Use net for safety; saving it for damage usually loses the fight."
+          ]
+        }
+      }
+    },
+    "Ezreal": {
+      "roles": {
+        "BOTTOM": {
+          "tier": "A",
+          "score": 80,
+          "build": "marksman",
+          "rune": "press_attack",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Safe, scaling poke carry with a high skill ceiling.",
+          "counters": [
+            { "champion": "Draven", "reason": "Early all-in punishes your tear scaling." },
+            { "champion": "Caitlyn", "reason": "Range and trap control deny your poke angles." },
+            { "champion": "Nautilus", "reason": "Point-and-click lockdown ignores your mobility." }
+          ],
+          "synergies": [
+            { "champion": "Karma", "reason": "Shield and speed amplify your poke." },
+            { "champion": "Lulu", "reason": "Peel and attack speed cover your mid game." },
+            { "champion": "Braum", "reason": "Passive stuns on your Q volley." }
+          ],
+          "tips": [
+            "Hold E for the enemy engage; it is your only defensive tool.",
+            "Q through minions when the wave blocks the enemy's skillshots."
+          ]
+        }
+      }
+    },
+    "Jhin": {
+      "roles": {
+        "BOTTOM": {
+          "tier": "A",
+          "score": 82,
+          "build": "marksman",
+          "rune": "fleet_marksman",
+          "skillOrder": ["Q", "W", "E"],
+          "note": "Long-range pick carry with strong follow-up and objective control.",
+          "counters": [
+            { "champion": "Samira", "reason": "Wind Wall blocks your root and fourth shot." },
+            { "champion": "Draven", "reason": "Early all-in overwhelms your reload windows." },
+            { "champion": "Zed", "reason": "Assassin dive punishes your immobility." }
+          ],
+          "synergies": [
+            { "champion": "Thresh", "reason": "Hook into root and Curtain Call." },
+            { "champion": "Morgana", "reason": "Binding enables your W from range." },
+            { "champion": "Nami", "reason": "Bubble and speed keep your DPS window clean." }
+          ],
+          "tips": [
+            "Manage reload before a fight; four shots decide the trade.",
+            "Use W to root targets your ally is already hitting."
+          ]
+        }
+      }
+    },
+    "Ashe": {
+      "roles": {
+        "BOTTOM": {
+          "tier": "B",
+          "score": 78,
+          "build": "marksman",
+          "rune": "lethal_tempo",
+          "skillOrder": ["W", "Q", "E"],
+          "note": "Utility carry with global engage; needs peel into dive comps.",
+          "counters": [
+            { "champion": "Zed", "reason": "Assassin pressure removes you before R matters." },
+            { "champion": "Talon", "reason": "Roams convert your immobility into deaths." },
+            { "champion": "Olaf", "reason": "Ragnarok ignores your slows and CC." }
+          ],
+          "synergies": [
+            { "champion": "Braum", "reason": "Passive stuns on every auto and arrow follow-up." },
+            { "champion": "Lulu", "reason": "Peel and speed keep you at max range." },
+            { "champion": "Thresh", "reason": "Lantern and hook cover your lack of mobility." }
+          ],
+          "tips": [
+            "Use E to scout the enemy jungler before pushing.",
+            "Save arrow for picks or disengage; do not open every fight with it."
+          ]
+        }
+      }
+    },
+    "Thresh": {
+      "roles": {
+        "UTILITY": {
+          "tier": "S",
+          "score": 86,
+          "build": "tank_support",
+          "rune": "aftershock",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Playmaking support with unmatched pick and peel tools.",
+          "counters": [
+            { "champion": "Morgana", "reason": "Black Shield blocks your hook and flay." },
+            { "champion": "Zyra", "reason": "Poke and plants win the lane before your engage." },
+            { "champion": "Brand", "reason": "Sustained poke punishes your melee range." }
+          ],
+          "synergies": [
+            { "champion": "Jinx", "reason": "Lantern and hook create a safe hypercarry lane." },
+            { "champion": "Caitlyn", "reason": "Hook into trap is a guaranteed kill." },
+            { "champion": "Aphelios", "reason": "Lockdown enables his long-range weapons." }
+          ],
+          "tips": [
+            "Throw the lantern first when your carry is diving; the hook can wait.",
+            "Roam with your jungler after the first crash."
+          ]
+        }
+      }
+    },
+    "Leona": {
+      "roles": {
+        "UTILITY": {
+          "tier": "S",
+          "score": 85,
+          "build": "tank_support",
+          "rune": "aftershock",
+          "skillOrder": ["W", "E", "Q"],
+          "note": "Hard-engage support with the best all-in pattern in the bot lane.",
+          "counters": [
+            { "champion": "Morgana", "reason": "Black Shield negates your entire engage." },
+            { "champion": "Janna", "reason": "Disengage and shields deny your all-in." },
+            { "champion": "Alistar", "reason": "Counter-engage and cleanse pressure." }
+          ],
+          "synergies": [
+            { "champion": "Samira", "reason": "CC chains stack her passive and ultimate." },
+            { "champion": "Kai'Sa", "reason": "Engage procs her passive for a free dive." },
+            { "champion": "Draven", "reason": "Damage follows your lockdown." }
+          ],
+          "tips": [
+            "Engage on the wave crash, not into a stacked enemy wave.",
+            "Hold Q for the flash escape instead of using it immediately."
+          ]
+        }
+      }
+    },
+    "Lulu": {
+      "roles": {
+        "UTILITY": {
+          "tier": "A",
+          "score": 83,
+          "build": "enchanter",
+          "rune": "aery",
+          "skillOrder": ["E", "W", "Q"],
+          "note": "Top-tier enchanter who turns hypercarries into unkillable threats.",
+          "counters": [
+            { "champion": "Blitzcrank", "reason": "Hook range threatens you before shields come online." },
+            { "champion": "Pyke", "reason": "Invisible roam pressure and execute threat." },
+            { "champion": "Nautilus", "reason": "Point-and-click lockdown ignores your polymorph if he reaches you." }
+          ],
+          "synergies": [
+            { "champion": "Jinx", "reason": "Attack speed and shields amplify her reset DPS." },
+            { "champion": "Kog'Maw", "reason": "Peel and attack speed enable the hypercarry." },
+            { "champion": "Twitch", "reason": "Invisibility flank with Lulu shields is lethal." }
+          ],
+          "tips": [
+            "Polymorph is for the engage, not for poke.",
+            "Shield before the damage lands; the shield also grants attack speed."
+          ]
+        }
+      }
+    },
+    "Nami": {
+      "roles": {
+        "UTILITY": {
+          "tier": "A",
+          "score": 81,
+          "build": "enchanter",
+          "rune": "aery",
+          "skillOrder": ["W", "E", "Q"],
+          "note": "Trade-focused enchanter with strong lane sustain and disengage.",
+          "counters": [
+            { "champion": "Leona", "reason": "Hard engage closes the range gap and locks you down." },
+            { "champion": "Blitzcrank", "reason": "Hook ends the lane if you stand in front of the wave." },
+            { "champion": "Pyke", "reason": "Roam pressure and execute threat." }
+          ],
+          "synergies": [
+            { "champion": "Lucian", "reason": "Ebb and Flow plus Lightslinger wins every short trade." },
+            { "champion": "Ezreal", "reason": "Speed and sustain cover his scaling curve." },
+            { "champion": "Caitlyn", "reason": "Bubble into traps and Headshot." }
+          ],
+          "tips": [
+            "Bounce W between allies and enemies for maximum value.",
+            "Use E on your carry before they commit, not after the fight starts."
+          ]
+        }
+      }
+    },
+    "Rakan": {
+      "roles": {
+        "UTILITY": {
+          "tier": "A",
+          "score": 79,
+          "build": "enchanter",
+          "rune": "aery",
+          "skillOrder": ["W", "E", "Q"],
+          "note": "Mobile playmaker with strong engage and disengage; fragile if caught first.",
+          "counters": [
+            { "champion": "Morgana", "reason": "Black Shield stops your knock-up engage." },
+            { "champion": "Janna", "reason": "Disengage denies your all-in pattern." },
+            { "champion": "Poppy", "reason": "Anti-dash field blocks your W." }
+          ],
+          "synergies": [
+            { "champion": "Xayah", "reason": "Duo passive and shared engage windows." },
+            { "champion": "Kai'Sa", "reason": "Engage sets up her dive." },
+            { "champion": "Samira", "reason": "Knock-up into her all-in." }
+          ],
+          "tips": [
+            "Use E back to your carry after the engage; you are not a frontline.",
+            "Rakan R is best used to disengage, not only to start fights."
+          ]
+        }
+      }
+    },
+    "Blitzcrank": {
+      "roles": {
+        "UTILITY": {
+          "tier": "A",
+          "score": 80,
+          "build": "tank_support",
+          "rune": "aftershock",
+          "skillOrder": ["Q", "E", "W"],
+          "note": "Pick threat that punishes every misposition; falls off against shields and cleanse.",
+          "counters": [
+            { "champion": "Morgana", "reason": "Black Shield makes your hook useless." },
+            { "champion": "Sivir", "reason": "Spell shield and speed deny your engage." },
+            { "champion": "Olaf", "reason": "Ragnarok ignores your hook and knock-up." }
+          ],
+          "synergies": [
+            { "champion": "Caitlyn", "reason": "Hook into trap is a guaranteed kill." },
+            { "champion": "Jhin", "reason": "Hook sets up root and Curtain Call." },
+            { "champion": "Draven", "reason": "Immediate damage follow-up on the hook." }
+          ],
+          "tips": [
+            "Walk forward to threaten the hook before throwing it.",
+            "Do not hook the tank into your carry."
+          ]
+        }
+      }
+    }
+  },
+  "arena": {
+    "S": [
+      "Jeweled Gauntlet",
+      "Executioner",
+      "Vulnerability",
+      "Dashing",
+      "Blade Waltz",
+      "Symphony of War",
+      "Tap Dancer",
+      "Ethereal Weapon",
+      "Mystic Punch",
+      "Goliath",
+      "Slow Cooker",
+      "Spirit Link",
+      "Dual Wield",
+      "Draw Your Sword",
+      "Quest: Steel Your Heart",
+      "Quest: Urf's Champion",
+      "Infernal Conduit"
+    ],
+    "A": [
+      "Warmup Routine",
+      "Lightning Strikes",
+      "Heavy Hitter",
+      "Phenomenal Evil",
+      "Eureka",
+      "Bread And Butter",
+      "Bread And Jam",
+      "Quest: Wooglet's Witchcap",
+      "Quest: Mad Hatter",
+      "Rabble Rousing",
+      "Tank It Or Leave It",
+      "Back To Basics",
+      "Cannon Fodder",
+      "Quest: Rite Of The Forge God",
+      "Quest: Three Sacred Treasures",
+      "Quest: Angel of Retribution",
+      "Infernal Soul"
+    ]
+  }
+}

@@ -1,0 +1,300 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --hud-border: rgba(233, 226, 206, 0.16);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    background: transparent;
+  }
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: transparent;
+    color: #c9c2af;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .web-preview body {
+    background:
+      repeating-linear-gradient(0deg, rgba(233, 226, 206, 0.025) 0 1px, transparent 1px 3px),
+      radial-gradient(1200px 800px at 50% -20%, rgba(233, 226, 206, 0.06), transparent 60%),
+      #050504;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3a372c transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #302e25;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 0;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a4636;
+    background-clip: padding-box;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+  }
+
+  ::selection {
+    background: #e9e2ce;
+    color: #0a0a08;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+}
+
+@layer components {
+  .hud-panel {
+    @apply relative overflow-hidden border border-line bg-panel;
+  }
+
+  /* Cream label band, like a printed chemical label. */
+  .hud-panel > header {
+    background: #e9e2ce;
+    color: #0c0c09;
+    border-bottom: 1px solid #0a0a08;
+  }
+
+  .hud-panel > header h2 {
+    color: #0c0c09 !important;
+    letter-spacing: 0.16em;
+  }
+
+  .hud-panel > header p {
+    color: rgba(12, 12, 9, 0.62) !important;
+    letter-spacing: 0.02em;
+  }
+
+  .hud-panel > header > div:first-child > svg {
+    color: #0c0c09 !important;
+  }
+
+  .hud-panel > header > div:last-child > span:not(.chip) {
+    color: #0c0c09 !important;
+  }
+
+  .hud-panel > header .chip {
+    border-color: rgba(12, 12, 9, 0.35) !important;
+    background: transparent !important;
+    color: #0c0c09 !important;
+  }
+
+  .hud-panel > header .btn {
+    border-color: rgba(12, 12, 9, 0.4) !important;
+    background: transparent !important;
+    color: #0c0c09 !important;
+  }
+
+  .hud-panel > header .btn:hover {
+    background: #0c0c09 !important;
+    color: #e9e2ce !important;
+  }
+
+  .hud-label {
+    @apply font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-fog;
+  }
+
+  .hud-value {
+    @apply font-mono tabular-nums text-slate-100;
+  }
+
+  .drag-region {
+    -webkit-app-region: drag;
+  }
+
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 border px-3 py-1.5 font-display text-[10px] font-bold uppercase tracking-[0.14em] transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-paper disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply border-paper bg-paper text-ink hover:border-paper-2 hover:bg-paper-2;
+  }
+
+  .btn-ghost {
+    @apply border-paper/25 bg-transparent text-mist hover:border-paper/60 hover:bg-paper/10 hover:text-paper;
+  }
+
+  .btn-danger {
+    @apply border-enemy-500/50 bg-transparent text-enemy-400 hover:border-enemy-400 hover:bg-enemy-500/15;
+  }
+
+  .icon-btn {
+    @apply inline-flex h-7 w-7 select-none items-center justify-center border border-transparent text-fog transition-colors hover:border-paper/25 hover:bg-paper/10 hover:text-paper focus:outline-none focus-visible:ring-1 focus-visible:ring-paper;
+  }
+
+  .field {
+    @apply w-full border border-line bg-abyss px-3 py-2 text-sm text-slate-200 outline-none transition-colors placeholder:text-fog/60 focus:border-paper/50;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 border border-paper/20 px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-mist;
+  }
+
+  .nav-item {
+    @apply relative flex w-full items-center gap-3 border border-transparent px-3 py-2.5 text-left text-[12px] font-bold uppercase tracking-[0.06em] text-ink/70 transition-colors duration-150 hover:bg-ink/[0.07] hover:text-ink;
+  }
+
+  .nav-item-active {
+    @apply border-ink bg-ink text-paper hover:bg-ink hover:text-paper;
+  }
+
+  .nav-item-active::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    transform: translateY(-50%) rotate(45deg);
+    background: #e9e2ce;
+  }
+
+  .tile {
+    @apply border border-line bg-panel-2 p-2 transition-colors hover:border-paper/25 hover:bg-panel-3;
+  }
+
+  .divider {
+    @apply h-px w-full bg-line;
+  }
+
+  .skill-chip {
+    @apply flex h-7 w-7 items-center justify-center border text-[11px] font-bold;
+  }
+
+  .range-paper {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: #35332a;
+    border: 1px solid #232218;
+  }
+
+  .range-paper::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 9px;
+    border: 1px solid #0a0a08;
+    background: #e9e2ce;
+    cursor: pointer;
+  }
+
+  .range-paper::-moz-range-thumb {
+    height: 16px;
+    width: 9px;
+    border: 1px solid #0a0a08;
+    border-radius: 0;
+    background: #e9e2ce;
+    cursor: pointer;
+  }
+
+  .rune-paths {
+    container-type: inline-size;
+  }  .rune-paths-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr;
+  }
+
+  @container (min-width: 470px) {
+    .rune-paths-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: none;
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.9);
+  }
+
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+
+  .bg-checker {
+    background-image: linear-gradient(45deg, rgba(233, 226, 206, 0.05) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(233, 226, 206, 0.05) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(233, 226, 206, 0.05) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(233, 226, 206, 0.05) 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+  }
+
+  .hazard-rule {
+    background: repeating-linear-gradient(-45deg, #e9e2ce 0 7px, #0a0a08 7px 14px);
+  }
+
+  .barcode {
+    height: 12px;
+    background-image: repeating-linear-gradient(
+      90deg,
+      currentColor 0 1px,
+      transparent 1px 3px,
+      currentColor 3px 4px,
+      transparent 4px 6px,
+      currentColor 6px 8px,
+      transparent 8px 11px,
+      currentColor 11px 12px,
+      transparent 12px 14px
+    );
+    opacity: 0.55;
+  }
+
+  .paper-grain {
+    background-image: repeating-linear-gradient(0deg, rgba(233, 226, 206, 0.03) 0 1px, transparent 1px 3px);
+  }
+}

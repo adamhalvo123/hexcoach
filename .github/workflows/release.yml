@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build Windows installer
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Type-check and build frontend
+        run: npm run build
+
+      - name: Build Tauri app and publish release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: "HexCoach v__VERSION__"
+          releaseBody: |
+            HexCoach v__VERSION__ — League of Legends overlay coach.
+
+            Download the `*-setup.exe` installer below, run it and launch **HexCoach**.
+            Windows SmartScreen may warn about an unsigned build; choose "More info" → "Run anyway".
+
+            - Draft helper (counters, synergies, estimated win rates)
+            - Live game scoreboard, build, runes and skill order
+            - Arena augment tier list and synergy reads
+            - One-click rune import through the local League Client API
+          releaseDraft: false
+          prerelease: false
+          args: --bundles nsis
