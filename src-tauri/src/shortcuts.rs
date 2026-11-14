@@ -19,6 +19,7 @@ pub fn validate(settings: &crate::settings::Settings) -> Result<(), String> {
         ("compact overlay", &settings.hotkeys.toggle_compact),
         ("click-through", &settings.hotkeys.toggle_click_through),
         ("visibility", &settings.hotkeys.toggle_visibility),
+        ("in-game HUD", &settings.hotkeys.toggle_hud),
     ];
     for (label, value) in shortcuts {
         Shortcut::from_str(value)
@@ -31,6 +32,13 @@ pub fn register(app: &AppHandle) -> Result<(), String> {
     let settings = app.state::<SettingsState>().get();
     let shortcuts = app.global_shortcut();
     let _ = shortcuts.unregister_all();
+
+    if let Some(window) = app.get_webview_window("hud-overlay") {
+        let _ = window.set_ignore_cursor_events(true);
+    }
+    if let Some(state) = app.try_state::<commands::HudState>() {
+        state.0.store(true, Ordering::Relaxed);
+    }
 
     shortcuts
         .on_shortcut(
@@ -90,6 +98,30 @@ pub fn register(app: &AppHandle) -> Result<(), String> {
             },
         )
         .map_err(|error| format!("Could not register the click-through hotkey: {error}"))?;
+
+    shortcuts
+        .on_shortcut(settings.hotkeys.toggle_hud.as_str(), |app, _shortcut, event| {
+            if event.state != ShortcutState::Pressed {
+                return;
+            }
+            let state = app.state::<commands::HudState>();
+            let next_ignore = !state.0.load(Ordering::Relaxed);
+            state.0.store(next_ignore, Ordering::Relaxed);
+            if let Some(window) = app.get_webview_window("hud-overlay") {
+                let _ = window.set_ignore_cursor_events(next_ignore);
+                if !window.is_visible().unwrap_or(false) {
+                    let _ = window.show();
+                }
+                if !next_ignore {
+                    let _ = window.set_focus();
+                }
+            }
+            let _ = app.emit(
+                "hud-clickthrough-changed",
+                commands::hud_state_view(app),
+            );
+        })
+        .map_err(|error| format!("Could not register the in-game HUD hotkey: {error}"))?;
 
     Ok(())
 }

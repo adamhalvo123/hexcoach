@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  BadgeCheck,
   Check,
   Database,
   Eye,
@@ -15,12 +16,21 @@ import {
   Save,
   ShieldCheck,
   Sparkles,
+  Trash2,
 } from "lucide-react";
 import { DEFAULT_SETTINGS, REGIONS } from "@/lib/defaults";
+import { fetchRiotApi } from "@/lib/api";
+import { isDesktop } from "@/lib/env";
 import { cn, shortPatch } from "@/lib/format";
 import type { Hotkeys, Settings } from "@/lib/types";
 import { useApp } from "@/state/store";
 import { Panel, Spinner } from "@/components/shared";
+
+function keySourceLabel(source: string): string {
+  if (source === "local") return "local override";
+  if (source === "environment") return "build-time key";
+  return "not configured";
+}
 
 function Toggle({
   checked,
@@ -83,10 +93,22 @@ function FieldRow({
 }
 
 export default function SettingsPage() {
-  const { settings, saveSettings, ddragon, bootstrap, perf, appInfo, refreshData, pushToast } = useApp();
+  const {
+    settings,
+    saveSettings,
+    clearRiotKey,
+    ddragon,
+    bootstrap,
+    perf,
+    appInfo,
+    refreshData,
+    pushToast,
+  } = useApp();
   const [draft, setDraft] = useState<Settings>(settings);
   const [saving, setSaving] = useState(false);
   const [showKey, setShowKey] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyResult, setVerifyResult] = useState<{ ok: boolean; message: string } | null>(null);
 
   useEffect(() => {
     setDraft(settings);
@@ -115,10 +137,66 @@ export default function SettingsPage() {
       ...DEFAULT_SETTINGS,
       hotkeys: { ...DEFAULT_SETTINGS.hotkeys },
       riotApiKey: draft.riotApiKey,
+      riotKeyConfigured: settings.riotKeyConfigured,
+      riotKeySource: settings.riotKeySource,
       riotId: draft.riotId,
       region: draft.region,
     });
     pushToast("info", "Defaults restored", "Review the values, then save to apply.");
+  };
+
+  const verifyRiotKey = async () => {
+    if (!isDesktop()) {
+      pushToast("info", "Web preview", "Riot API verification runs in the desktop app.");
+      return;
+    }
+    if (draft.riotApiKey.trim()) {
+      pushToast("info", "Save the key first", "HexCoach verifies the key stored by the Rust backend, not the unsaved field.");
+      return;
+    }
+    const [gameName, tagLine] = draft.riotId.split("#");
+    if (!gameName?.trim() || !tagLine?.trim()) {
+      pushToast("error", "Riot ID needed", "Enter your Riot ID in the Name#Tag form before verifying.");
+      return;
+    }
+    setVerifying(true);
+    setVerifyResult(null);
+    try {
+      const response = await fetchRiotApi({
+        kind: "account",
+        region: draft.region,
+        gameName: gameName.trim(),
+        tagLine: tagLine.trim(),
+      });
+      if (response.status === 200) {
+        const data = response.data as { puuid?: string; gameName?: string; tagLine?: string } | null;
+        setVerifyResult({
+          ok: true,
+          message: data?.puuid
+            ? `Verified ${data.gameName ?? gameName}#${data.tagLine ?? tagLine}`
+            : `Verified ${gameName}#${tagLine}`,
+        });
+        pushToast("success", "Riot key verified", "Account-v1 answered with HTTP 200.");
+      } else {
+        setVerifyResult({ ok: false, message: `Riot API returned HTTP ${response.status}` });
+        pushToast("error", "Riot key check failed", `The Riot API returned HTTP ${response.status}.`);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setVerifyResult({ ok: false, message });
+      pushToast("error", "Riot key check failed", message);
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const removeLocalKey = async () => {
+    try {
+      await clearRiotKey();
+      setVerifyResult(null);
+    } catch {
+      // The store already surfaced the error toast.
+    }
   };
 
   return (
@@ -144,7 +222,22 @@ export default function SettingsPage() {
 
       <div className="grid grid-cols-1 gap-3.5 xl:grid-cols-2">
         <div className="space-y-3.5">
-          <Panel icon={KeyRound} title="Riot account" subtitle="Optional · used for future profile features" bodyClassName="space-y-3 p-3">
+          <Panel
+            icon={KeyRound}
+            title="Riot account"
+            subtitle="Optional · the key never reaches the frontend"
+            action={
+              <span
+                className={cn(
+                  "chip",
+                  draft.riotKeyConfigured ? "border-emerald-500/40 text-emerald-300" : "border-paper/20 text-fog",
+                )}
+              >
+                {draft.riotKeyConfigured ? keySourceLabel(draft.riotKeySource) : "no key"}
+              </span>
+            }
+            bodyClassName="space-y-3 p-3"
+          >
             <FieldRow label="Riot ID" hint="Name#Tag">
               <input
                 className="field"
@@ -154,14 +247,14 @@ export default function SettingsPage() {
                 spellCheck={false}
               />
             </FieldRow>
-            <FieldRow label="Riot API key" hint="Stored locally">
+            <FieldRow label="Riot API key" hint={keySourceLabel(draft.riotKeySource)}>
               <div className="relative">
                 <input
                   className="field pr-10"
                   type={showKey ? "text" : "password"}
                   value={draft.riotApiKey}
                   onChange={(event) => update({ riotApiKey: event.target.value })}
-                  placeholder="RGAPI-…"
+                  placeholder={draft.riotKeyConfigured ? "•••••••• configured — type to replace" : "RGAPI-…"}
                   spellCheck={false}
                   autoComplete="off"
                 />
@@ -188,10 +281,43 @@ export default function SettingsPage() {
                 ))}
               </select>
             </FieldRow>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => void verifyRiotKey()}
+                disabled={verifying || !draft.riotKeyConfigured}
+              >
+                {verifying ? <Spinner className="h-3.5 w-3.5" /> : <BadgeCheck className="h-3.5 w-3.5" />}
+                Verify with Account-v1
+              </button>
+              {draft.riotKeySource === "local" ? (
+                <button type="button" className="btn btn-ghost text-enemy-400" onClick={() => void removeLocalKey()}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Remove local key
+                </button>
+              ) : null}
+            </div>
+            {verifyResult ? (
+              <p
+                className={cn(
+                  "border px-2 py-1.5 text-[10px] leading-relaxed",
+                  verifyResult.ok
+                    ? "border-emerald-500/30 bg-emerald-500/[0.06] text-emerald-300"
+                    : "border-enemy-500/30 bg-enemy-500/[0.06] text-enemy-400",
+                )}
+              >
+                {verifyResult.message}
+              </p>
+            ) : null}
             <p className="flex items-start gap-1.5 rounded-md border border-white/[0.05] bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
               <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-emerald-400" />
-              The key never leaves your machine. Live builds, rune import and Data Dragon use public or local
-              endpoints and do not require it.
+              <span>
+                HexCoach only masks the key in the UI; the Rust backend attaches{" "}
+                <span className="font-mono text-slate-300">X-Riot-Token</span> server-side. Leave the field blank to
+                keep the existing key. Release builds fall back to the build-time{" "}
+                <span className="font-mono text-slate-300">RIOT_API_KEY</span>.
+              </span>
             </p>
           </Panel>
 
@@ -202,6 +328,20 @@ export default function SettingsPage() {
               label="Always on top"
               description="Keeps HexCoach above the League client while you play."
             />
+            <Toggle
+              checked={draft.hudOverlay}
+              onChange={(value) => update({ hudOverlay: value })}
+              label="In-game HUD"
+              description="Click-through top-right overlay with enemy respawns, Flash timers, next item and skill order."
+            />
+            <div className="flex items-start gap-2 rounded-md border border-white/[0.05] bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
+              <MousePointerClick className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
+              <span>
+                The HUD starts click-through so fights keep mouse focus. Press{" "}
+                <span className="font-mono text-slate-300">Alt+X</span> to make it interactive, then again to pass
+                clicks straight back into League.
+              </span>
+            </div>
             <div className="border border-line bg-abyss px-3 py-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-200">Overlay opacity</span>
@@ -283,10 +423,21 @@ export default function SettingsPage() {
                 spellCheck={false}
               />
             </FieldRow>
+            <FieldRow label="HUD click-through" hint="Alt+X default">
+              <input
+                className="field font-mono text-xs"
+                value={draft.hotkeys.toggleHud}
+                onChange={(event) => updateHotkey("toggleHud", event.target.value)}
+                spellCheck={false}
+              />
+            </FieldRow>
             <p className="flex items-start gap-1.5 text-[10px] leading-relaxed text-fog">
               <MousePointerClick className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
-              Use Tauri accelerator syntax: <span className="font-mono text-slate-300">CommandOrControl+Shift+C</span>.
-              Shortcuts are registered globally by the desktop app.
+              <span>
+                Use Tauri accelerator syntax:{" "}
+                <span className="font-mono text-slate-300">CommandOrControl+Shift+C</span>. Shortcuts are registered
+                globally by the desktop app.
+              </span>
             </p>
           </Panel>
 
@@ -320,6 +471,17 @@ export default function SettingsPage() {
                 <p className="mt-0.5 font-mono text-sm text-slate-100">{bootstrap?.arena.length ?? "—"}</p>
                 <p className="text-[9px] text-fog">
                   {bootstrap?.arenaSource === "curated" ? "Curated offline set" : "CommunityDragon"}
+                </p>
+              </div>
+              <div className="border border-line bg-abyss px-3 py-2">
+                <p className="hud-label">ARAM balance</p>
+                <p className="mt-0.5 font-mono text-sm text-slate-100">{bootstrap?.aram.length ?? "—"}</p>
+                <p className="text-[9px] text-fog">
+                  {bootstrap?.aramSource === "curated" || !bootstrap?.aramSource
+                    ? "Curated offline set"
+                    : bootstrap.aramSource === "cache"
+                      ? "Cached CommunityDragon"
+                      : "CommunityDragon"}
                 </p>
               </div>
             </div>

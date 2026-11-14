@@ -1,3 +1,4 @@
+mod aram;
 mod arena;
 mod commands;
 mod ddragon;
@@ -5,6 +6,7 @@ mod live_client;
 mod lcu;
 mod meta;
 mod recommend;
+mod riot;
 mod settings;
 mod shortcuts;
 mod util;
@@ -40,6 +42,7 @@ pub fn run() {
             app.manage(commands::PerfState::new(app.handle()));
             app.manage(commands::CompactState::default());
             app.manage(shortcuts::ClickThroughState::default());
+            app.manage(commands::HudState::default());
 
             if let Err(error) = shortcuts::register(app.handle()) {
                 eprintln!("HexCoach: global hotkeys unavailable: {error}");
@@ -74,9 +77,14 @@ pub fn run() {
             recommend::get_draft_recommendations,
             settings::get_settings,
             settings::save_settings,
+            settings::clear_riot_api_key,
+            riot::fetch_riot_api,
             commands::get_performance,
             commands::get_app_info,
             commands::set_compact_mode,
+            commands::set_overlay_clickthrough,
+            commands::get_overlay_state,
+            commands::set_hud_visible,
         ])
         .run(tauri::generate_context!())
         .expect("error while running HexCoach");

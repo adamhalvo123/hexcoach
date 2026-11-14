@@ -1,4 +1,5 @@
 import metaJson from "@/data/meta.json";
+import { FALLBACK_ARAM_BALANCE } from "./aram";
 import { DEFAULT_SETTINGS } from "./defaults";
 import { normalizeRole, roleLabel } from "./format";
 import type {
@@ -187,6 +188,8 @@ async function loadBrowserBootstrapInner(): Promise<Bootstrap> {
     runes,
     spells: spells.sort((a, b) => a.name.localeCompare(b.name)),
     arena,
+    aram: FALLBACK_ARAM_BALANCE,
+    aramSource: "curated",
   };
 }
 
@@ -569,9 +572,13 @@ export function getBrowserSettings(): Settings {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return { ...DEFAULT_SETTINGS, hotkeys: { ...DEFAULT_SETTINGS.hotkeys } };
     const parsed = JSON.parse(raw) as Partial<Settings>;
+    const configured = Boolean(parsed.riotKeyConfigured);
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
+      riotApiKey: "",
+      riotKeyConfigured: configured,
+      riotKeySource: configured ? (parsed.riotKeySource ?? "local") : "none",
       hotkeys: { ...DEFAULT_SETTINGS.hotkeys, ...(parsed.hotkeys ?? {}) },
     };
   } catch {
@@ -580,7 +587,15 @@ export function getBrowserSettings(): Settings {
 }
 
 export function saveBrowserSettings(settings: Settings): Settings {
-  const next = { ...settings, overlayOpacity: Math.min(1, Math.max(0.55, settings.overlayOpacity)) };
+  const configured = settings.riotKeyConfigured || settings.riotApiKey.trim().length > 0;
+  const next: Settings = {
+    ...settings,
+    // The web preview never persists a real key; only the desktop backend does.
+    riotApiKey: "",
+    riotKeyConfigured: configured,
+    riotKeySource: configured ? "local" : "none",
+    overlayOpacity: Math.min(1, Math.max(0.55, settings.overlayOpacity)),
+  };
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
   return next;
 }

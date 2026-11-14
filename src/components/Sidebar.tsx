@@ -1,6 +1,7 @@
 import {
   Activity,
   Database,
+  Flame,
   Hammer,
   RefreshCw,
   Settings2,
@@ -21,6 +22,7 @@ const NAV: Array<{
   { id: "draft", label: "Draft Helper", hint: "Counters & picks", icon: Swords },
   { id: "builds", label: "Builds & Runes", hint: "Plans & runes", icon: Hammer },
   { id: "arena", label: "Arena Lab", hint: "Augments & tiers", icon: Sparkles },
+  { id: "aram", label: "ARAM / Mayhem", hint: "Howling Abyss", icon: Flame },
 ];
 
 export default function Sidebar() {

@@ -1,4 +1,5 @@
 use crate::{
+    aram::{self, AramBalance},
     arena::{self, ArenaAugment},
     util::strip_html,
     Clients,
@@ -158,6 +159,8 @@ pub struct DdragonData {
     pub runes: Vec<RuneTree>,
     pub spells: Vec<Spell>,
     pub arena: Vec<ArenaAugment>,
+    pub aram: Vec<AramBalance>,
+    pub aram_source: String,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -171,6 +174,8 @@ pub struct Bootstrap {
     pub runes: Vec<RuneTree>,
     pub spells: Vec<Spell>,
     pub arena: Vec<ArenaAugment>,
+    pub aram: Vec<AramBalance>,
+    pub aram_source: String,
 }
 
 pub struct DdragonState {
@@ -434,6 +439,7 @@ async fn load_data(
         Ok(augments) => (augments, None),
         Err(err) => (Vec::new(), Some(err)),
     };
+    let (aram, aram_source) = aram::load(client, &version_dir).await;
 
     Ok((
         DdragonData {
@@ -445,6 +451,8 @@ async fn load_data(
             runes,
             spells,
             arena,
+            aram,
+            aram_source,
         },
         arena_error,
     ))
@@ -614,6 +622,8 @@ pub async fn get_bootstrap(state: State<'_, DdragonState>) -> Result<Bootstrap, 
         runes: data.runes.clone(),
         spells: data.spells.clone(),
         arena: data.arena.clone(),
+        aram: data.aram.clone(),
+        aram_source: data.aram_source.clone(),
     })
 }
 

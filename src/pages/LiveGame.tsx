@@ -196,6 +196,7 @@ export default function LiveGamePage() {
   const teamKills = live.myTeam.reduce((sum, player) => sum + player.kills, 0);
   const enemyKills = live.enemyTeam.reduce((sum, player) => sum + player.kills, 0);
   const isArena = live.gameMode === "CHERRY";
+  const isMayhem = live.isMayhem || live.gameMode === "ARAM_MAYHEM";
   const activeAugments = findActiveAugments(bootstrap.arena, live.augments);
   const augmentPicks = recommendAugments(bootstrap.arena, myChampion, 4);
 
@@ -475,13 +476,18 @@ export default function LiveGamePage() {
             </Panel>
           ) : null}
 
-          {isArena || activeAugments.length ? (
+          {isArena || isMayhem || activeAugments.length ? (
             <Panel
               icon={Sparkles}
-              title="Arena augments"
+              title={isMayhem ? "ARAM Mayhem augments" : "Arena augments"}
               subtitle="Active picks & suggestions"
               action={
-                <button type="button" className="icon-btn" onClick={() => setPage("arena")} title="Open Arena Lab">
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => setPage(isMayhem ? "aram" : "arena")}
+                  title={isMayhem ? "Open ARAM / Mayhem" : "Open Arena Lab"}
+                >
                   <ChevronRight className="h-4 w-4" />
                 </button>
               }
@@ -528,8 +534,8 @@ export default function LiveGamePage() {
                   </div>
                 ))}
               </div>
-              <button type="button" className="btn btn-ghost w-full" onClick={() => setPage("arena")}>
-                Open Arena Lab
+              <button type="button" className="btn btn-ghost w-full" onClick={() => setPage(isMayhem ? "aram" : "arena")}>
+                {isMayhem ? "Open ARAM / Mayhem" : "Open Arena Lab"}
                 <ChevronRight className="h-3 w-3" />
               </button>
             </Panel>

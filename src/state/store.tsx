@@ -26,8 +26,9 @@ import {
   refreshDdragon,
   saveSettings as persistSettings,
   setCompactMode as applyCompactMode,
+  clearRiotApiKey as clearRiotKeyRequest,
 } from "@/lib/api";
-import { createDemoChampSelect, createDemoLive } from "@/lib/demo";
+import { createDemoAram, createDemoChampSelect, createDemoLive } from "@/lib/demo";
 import { DEFAULT_SETTINGS } from "@/lib/defaults";
 import { isDesktop } from "@/lib/env";
 import { normalizeRole } from "@/lib/format";
@@ -36,6 +37,7 @@ import type {
   Bootstrap,
   ChampSelect,
   DdragonStatus,
+  HudOverlayState,
   LiveGame,
   LcuStatus,
   Page,
@@ -63,9 +65,19 @@ const SELECTION_KEY = "hexcoach.selection.v1";
 function initialPage(): Page {
   if (typeof window === "undefined") return "live";
   const value = new URLSearchParams(window.location.search).get("page");
-  return value === "draft" || value === "builds" || value === "arena" || value === "settings"
+  return value === "draft" ||
+    value === "builds" ||
+    value === "arena" ||
+    value === "aram" ||
+    value === "settings"
     ? value
     : "live";
+}
+
+function initialDemoVariant(): "classic" | "aram" | "mayhem" {
+  if (typeof window === "undefined") return "classic";
+  const value = new URLSearchParams(window.location.search).get("mode");
+  return value === "aram" || value === "mayhem" ? value : "classic";
 }
 
 function initialCompact(): boolean {
@@ -91,6 +103,7 @@ function initialSelection(): { champion: string; role: Role } {
 }
 
 const savedSelection = initialSelection();
+const demoVariant = initialDemoVariant();
 
 interface AppStore {
   bootstrap: Bootstrap | null;
@@ -107,6 +120,7 @@ interface AppStore {
   setPage: (page: Page) => void;
   compact: boolean;
   setCompact: (compact: boolean) => void;
+  hudClickThrough: boolean;
   champion: string;
   setChampion: (champion: string) => void;
   role: Role;
@@ -118,6 +132,7 @@ interface AppStore {
   refreshData: () => Promise<void>;
   retryBootstrap: () => void;
   saveSettings: (next: Settings) => Promise<void>;
+  clearRiotKey: () => Promise<void>;
   importRunes: () => Promise<void>;
   toasts: Toast[];
   pushToast: (kind: ToastKind, title: string, message?: string) => void;
@@ -150,6 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [appInfo, setAppInfo] = useState<AppInfo | null>(null);
   const [page, setPage] = useState<Page>(initialPage);
   const [compact, setCompactState] = useState(initialCompact);
+  const [hudClickThrough, setHudClickThrough] = useState(true);
   const [champion, setChampion] = useState(savedSelection.champion);
   const [role, setRole] = useState<Role>(savedSelection.role);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
@@ -322,6 +338,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
             pushToast("info", "Overlay hidden", "Use the visibility hotkey to bring HexCoach back.");
           }
         }),
+        listen<HudOverlayState>("hud-clickthrough-changed", (event) => {
+          setHudClickThrough(event.payload.clickThrough);
+          if (event.payload.visible) {
+            pushToast(
+              "info",
+              event.payload.interactive ? "HUD interactive" : "HUD click-through",
+              event.payload.interactive
+                ? "You can now click the in-game HUD. Press Alt+X to pass clicks through again."
+                : "Mouse clicks pass straight through to League. Press Alt+X to interact.",
+            );
+          }
+        }),
       ]);
       if (cancelled) {
         listeners.forEach((unlisten) => unlisten());
@@ -347,7 +375,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const live = useMemo<LiveGame>(() => {
     if (settings.demoMode && bootstrap) {
       const demoChampion = champion || bootstrap.champions[0]?.name || "Ahri";
-      return createDemoLive(bootstrap, demoChampion, role);
+      return demoVariant === "classic"
+        ? createDemoLive(bootstrap, demoChampion, role)
+        : createDemoAram(bootstrap, demoChampion, demoVariant);
     }
     return rawLive;
   }, [settings.demoMode, bootstrap, champion, role, rawLive, demoClock]);
@@ -438,6 +468,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [pushToast],
   );
 
+  const clearRiotKey = useCallback(async () => {
+    try {
+      const saved = await clearRiotKeyRequest();
+      setSettings(saved);
+      pushToast("success", "Local Riot key removed", "HexCoach will use the build-time key if one was provided.");
+    } catch (error) {
+      pushToast("error", "Could not clear the Riot key", errorMessage(error));
+      throw error;
+    }
+  }, [pushToast]);
+
   const refreshData = useCallback(async () => {
     if (!isDesktop()) {
       pushToast("info", "Web preview", "Data Dragon refresh is available in the desktop app.");
@@ -515,6 +556,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPage,
     compact,
     setCompact,
+    hudClickThrough,
     champion,
     setChampion,
     role,
@@ -526,6 +568,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     refreshData,
     retryBootstrap,
     saveSettings,
+    clearRiotKey,
     importRunes,
     toasts,
     pushToast,

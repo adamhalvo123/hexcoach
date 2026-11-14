@@ -25,6 +25,83 @@ impl Default for CompactState {
     }
 }
 
+/// Tracks whether the in-game HUD is currently passing mouse input through to
+/// the game. The HUD starts click-through so it never steals a click in a fight.
+pub struct HudState(pub AtomicBool);
+
+impl Default for HudState {
+    fn default() -> Self {
+        Self(AtomicBool::new(true))
+    }
+}
+
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HudOverlayState {
+    pub visible: bool,
+    pub click_through: bool,
+    pub interactive: bool,
+}
+
+pub fn hud_state_view(app: &AppHandle) -> HudOverlayState {
+    let click_through = app
+        .try_state::<HudState>()
+        .map(|state| state.0.load(Ordering::Relaxed))
+        .unwrap_or(true);
+    let visible = app
+        .get_webview_window("hud-overlay")
+        .and_then(|window| window.is_visible().ok())
+        .unwrap_or(false);
+    HudOverlayState {
+        visible,
+        click_through,
+        interactive: !click_through,
+    }
+}
+
+#[tauri::command]
+pub fn set_overlay_clickthrough(
+    app: AppHandle,
+    state: State<'_, HudState>,
+    ignore: bool,
+) -> Result<HudOverlayState, String> {
+    let window = app
+        .get_webview_window("hud-overlay")
+        .ok_or_else(|| "The in-game HUD window is not available".to_string())?;
+    window
+        .set_ignore_cursor_events(ignore)
+        .map_err(|error| error.to_string())?;
+    state.0.store(ignore, Ordering::Relaxed);
+    let view = hud_state_view(&app);
+    let _ = app.emit("hud-clickthrough-changed", view.clone());
+    Ok(view)
+}
+
+#[tauri::command]
+pub fn get_overlay_state(
+    app: AppHandle,
+    _state: State<'_, HudState>,
+) -> Result<HudOverlayState, String> {
+    Ok(hud_state_view(&app))
+}
+
+#[tauri::command]
+pub fn set_hud_visible(
+    app: AppHandle,
+    _state: State<'_, HudState>,
+    visible: bool,
+) -> Result<HudOverlayState, String> {
+    let Some(window) = app.get_webview_window("hud-overlay") else {
+        return Err("The in-game HUD window is not available".into());
+    };
+    if visible {
+        let _ = window.show();
+    } else {
+        let _ = window.hide();
+    }
+    Ok(hud_state_view(&app))
+}
+
 pub struct PerfState {
     system: Mutex<System>,
     started: Instant,

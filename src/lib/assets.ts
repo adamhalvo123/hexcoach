@@ -77,12 +77,15 @@ export function spellIcon(bootstrap: Bootstrap, spell: SummonerSpell): AssetSour
   );
 }
 
-export function augmentIcon(bootstrap: Bootstrap, augment: ArenaAugment): AssetSources {
-  return localOr(
-    bootstrap,
-    `img/augment/${augment.apiName}.png`,
-    `${communityAsset(augment.iconSmall)}`,
-  );
+export function augmentIcon(
+  bootstrap: Bootstrap,
+  augment: ArenaAugment,
+): AssetSources | undefined {
+  const local = localAsset(bootstrap, `img/augment/${augment.apiName}.png`);
+  if (!augment.iconSmall) {
+    return local ? { src: local } : undefined;
+  }
+  return localOr(bootstrap, `img/augment/${augment.apiName}.png`, `${communityAsset(augment.iconSmall)}`);
 }
 
 export function abilityIcon(bootstrap: Bootstrap, image: { full: string }): AssetSources {

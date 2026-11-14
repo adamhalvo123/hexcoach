@@ -9,10 +9,12 @@ import MobileNav from "@/components/MobileNav";
 import StatusBar from "@/components/StatusBar";
 import Toasts from "@/components/Toasts";
 import CompactOverlay from "@/components/CompactOverlay";
+import InGameHud from "@/components/InGameHud";
 import LiveGamePage from "@/pages/LiveGame";
 import DraftPage from "@/pages/Draft";
 import BuildsPage from "@/pages/Builds";
 import ArenaPage from "@/pages/Arena";
+import AramMayhemPage from "@/pages/AramMayhem";
 import SettingsPage from "@/pages/Settings";
 
 const PAGES: Record<Page, ComponentType> = {
@@ -20,8 +22,13 @@ const PAGES: Record<Page, ComponentType> = {
   draft: DraftPage,
   builds: BuildsPage,
   arena: ArenaPage,
+  aram: AramMayhemPage,
   settings: SettingsPage,
 };
+
+const IS_HUD_ROUTE =
+  typeof window !== "undefined" &&
+  new URLSearchParams(window.location.search).get("hud") === "1";
 
 function LoadingPanel({ error, onRetry }: { error: string | null; onRetry: () => void }) {
   return (
@@ -85,6 +92,15 @@ export default function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [compact, setCompact]);
+
+  if (IS_HUD_ROUTE) {
+    return (
+      <>
+        <InGameHud />
+        <Toasts />
+      </>
+    );
+  }
 
   if (compact) {
     return (

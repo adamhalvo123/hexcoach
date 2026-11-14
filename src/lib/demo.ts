@@ -268,7 +268,47 @@ export function createDemoLive(
     enemyTeam,
     events,
     augments: [],
+    isAram: false,
+    isMayhem: false,
+    myGold: 2150,
     latencyMs: 4,
+    updatedAt: Date.now(),
+  };
+}
+
+export function createDemoAram(
+  bootstrap: Bootstrap,
+  championName: string,
+  variant: "aram" | "mayhem",
+): LiveGame {
+  const base = createDemoLive(bootstrap, championName, "MIDDLE");
+  const mayhem = variant === "mayhem";
+  const augments = mayhem ? ["Jeweled Gauntlet", "Goliath", "Dual Wield"] : [];
+  const myTeam = base.myTeam.map((player) => ({
+    ...player,
+    position: "NONE",
+    augments: player.isLocal ? augments : player.augments,
+  }));
+  const enemyTeam = base.enemyTeam.map((player, index) => ({
+    ...player,
+    position: "NONE",
+    isDead: index < 2,
+    respawnTimer: index === 0 ? 9.4 : 22.1,
+    summonerSpells: index % 2 === 0 ? ["Flash", "Ignite"] : ["Flash", "Snowball"],
+    augments: mayhem && index === 0 ? ["Goliath"] : [],
+  }));
+
+  return {
+    ...base,
+    gameMode: mayhem ? "ARAM_MAYHEM" : "ARAM",
+    mapName: "Map12",
+    myTeam,
+    enemyTeam,
+    augments,
+    isAram: true,
+    isMayhem: mayhem,
+    myGold: 2475,
+    gameTime: 742 + (Date.now() - demoStarted) / 1000,
     updatedAt: Date.now(),
   };
 }

@@ -2,6 +2,8 @@ import type { Settings } from "./types";
 
 export const DEFAULT_SETTINGS: Settings = {
   riotApiKey: "",
+  riotKeyConfigured: false,
+  riotKeySource: "none",
   riotId: "",
   region: "euw1",
   alwaysOnTop: true,
@@ -9,10 +11,12 @@ export const DEFAULT_SETTINGS: Settings = {
   overlayOpacity: 0.97,
   performanceHud: true,
   autoImport: false,
+  hudOverlay: true,
   hotkeys: {
     toggleCompact: "CommandOrControl+Shift+C",
     toggleClickThrough: "CommandOrControl+Shift+X",
     toggleVisibility: "CommandOrControl+Shift+H",
+    toggleHud: "Alt+X",
   },
 };
 

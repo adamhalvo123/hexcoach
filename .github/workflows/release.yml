@@ -47,6 +47,7 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
         with:
           tagName: v__VERSION__
           releaseName: "HexCoach v__VERSION__"
@@ -59,6 +60,8 @@ jobs:
             - Draft helper (counters, synergies, estimated win rates)
             - Live game scoreboard, build, runes and skill order
             - Arena augment tier list and synergy reads
+            - ARAM / ARAM Mayhem balance, builds and augment tiers
+            - Click-through in-game HUD (Alt+X to interact)
             - One-click rune import through the local League Client API
           releaseDraft: false
           prerelease: false

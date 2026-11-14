@@ -118,6 +118,8 @@ export function gameModeLabel(mode?: string): string {
       return "Summoner's Rift";
     case "ARAM":
       return "ARAM";
+    case "ARAM_MAYHEM":
+      return "ARAM Mayhem";
     case "CHERRY":
       return "Arena";
     case "URF":

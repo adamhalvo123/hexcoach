@@ -1,4 +1,4 @@
-import { Activity, Hammer, Settings2, Sparkles, Swords } from "lucide-react";
+import { Activity, Flame, Hammer, Settings2, Sparkles, Swords } from "lucide-react";
 import { useApp } from "@/state/store";
 import { cn } from "@/lib/format";
 import type { Page } from "@/lib/types";
@@ -8,6 +8,7 @@ const ITEMS: Array<{ id: Page; label: string; icon: typeof Activity }> = [
   { id: "draft", label: "Draft", icon: Swords },
   { id: "builds", label: "Builds", icon: Hammer },
   { id: "arena", label: "Arena", icon: Sparkles },
+  { id: "aram", label: "ARAM", icon: Flame },
   { id: "settings", label: "Config", icon: Settings2 },
 ];
 

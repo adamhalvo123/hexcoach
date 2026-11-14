@@ -9,15 +9,19 @@ import {
 } from "./browser";
 import { isDesktop } from "./env";
 import { FALLBACK_AUGMENTS } from "./arena";
+import { FALLBACK_ARAM_BALANCE } from "./aram";
 import type {
   AppInfo,
   Bootstrap,
   ChampSelect,
   DdragonStatus,
+  HudOverlayState,
   LiveGame,
   LcuStatus,
   Performance,
   Recommendation,
+  RiotApiRequest,
+  RiotApiResponse,
   RolePick,
   RunePageInput,
   Settings,
@@ -41,6 +45,9 @@ const EMPTY_LIVE: LiveGame = {
   enemyTeam: [],
   events: [],
   augments: [],
+  isAram: false,
+  isMayhem: false,
+  myGold: 0,
   latencyMs: 0,
   updatedAt: 0,
 };
@@ -61,10 +68,15 @@ const EMPTY_SELECT: ChampSelect = {
 
 export async function getBootstrap(): Promise<Bootstrap> {
   const data = isDesktop() ? await invoke<Bootstrap>("get_bootstrap") : await loadBrowserBootstrap();
-  if (!data.arena.length) {
-    return { ...data, arena: FALLBACK_AUGMENTS, arenaSource: "curated" };
-  }
-  return { ...data, arenaSource: "live" };
+  const arena = !data.arena.length ? FALLBACK_AUGMENTS : data.arena;
+  const aram = data.aram?.length ? data.aram : FALLBACK_ARAM_BALANCE;
+  return {
+    ...data,
+    arena,
+    arenaSource: data.arena.length ? "live" : "curated",
+    aram,
+    aramSource: data.aram?.length ? (data.aramSource ?? "live") : "curated",
+  };
 }
 
 export async function getDdragonStatus(): Promise<DdragonStatus> {
@@ -133,6 +145,33 @@ export async function applyRunes(page: RunePageInput): Promise<string> {
 
 export async function setCompactMode(compact: boolean): Promise<void> {
   if (isDesktop()) await invoke("set_compact_mode", { compact });
+}
+
+export async function getOverlayState(): Promise<HudOverlayState> {
+  if (isDesktop()) return invoke<HudOverlayState>("get_overlay_state");
+  return { visible: true, clickThrough: true, interactive: false };
+}
+
+export async function setOverlayClickthrough(ignore: boolean): Promise<HudOverlayState> {
+  if (isDesktop()) return invoke<HudOverlayState>("set_overlay_clickthrough", { ignore });
+  return { visible: true, clickThrough: ignore, interactive: !ignore };
+}
+
+export async function setHudVisible(visible: boolean): Promise<HudOverlayState> {
+  if (isDesktop()) return invoke<HudOverlayState>("set_hud_visible", { visible });
+  return { visible, clickThrough: true, interactive: false };
+}
+
+export async function fetchRiotApi(request: RiotApiRequest): Promise<RiotApiResponse> {
+  if (!isDesktop()) {
+    throw new Error("Riot API requests run in the desktop app.");
+  }
+  return invoke<RiotApiResponse>("fetch_riot_api", { request });
+}
+
+export async function clearRiotApiKey(): Promise<Settings> {
+  if (isDesktop()) return invoke<Settings>("clear_riot_api_key");
+  return getBrowserSettings();
 }
 
 export async function refreshDdragon(): Promise<void> {

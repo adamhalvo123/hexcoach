@@ -5,7 +5,7 @@ use std::{
     sync::atomic::{AtomicU64, Ordering},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
-use tauri::{AppHandle, Emitter, Manager, State};
+use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, State, WebviewWindow};
 use tokio::{sync::RwLock, time::MissedTickBehavior};
 
 const LIVE_HTTPS: &str = "https://127.0.0.1:2999/liveclientdata/allgamedata";
@@ -68,6 +68,9 @@ pub struct LiveGame {
     pub enemy_team: Vec<LivePlayer>,
     pub events: Vec<LiveEvent>,
     pub augments: Vec<String>,
+    pub is_aram: bool,
+    pub is_mayhem: bool,
+    pub my_gold: f64,
     pub latency_ms: u64,
     pub updated_at: u64,
 }
@@ -311,11 +314,32 @@ fn parse_game(value: &Value, latency_ms: u64) -> LiveGame {
     });
 
     let augments = local.augments.clone();
+    let raw_mode = str_at(value, &["gameData", "gameMode"]);
+    let map_name = str_at(value, &["gameData", "mapName"]).to_string();
+    let map_number = i64_at(value, &["gameData", "mapNumber"]);
+    let raw_mode_upper = raw_mode.to_uppercase();
+
+    let is_howling_abyss = map_name.to_lowercase().contains("howling")
+        || map_name.eq_ignore_ascii_case("Map12")
+        || map_number == 12;
+    let any_augments = players.iter().any(|player| !player.augments.is_empty());
+    let is_aram = raw_mode_upper == "ARAM" || is_howling_abyss;
+    let is_mayhem = is_aram
+        && (raw_mode_upper.contains("MAYHEM")
+            || raw_mode_upper.contains("KIWI")
+            || any_augments);
+    let game_mode = if is_mayhem {
+        "ARAM_MAYHEM".to_string()
+    } else if is_aram && raw_mode.is_empty() {
+        "ARAM".to_string()
+    } else {
+        raw_mode.to_string()
+    };
 
     LiveGame {
         active: !players.is_empty(),
-        game_mode: str_at(value, &["gameData", "gameMode"]).to_string(),
-        map_name: str_at(value, &["gameData", "mapName"]).to_string(),
+        game_mode,
+        map_name,
         game_time: f64_at(value, &["gameData", "gameTime"]),
         my_champion: local.champion.clone(),
         my_role: local.position.clone(),
@@ -328,6 +352,9 @@ fn parse_game(value: &Value, latency_ms: u64) -> LiveGame {
         enemy_team,
         events: parse_events(value),
         augments,
+        is_aram,
+        is_mayhem,
+        my_gold: f64_at(value, &["activePlayer", "currentGold"]),
         latency_ms,
         updated_at: now_ms(),
     }
@@ -349,6 +376,52 @@ async fn fetch_live(client: &reqwest::Client) -> Result<(Value, u64), String> {
     }
     let value = response.json::<Value>().await.map_err(|e| e.to_string())?;
     Ok((value, latency))
+}
+
+fn position_hud(window: &WebviewWindow) {
+    if let Ok(Some(monitor)) = window.current_monitor() {
+        let scale = monitor.scale_factor();
+        let position = monitor.position();
+        let size = monitor.size();
+        let width = size.width as f64 / scale;
+        let x = position.x as f64 / scale + width - 484.0 - 24.0;
+        let y = position.y as f64 / scale + 24.0;
+        let _ = window.set_position(PhysicalPosition::new(
+            (x * scale) as i32,
+            (y * scale) as i32,
+        ));
+    }
+}
+
+/// Shows the click-through HUD while a live game is running and hides it as
+/// soon as the game ends or the user turns the HUD off in Settings.
+fn sync_hud_window(app: &AppHandle, game: &LiveGame) {
+    let Some(window) = app.get_webview_window("hud-overlay") else {
+        return;
+    };
+    let enabled = app
+        .state::<crate::settings::SettingsState>()
+        .get()
+        .hud_overlay;
+    let should_show = game.active && enabled;
+
+    if should_show {
+        if !window.is_visible().unwrap_or(false) {
+            position_hud(&window);
+            if let Some(state) = app.try_state::<crate::commands::HudState>() {
+                state.0.store(true, Ordering::Relaxed);
+            }
+            // HUD starts in read-only click-through mode; Alt+X makes it interactive.
+            let _ = window.set_ignore_cursor_events(true);
+            let _ = window.show();
+            let _ = app.emit(
+                "hud-clickthrough-changed",
+                crate::commands::hud_state_view(app),
+            );
+        }
+    } else if window.is_visible().unwrap_or(false) {
+        let _ = window.hide();
+    }
 }
 
 async fn poll_once(app: &AppHandle) {
@@ -374,8 +447,9 @@ async fn poll_once(app: &AppHandle) {
 
     *state.game.write().await = next.clone();
     if should_emit {
-        let _ = app.emit("live-update", next);
+        let _ = app.emit("live-update", next.clone());
     }
+    sync_hud_window(app, &next);
 }
 
 pub async fn poll_loop(app: AppHandle) {

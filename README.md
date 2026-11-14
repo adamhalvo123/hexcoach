@@ -2,7 +2,7 @@
 
 A fast, lightweight League of Legends overlay coach built with **Tauri v2**, **Rust**, **React**, **TypeScript** and **Tailwind CSS**.
 
-HexCoach reads the local Riot Live Client API and League Client API, then shows a compact always-on-top HUD with the things you actually need during a game: builds, runes, skill order, enemy threats and Arena augments.
+HexCoach reads the local Riot Live Client API and League Client API, then shows a compact always-on-top HUD with the things you actually need during a game: builds, runes, skill order, enemy threats, Arena augments and ARAM / ARAM Mayhem modifiers.
 
 > HexCoach isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
 
@@ -28,7 +28,9 @@ All colours come from the Tailwind theme in `tailwind.config.js` and the compone
 
 ## Features
 
-- **Live game HUD** — polls `https://127.0.0.1:2999/liveclientdata/allgamedata` every ~2 seconds, tolerates the self-signed local certificate, and detects champion, role, game mode, scoreboard, items, events and Arena augments.
+- **Live game HUD** — polls `https://127.0.0.1:2999/liveclientdata/allgamedata` every ~2 seconds, tolerates the self-signed local certificate, and detects champion, role, game mode, scoreboard, items, events, Arena augments and ARAM / ARAM Mayhem state.
+- **ARAM / Mayhem** — Howling Abyss balance modifiers (damage dealt/taken, healing, shielding, tenacity, ability haste, regen), Guardian starter builds, ARAM rune pages and a curated ARAM Mayhem augment tier list when Mayhem is detected.
+- **Click-through in-game HUD** — a separate transparent `hud-overlay` window shows enemy respawn timers, enemy Flash cooldowns (300s, or 255s with Cosmic Insight), the next recommended item against your gold and inventory, skill max order and active augments. It starts click-through; `Alt+X` toggles interactive mode.
 - **Draft helper** — counters, synergies and estimated win-rate heuristics, plus a live champ-select mirror from the local League Client API.
 - **Builds & runes** — starter, boots, core and situational items, full rune pages, shard selection and an 18-level skill order.
 - **Arena Lab** — searchable augment library with tier list, rarity filters, champion-class synergy scoring and active-game augment detection. If CommunityDragon is unreachable, a bundled 34-augment curated library keeps the page useful offline.
@@ -36,7 +38,8 @@ All colours come from the Tailwind theme in `tailwind.config.js` and the compone
 - **Compact overlay** — `432 × 590` always-on-top HUD with core items, runes, skill order and fed enemies.
 - **Local-first data** — Data Dragon and CommunityDragon files plus images are cached per patch in the app cache directory.
 - **Performance HUD** — RAM, local API latency, patch, cache size and cached image progress.
-- **Global hotkeys** — compact mode, click-through and show/hide, registered by Rust.
+- **Global hotkeys** — compact mode, click-through, show/hide and the in-game HUD toggle, registered by Rust.
+- **Server-side Riot API proxy** — Account-v1, Match-v5 and Summoner-v4 calls are made by Rust. The key is read from local Settings or the build-time `RIOT_API_KEY` and only ever attached as `X-Riot-Token` on the backend.
 
 ## Stack
 
@@ -77,8 +80,12 @@ The browser preview fetches Data Dragon directly and falls back to demo live-gam
 Preview deep links are available for screenshots and UI work:
 
 ```text
-http://127.0.0.1:1420/?page=live|draft|builds|arena|settings
+http://127.0.0.1:1420/?page=live|draft|builds|arena|aram|settings
 http://127.0.0.1:1420/?compact=1
+http://127.0.0.1:1420/?hud=1
+http://127.0.0.1:1420/?mode=aram
+http://127.0.0.1:1420/?mode=mayhem
+http://127.0.0.1:1420/?hud=1&mode=mayhem
 ```
 
 ### Production build
@@ -101,20 +108,24 @@ Validates every champion, item, rune and Arena augment name in `src/data/meta.js
 
 ```
 src/
-  components/        HUD shell, compact overlay, pickers, shared UI
-  pages/             Live Game, Draft, Builds, Arena, Settings
-  lib/               API wrappers, types, assets, browser fallback, demo data
+  components/        HUD shell, in-game HUD, compact overlay, pickers, shared UI
+  pages/             Live Game, Draft, Builds, Arena, ARAM / Mayhem, Settings
+  lib/               API wrappers, types, assets, ARAM helpers, browser fallback, demo data
   data/meta.json     curated patch data (builds, rune profiles, matchups, Arena tiers)
   data/arena-fallback.json  bundled Arena augments used when CommunityDragon is offline
+  data/aram-balance.json    curated Howling Abyss balance snapshot
+  data/aram-mayhem.json     curated ARAM Mayhem augment tiers
 src-tauri/src/
   ddragon.rs         Data Dragon patch resolution, JSON + image cache
   arena.rs           CommunityDragon Arena augments
-  live_client.rs     Live Client API polling and parsing
+  aram.rs            CommunityDragon ARAM balance with cache + curated fallback
+  live_client.rs     Live Client API polling, ARAM/Mayhem detection and HUD window sync
   lcu.rs             League Client lockfile, champ select and rune import
   recommend.rs       Recommendation engine
-  shortcuts.rs       Global hotkeys
-  settings.rs        Local settings persistence
-  commands.rs        Performance, compact mode, app info
+  riot.rs            Server-side Riot API proxy (Account-v1, Match-v5, Summoner-v4)
+  shortcuts.rs       Global hotkeys and HUD click-through
+  settings.rs        Local settings persistence and masked Riot key handling
+  commands.rs        Performance, compact mode, HUD overlay commands, app info
 scripts/             Data validation and publishing helpers
 ```
 
@@ -126,13 +137,46 @@ scripts/             Data validation and publishing helpers
 | League lockfile → `/lol-champ-select/v1/session` | Champ select mirror |
 | League lockfile → `/lol-perks/v1/pages` | Rune page import |
 | `https://ddragon.leagueoflegends.com` | Champions, items, runes, spells and images |
-| `https://raw.communitydragon.org` | Arena augment metadata and icons |
+| `https://raw.communitydragon.org` | Arena augment metadata and ARAM balance modifiers |
+| `https://<region>.api.riotgames.com` | Account-v1 via `fetch_riot_api` (backend only) |
+| `https://<routing>.api.riotgames.com` | Match-v5 and Summoner-v4 via `fetch_riot_api` (backend only) |
 
-The Riot API key stored in Settings is optional and only used for future profile features. Live builds, rune import and static data never require it.
+### Riot API key
+
+The key is never hardcoded or sent to the frontend.
+
+- A local key entered in Settings is written to the app config directory and takes priority.
+- Release builds can inject a community key at compile time: the workflow passes `${{ secrets.RIOT_API_KEY }}` into the `tauri-action` build environment, and Rust reads it with `option_env!("RIOT_API_KEY")`.
+- `get_settings` always returns an empty `riotApiKey` plus `riotKeyConfigured` and `riotKeySource` (`local`, `environment` or `none`). Saving with an empty field keeps the existing key, and **Remove local key** clears only the local override.
+- `fetch_riot_api` builds Account-v1, Match-v5 or Summoner-v4 URLs in Rust and adds `X-Riot-Token` server-side.
+- Live builds, rune import and static data do not require a key.
+
+To bake a key into a local release build without committing it:
+
+```powershell
+$env:RIOT_API_KEY = "RGAPI-…"
+npm run tauri:build
+```
 
 ### Arena data fallback
 
 Arena augments are fetched from CommunityDragon and cached for 12 hours. If the feed is down (it occasionally returns 502/522) or the browser preview cannot reach it because of CORS, HexCoach uses `src/data/arena-fallback.json` and labels the library **OFFLINE SET**. The live feed and icons replace it automatically once it is reachable again.
+
+### ARAM data fallback
+
+Howling Abyss modifiers come from CommunityDragon's ARAM balance feed. The result is cached, and if the feed is unreachable HexCoach falls back to `src/data/aram-balance.json` and labels the page **CURATED SNAPSHOT**. These values are percentage-point estimates, not Riot match data. ARAM Mayhem augment tiers in `src/data/aram-mayhem.json` are drafting heuristics, matched to the Arena augment library for icons and descriptions.
+
+## In-game overlay
+
+The `hud-overlay` window is a separate Tauri window configured in `src-tauri/tauri.conf.json`:
+
+- transparent, undecorated, always on top and hidden from the taskbar
+- loads `index.html?hud=1`
+- created hidden and shown only while `liveGame.active` is true and the **In-game HUD** setting is enabled
+- starts with `set_ignore_cursor_events(true)` so mouse clicks pass through to League
+- `set_overlay_clickthrough(ignore)` calls `window.set_ignore_cursor_events(ignore)`; the default `Alt+X` global shortcut toggles interactive vs click-through and emits `hud-clickthrough-changed`
+
+The HUD intentionally stays minimal: enemy respawn timers, clickable enemy summoner-spell timers, the next affordable build item, skill max order and active Arena / Mayhem augments.
 
 ## About win rates
 
@@ -156,6 +200,8 @@ Settings and the Data Dragon cache live in your app config/cache directories. No
 - Demo mode (default on) shows a realistic fake game so the UI is explorable without League running.
 - Turn demo mode off to read the real Live Client and League Client APIs.
 - Global hotkeys use Tauri accelerator syntax, e.g. `CommandOrControl+Shift+C`.
+- The in-game HUD toggle defaults to `Alt+X` and works globally, even while League has focus.
+- The Riot key field is write-only: it is blank on load, and blank means "keep the saved key".
 
 ## License
 

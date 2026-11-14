@@ -1,4 +1,4 @@
-export type Page = "live" | "draft" | "builds" | "arena" | "settings";
+export type Page = "live" | "draft" | "builds" | "arena" | "aram" | "settings";
 export type Role = "TOP" | "JUNGLE" | "MIDDLE" | "BOTTOM" | "UTILITY" | "NONE";
 export type ToastKind = "success" | "error" | "info";
 
@@ -115,6 +115,19 @@ export interface ArenaAugment {
   synergy: string;
 }
 
+export interface AramBalance {
+  champion: string;
+  damageDealt: number;
+  damageTaken: number;
+  healing: number;
+  shielding: number;
+  tenacity: number;
+  abilityHaste: number;
+  manaRegen: number;
+  energyRegen: number;
+  note: string;
+}
+
 export interface Bootstrap {
   version: string;
   cacheDir: string;
@@ -126,6 +139,9 @@ export interface Bootstrap {
   runes: RuneTree[];
   spells: SummonerSpell[];
   arena: ArenaAugment[];
+  aram: AramBalance[];
+  /** "curated" when the Howling Abyss balance feed was not reachable. */
+  aramSource?: "live" | "cache" | "curated";
 }
 
 export interface DdragonStatus {
@@ -186,6 +202,9 @@ export interface LiveGame {
   enemyTeam: LivePlayer[];
   events: LiveEvent[];
   augments: string[];
+  isAram: boolean;
+  isMayhem: boolean;
+  myGold: number;
   latencyMs: number;
   updatedAt: number;
 }
@@ -225,10 +244,14 @@ export interface Hotkeys {
   toggleCompact: string;
   toggleClickThrough: string;
   toggleVisibility: string;
+  toggleHud: string;
 }
 
 export interface Settings {
+  /** Write-only in the UI: the backend always responds with an empty string. */
   riotApiKey: string;
+  riotKeyConfigured: boolean;
+  riotKeySource: "local" | "environment" | "none" | string;
   riotId: string;
   region: string;
   alwaysOnTop: boolean;
@@ -236,7 +259,30 @@ export interface Settings {
   overlayOpacity: number;
   performanceHud: boolean;
   autoImport: boolean;
+  hudOverlay: boolean;
   hotkeys: Hotkeys;
+}
+
+export interface HudOverlayState {
+  visible: boolean;
+  clickThrough: boolean;
+  interactive: boolean;
+}
+
+export interface RiotApiRequest {
+  kind: "account" | "matches" | "match" | "summoner" | string;
+  region?: string;
+  gameName?: string;
+  tagLine?: string;
+  puuid?: string;
+  matchId?: string;
+  start?: number;
+  count?: number;
+}
+
+export interface RiotApiResponse {
+  status: number;
+  data: unknown;
 }
 
 export interface ItemRef {

@@ -3,6 +3,12 @@
 import fs from "node:fs";
 
 const meta = JSON.parse(fs.readFileSync(new URL("../src/data/meta.json", import.meta.url), "utf8"));
+const aramBalance = JSON.parse(
+  fs.readFileSync(new URL("../src/data/aram-balance.json", import.meta.url), "utf8"),
+);
+const aramMayhem = JSON.parse(
+  fs.readFileSync(new URL("../src/data/aram-mayhem.json", import.meta.url), "utf8"),
+);
 const patch = process.argv[2] ?? (await (await fetch("https://ddragon.leagueoflegends.com/api/versions.json")).json())[0];
 const base = `https://ddragon.leagueoflegends.com/cdn/${patch}/data/en_US`;
 const [champions, items, runes] = await Promise.all([
@@ -10,7 +16,21 @@ const [champions, items, runes] = await Promise.all([
   fetch(`${base}/item.json`).then((r) => r.json()),
   fetch(`${base}/runesReforged.json`).then((r) => r.json()),
 ]);
-const arena = await fetch("https://raw.communitydragon.org/latest/cdragon/arena/en_us.json").then((r) => r.json());
+const arenaFallback = JSON.parse(
+  fs.readFileSync(new URL("../src/data/arena-fallback.json", import.meta.url), "utf8"),
+);
+let arena = { augments: arenaFallback };
+let arenaSource = "bundled arena-fallback.json";
+try {
+  const response = await fetch("https://raw.communitydragon.org/latest/cdragon/arena/en_us.json");
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const live = await response.json();
+  if (!Array.isArray(live.augments) || !live.augments.length) throw new Error("empty augment list");
+  arena = live;
+  arenaSource = "CommunityDragon";
+} catch (error) {
+  console.warn(`⚠ CommunityDragon Arena feed unavailable (${error.message}); using the bundled fallback.`);
+}
 
 const championNames = new Set(Object.values(champions.data).map((c) => c.name));
 const itemNames = new Set(
@@ -66,6 +86,15 @@ for (const [tier, names] of Object.entries(meta.arena ?? {})) {
     if (!arenaNames.has(name)) errors.push(`arena.${tier}: missing augment "${name}"`);
   }
 }
+for (const entry of aramBalance.champions ?? []) {
+  if (!championNames.has(entry.champion)) errors.push(`aram-balance: missing champion "${entry.champion}"`);
+}
+const mayhemNames = Object.values(aramMayhem.tiers ?? {}).flat();
+const unknownMayhem = mayhemNames.filter((name) => !arenaNames.has(name));
+if (unknownMayhem.length) {
+  console.warn(`⚠ ${unknownMayhem.length} ARAM Mayhem augment(s) not in the live Arena pool:`);
+  for (const name of unknownMayhem) console.warn(`  - ${name}`);
+}
 
 if (errors.length) {
   console.error(`✖ ${errors.length} data issue(s):`);
@@ -77,3 +106,6 @@ console.log(`  champions: ${Object.keys(meta.champions).length}`);
 console.log(`  build profiles: ${Object.keys(meta.buildProfiles).length}`);
 console.log(`  rune profiles: ${Object.keys(meta.runeProfiles).length}`);
 console.log(`  arena augments checked: ${Object.values(meta.arena ?? {}).flat().length}`);
+console.log(`  ARAM balance champions checked: ${(aramBalance.champions ?? []).length}`);
+console.log(`  ARAM Mayhem augments checked: ${mayhemNames.length}`);
+console.log(`  Arena source: ${arenaSource}`);

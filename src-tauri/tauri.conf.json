@@ -27,6 +27,25 @@
         "visible": true,
         "dragDropEnabled": false,
         "theme": "Dark"
+      },
+      {
+        "label": "hud-overlay",
+        "title": "HexCoach In-Game HUD",
+        "url": "index.html?hud=1",
+        "width": 460,
+        "height": 380,
+        "minWidth": 360,
+        "minHeight": 260,
+        "resizable": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": false,
+        "focus": false,
+        "visible": false,
+        "dragDropEnabled": false,
+        "theme": "Dark"
       }
     ],
     "security": {
