@@ -7,6 +7,7 @@ import {
   Settings2,
   Sparkles,
   Swords,
+  UserRound,
 } from "lucide-react";
 import { useApp } from "@/state/store";
 import { cn } from "@/lib/format";
@@ -18,6 +19,7 @@ const NAV: Array<{
   hint: string;
   icon: typeof Activity;
 }> = [
+  { id: "profile", label: "Profile", hint: "Ranks & match history", icon: UserRound },
   { id: "live", label: "Live Game", hint: "Scoreboard & builds", icon: Activity },
   { id: "draft", label: "Draft Helper", hint: "Counters & picks", icon: Swords },
   { id: "builds", label: "Builds & Runes", hint: "Plans & runes", icon: Hammer },

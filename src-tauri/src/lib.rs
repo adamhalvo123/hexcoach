@@ -5,6 +5,7 @@ mod ddragon;
 mod live_client;
 mod lcu;
 mod meta;
+mod profile;
 mod recommend;
 mod riot;
 mod settings;
@@ -79,6 +80,7 @@ pub fn run() {
             settings::save_settings,
             settings::clear_riot_api_key,
             riot::fetch_riot_api,
+            profile::get_player_profile,
             commands::get_performance,
             commands::get_app_info,
             commands::set_compact_mode,

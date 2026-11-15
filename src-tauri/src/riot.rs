@@ -29,7 +29,7 @@ const PLATFORM_REGIONS: &[&str] = &[
     "vn2", "tw2", "ph2",
 ];
 
-fn normalise_region(value: &str) -> Result<String, String> {
+pub(crate) fn normalise_region(value: &str) -> Result<String, String> {
     let region = value.trim().to_lowercase();
     match region.as_str() {
         "europe" | "americas" | "asia" | "sea" => Ok(region),
@@ -40,7 +40,7 @@ fn normalise_region(value: &str) -> Result<String, String> {
     }
 }
 
-fn regional_route(region: &str) -> &'static str {
+pub(crate) fn regional_route(region: &str) -> &'static str {
     match region {
         "euw1" | "eun1" | "tr1" | "ru" | "europe" => "europe",
         "na1" | "br1" | "la1" | "la2" | "oc1" | "americas" => "americas",
@@ -50,7 +50,7 @@ fn regional_route(region: &str) -> &'static str {
     }
 }
 
-fn platform_host(region: &str) -> Result<String, String> {
+pub(crate) fn platform_host(region: &str) -> Result<String, String> {
     if PLATFORM_REGIONS.contains(&region) {
         Ok(format!("https://{region}.api.riotgames.com"))
     } else {

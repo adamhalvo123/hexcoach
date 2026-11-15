@@ -1,10 +1,14 @@
 import type {
   Bootstrap,
   ChampSelect,
+  FrequentTeammate,
   LiveEvent,
   LiveGame,
   LiveItem,
   LivePlayer,
+  PlayerProfile,
+  ProfileMatch,
+  ProfileRank,
   Role,
 } from "./types";
 import { normalizeRole } from "./format";
@@ -365,5 +369,293 @@ export function createDemoChampSelect(
     myBans: ["Yuumi", "Teemo", "Shaco"],
     enemyBans: ["Blitzcrank", "Kassadin", "Fiora"],
     isMyTurn: true,
+  };
+}
+
+const DEMO_ROSTER: Record<string, string> = {
+  "DuoKing#EUW": "Lulu",
+  "PunchFirst#EUW": "Vi",
+  "RocketGirl#EUW": "Jinx",
+  "LanternKing#EUW": "Thresh",
+  "IronRevenant#EUW": "Darius",
+};
+
+const DEMO_TEAMMATE_STATS: Record<string, [number, number, number]> = {
+  "DuoKing#EUW": [2, 3, 18],
+  "PunchFirst#EUW": [6, 4, 9],
+  "RocketGirl#EUW": [8, 3, 7],
+  "LanternKing#EUW": [1, 6, 16],
+  "IronRevenant#EUW": [4, 5, 6],
+};
+
+const DEMO_MATCHES: Array<{
+  champion: string;
+  championId: number;
+  role: string;
+  win: boolean;
+  kills: number;
+  deaths: number;
+  assists: number;
+  durationSec: number;
+  gameMode: string;
+  queueId: number;
+  hoursAgo: number;
+  team: string[];
+}> = [
+  {
+    champion: "Ahri",
+    championId: 103,
+    role: "MIDDLE",
+    win: true,
+    kills: 12,
+    deaths: 3,
+    assists: 9,
+    durationSec: 1884,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 3,
+    team: ["DuoKing#EUW", "PunchFirst#EUW", "RocketGirl#EUW", "LanternKing#EUW"],
+  },
+  {
+    champion: "Ahri",
+    championId: 103,
+    role: "MIDDLE",
+    win: false,
+    kills: 4,
+    deaths: 6,
+    assists: 5,
+    durationSec: 1620,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 6,
+    team: ["DuoKing#EUW", "PunchFirst#EUW", "RocketGirl#EUW", "LanternKing#EUW"],
+  },
+  {
+    champion: "Sylas",
+    championId: 517,
+    role: "MIDDLE",
+    win: true,
+    kills: 9,
+    deaths: 2,
+    assists: 7,
+    durationSec: 1440,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 10,
+    team: ["DuoKing#EUW", "PunchFirst#EUW", "IronRevenant#EUW", "LanternKing#EUW"],
+  },
+  {
+    champion: "Kai'Sa",
+    championId: 145,
+    role: "BOTTOM",
+    win: false,
+    kills: 5,
+    deaths: 8,
+    assists: 3,
+    durationSec: 2040,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 26,
+    team: ["DuoKing#EUW", "LanternKing#EUW", "IronRevenant#EUW", "PunchFirst#EUW"],
+  },
+  {
+    champion: "Ahri",
+    championId: 103,
+    role: "MIDDLE",
+    win: true,
+    kills: 10,
+    deaths: 4,
+    assists: 11,
+    durationSec: 1755,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 29,
+    team: ["DuoKing#EUW", "PunchFirst#EUW", "RocketGirl#EUW", "LanternKing#EUW"],
+  },
+  {
+    champion: "Ezreal",
+    championId: 81,
+    role: "BOTTOM",
+    win: false,
+    kills: 3,
+    deaths: 7,
+    assists: 6,
+    durationSec: 1590,
+    gameMode: "CLASSIC",
+    queueId: 440,
+    hoursAgo: 33,
+    team: ["PunchFirst#EUW", "RocketGirl#EUW", "LanternKing#EUW", "IronRevenant#EUW"],
+  },
+  {
+    champion: "Ahri",
+    championId: 103,
+    role: "MIDDLE",
+    win: true,
+    kills: 8,
+    deaths: 1,
+    assists: 14,
+    durationSec: 1500,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 52,
+    team: ["DuoKing#EUW", "PunchFirst#EUW", "RocketGirl#EUW", "LanternKing#EUW"],
+  },
+  {
+    champion: "Sylas",
+    championId: 517,
+    role: "MIDDLE",
+    win: true,
+    kills: 11,
+    deaths: 5,
+    assists: 8,
+    durationSec: 2175,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 55,
+    team: ["DuoKing#EUW", "RocketGirl#EUW", "LanternKing#EUW", "IronRevenant#EUW"],
+  },
+  {
+    champion: "Kai'Sa",
+    championId: 145,
+    role: "BOTTOM",
+    win: false,
+    kills: 6,
+    deaths: 9,
+    assists: 4,
+    durationSec: 1860,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 75,
+    team: ["PunchFirst#EUW", "RocketGirl#EUW", "LanternKing#EUW", "IronRevenant#EUW"],
+  },
+  {
+    champion: "Ahri",
+    championId: 103,
+    role: "MIDDLE",
+    win: true,
+    kills: 13,
+    deaths: 2,
+    assists: 10,
+    durationSec: 1725,
+    gameMode: "CLASSIC",
+    queueId: 420,
+    hoursAgo: 98,
+    team: ["DuoKing#EUW", "PunchFirst#EUW", "RocketGirl#EUW", "LanternKing#EUW"],
+  },
+];
+
+export function createDemoProfile(riotId?: string): PlayerProfile {
+  const raw = riotId?.trim() || "HexCoach#EUW";
+  const [gameName, tagLine] = raw.includes("#") ? raw.split("#") : ["HexCoach", "EUW"];
+  const now = Date.now();
+
+  const matches: ProfileMatch[] = DEMO_MATCHES.map((spec, index) => ({
+    matchId: `EUN1_DEMO_${String(index + 1).padStart(6, "0")}`,
+    champion: spec.champion,
+    championId: spec.championId,
+    role: spec.role,
+    win: spec.win,
+    kills: spec.kills,
+    deaths: spec.deaths,
+    assists: spec.assists,
+    kda:
+      Math.round(
+        ((spec.kills + spec.assists) / Math.max(1, spec.deaths)) * 100,
+      ) / 100,
+    durationSec: spec.durationSec,
+    gameMode: spec.gameMode,
+    queueId: spec.queueId,
+    playedAtMs: now - spec.hoursAgo * 3_600_000,
+    teammates: spec.team.map((name) => {
+      const [kills, deaths, assists] = DEMO_TEAMMATE_STATS[name] ?? [2, 4, 8];
+      return {
+        puuid: name.toLowerCase().replace(/[^a-z0-9]/g, ""),
+        name,
+        champion: DEMO_ROSTER[name] ?? "Lulu",
+        win: spec.win,
+        kills,
+        deaths,
+        assists,
+        kda: Math.round(((kills + assists) / Math.max(1, deaths)) * 100) / 100,
+      };
+    }),
+  }));
+
+  const totals = new Map<string, FrequentTeammate>();
+  for (const game of matches) {
+    const seen = new Set<string>();
+    for (const teammate of game.teammates) {
+      if (seen.has(teammate.puuid)) continue;
+      seen.add(teammate.puuid);
+      const entry =
+        totals.get(teammate.puuid) ??
+        ({
+          puuid: teammate.puuid,
+          name: teammate.name,
+          games: 0,
+          wins: 0,
+          losses: 0,
+          winRate: 0,
+        } satisfies FrequentTeammate);
+      entry.games += 1;
+      if (game.win) entry.wins += 1;
+      else entry.losses += 1;
+      entry.winRate = Math.round((entry.wins / entry.games) * 1000) / 10;
+      totals.set(teammate.puuid, entry);
+    }
+  }
+  const teammates = [...totals.values()].sort(
+    (a, b) => b.games - a.games || b.winRate - a.winRate || a.name.localeCompare(b.name),
+  );
+
+  const ranks: ProfileRank[] = [
+    {
+      queue: "RANKED_SOLO_5x5",
+      queueLabel: "Solo/Duo",
+      tier: "EMERALD",
+      rank: "II",
+      leaguePoints: 43,
+      wins: 68,
+      losses: 54,
+      winRate: 55.7,
+      hotStreak: true,
+    },
+    {
+      queue: "RANKED_FLEX_SR",
+      queueLabel: "Flex",
+      tier: "PLATINUM",
+      rank: "I",
+      leaguePoints: 12,
+      wins: 22,
+      losses: 19,
+      winRate: 53.7,
+      hotStreak: false,
+    },
+  ];
+
+  const overallWins = ranks.reduce((sum, rank) => sum + rank.wins, 0);
+  const overallLosses = ranks.reduce((sum, rank) => sum + rank.losses, 0);
+  const recentWins = matches.filter((game) => game.win).length;
+  const recentLosses = matches.length - recentWins;
+
+  return {
+    riotId: `${gameName}#${tagLine}`,
+    gameName,
+    tagLine,
+    puuid: "demo-puuid-hexcoach",
+    summonerLevel: 412,
+    profileIconId: 29,
+    region: "euw1",
+    ranks,
+    matches,
+    teammates,
+    overallWins,
+    overallLosses,
+    overallWinRate: Math.round((overallWins / (overallWins + overallLosses)) * 1000) / 10,
+    overallSource: "ranked",
+    recentWins,
+    recentLosses,
+    recentWinRate: Math.round((recentWins / Math.max(1, matches.length)) * 1000) / 10,
+    fetchedAtMs: now,
   };
 }

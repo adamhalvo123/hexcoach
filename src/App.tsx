@@ -10,6 +10,7 @@ import StatusBar from "@/components/StatusBar";
 import Toasts from "@/components/Toasts";
 import CompactOverlay from "@/components/CompactOverlay";
 import InGameHud from "@/components/InGameHud";
+import ProfilePage from "@/pages/Profile";
 import LiveGamePage from "@/pages/LiveGame";
 import DraftPage from "@/pages/Draft";
 import BuildsPage from "@/pages/Builds";
@@ -18,6 +19,7 @@ import AramMayhemPage from "@/pages/AramMayhem";
 import SettingsPage from "@/pages/Settings";
 
 const PAGES: Record<Page, ComponentType> = {
+  profile: ProfilePage,
   live: LiveGamePage,
   draft: DraftPage,
   builds: BuildsPage,
@@ -132,7 +134,7 @@ export default function App() {
               <MobileNav />
               <div className="relative z-10 flex min-h-0 flex-1">
                 <Sidebar />
-                <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+                <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
                   <div key={page} className="mx-auto max-w-[1540px] animate-rise px-3 py-3.5 sm:px-4">
                     <PageComponent />
                   </div>

@@ -10,6 +10,7 @@ import {
 import { isDesktop } from "./env";
 import { FALLBACK_AUGMENTS } from "./arena";
 import { FALLBACK_ARAM_BALANCE } from "./aram";
+import { createDemoProfile } from "./demo";
 import type {
   AppInfo,
   Bootstrap,
@@ -19,6 +20,8 @@ import type {
   LiveGame,
   LcuStatus,
   Performance,
+  PlayerProfile,
+  ProfileRequest,
   Recommendation,
   RiotApiRequest,
   RiotApiResponse,
@@ -167,6 +170,13 @@ export async function fetchRiotApi(request: RiotApiRequest): Promise<RiotApiResp
     throw new Error("Riot API requests run in the desktop app.");
   }
   return invoke<RiotApiResponse>("fetch_riot_api", { request });
+}
+
+export async function getPlayerProfile(request: ProfileRequest = {}): Promise<PlayerProfile> {
+  if (isDesktop()) {
+    return invoke<PlayerProfile>("get_player_profile", { request });
+  }
+  return createDemoProfile(request.riotId);
 }
 
 export async function clearRiotApiKey(): Promise<Settings> {

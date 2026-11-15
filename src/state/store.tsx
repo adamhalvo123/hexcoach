@@ -65,7 +65,8 @@ const SELECTION_KEY = "hexcoach.selection.v1";
 function initialPage(): Page {
   if (typeof window === "undefined") return "live";
   const value = new URLSearchParams(window.location.search).get("page");
-  return value === "draft" ||
+  return value === "profile" ||
+    value === "draft" ||
     value === "builds" ||
     value === "arena" ||
     value === "aram" ||

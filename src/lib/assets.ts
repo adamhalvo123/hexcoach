@@ -42,6 +42,15 @@ export function championIcon(bootstrap: Bootstrap, champion: Champion): AssetSou
   );
 }
 
+export function profileIcon(bootstrap: Bootstrap, iconId: number): AssetSources {
+  const id = Number.isFinite(iconId) && iconId > 0 ? Math.trunc(iconId) : 29;
+  return localOr(
+    bootstrap,
+    `img/profileicon/${id}.png`,
+    `${DDRAGON}/${bootstrap.version}/img/profileicon/${id}.png`,
+  );
+}
+
 export function championSplash(bootstrap: Bootstrap, champion: Champion): AssetSources {
   return {
     src: `${DDRAGON}/${bootstrap.version}/img/champion/splash/${champion.id}_0.jpg`,

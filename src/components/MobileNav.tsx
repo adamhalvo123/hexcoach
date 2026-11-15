@@ -1,9 +1,10 @@
-import { Activity, Flame, Hammer, Settings2, Sparkles, Swords } from "lucide-react";
+import { Activity, Flame, Hammer, Settings2, Sparkles, Swords, UserRound } from "lucide-react";
 import { useApp } from "@/state/store";
 import { cn } from "@/lib/format";
 import type { Page } from "@/lib/types";
 
 const ITEMS: Array<{ id: Page; label: string; icon: typeof Activity }> = [
+  { id: "profile", label: "Profile", icon: UserRound },
   { id: "live", label: "Live", icon: Activity },
   { id: "draft", label: "Draft", icon: Swords },
   { id: "builds", label: "Builds", icon: Hammer },

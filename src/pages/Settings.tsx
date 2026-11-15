@@ -319,6 +319,13 @@ export default function SettingsPage() {
                 <span className="font-mono text-slate-300">RIOT_API_KEY</span>.
               </span>
             </p>
+            <div className="flex items-start gap-1.5 rounded-md border border-white/[0.05] bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
+              <Info className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
+              <span>
+                The <span className="font-semibold text-slate-200">Profile</span> page uses this Riot ID, region and
+                key to load ranked entries, the last ten matches and your most frequent teammates.
+              </span>
+            </div>
           </Panel>
 
           <Panel icon={Monitor} title="Overlay" subtitle="Window behaviour and transparency" bodyClassName="space-y-2.5 p-3">

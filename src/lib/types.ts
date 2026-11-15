@@ -1,4 +1,4 @@
-export type Page = "live" | "draft" | "builds" | "arena" | "aram" | "settings";
+export type Page = "profile" | "live" | "draft" | "builds" | "arena" | "aram" | "settings";
 export type Role = "TOP" | "JUNGLE" | "MIDDLE" | "BOTTOM" | "UTILITY" | "NONE";
 export type ToastKind = "success" | "error" | "info";
 
@@ -283,6 +283,82 @@ export interface RiotApiRequest {
 export interface RiotApiResponse {
   status: number;
   data: unknown;
+}
+
+export interface ProfileRequest {
+  riotId?: string;
+  region?: string;
+  count?: number;
+}
+
+export interface ProfileRank {
+  queue: string;
+  queueLabel: string;
+  tier: string;
+  rank: string;
+  leaguePoints: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  hotStreak: boolean;
+}
+
+export interface MatchTeammate {
+  puuid: string;
+  name: string;
+  champion: string;
+  win: boolean;
+  kills: number;
+  deaths: number;
+  assists: number;
+  kda: number;
+}
+
+export interface ProfileMatch {
+  matchId: string;
+  champion: string;
+  championId: number;
+  role: string;
+  win: boolean;
+  kills: number;
+  deaths: number;
+  assists: number;
+  kda: number;
+  durationSec: number;
+  gameMode: string;
+  queueId: number;
+  playedAtMs: number;
+  teammates: MatchTeammate[];
+}
+
+export interface FrequentTeammate {
+  puuid: string;
+  name: string;
+  games: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+}
+
+export interface PlayerProfile {
+  riotId: string;
+  gameName: string;
+  tagLine: string;
+  puuid: string;
+  summonerLevel: number;
+  profileIconId: number;
+  region: string;
+  ranks: ProfileRank[];
+  matches: ProfileMatch[];
+  teammates: FrequentTeammate[];
+  overallWins: number;
+  overallLosses: number;
+  overallWinRate: number;
+  overallSource: "ranked" | "recent" | string;
+  recentWins: number;
+  recentLosses: number;
+  recentWinRate: number;
+  fetchedAtMs: number;
 }
 
 export interface ItemRef {
