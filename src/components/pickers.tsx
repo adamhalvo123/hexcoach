@@ -198,7 +198,7 @@ export function RoleTabs({ compact }: { compact?: boolean }) {
             )}
             title={value === "NONE" ? "Auto-detect role" : roleLabel(value)}
           >
-            {value === "NONE" ? "AUTO" : compact ? roleShort(value) : roleLabel(value)}
+            {value === "NONE" ? "AUTO" : compact ? (value === "BOTTOM" ? "ADC" : roleShort(value)) : roleLabel(value)}
           </button>
         );
       })}

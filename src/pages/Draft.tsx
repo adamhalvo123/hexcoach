@@ -58,6 +58,8 @@ export default function DraftPage() {
     setRole,
     champSelect,
     recommendation,
+    championBuild,
+    buildLoading,
     recLoading,
     settings,
     setPage,
@@ -100,6 +102,17 @@ export default function DraftPage() {
 
   const myChampion = bootstrap.champions.find((entry) => entry.name === champion);
   const enemyChampion = (name: string) => bootstrap.champions.find((entry) => entry.name === name);
+
+  const plan = championBuild ?? recommendation;
+  const planTier = championBuild?.tier ?? recommendation?.meta.tier;
+  const planScore = championBuild?.score ?? recommendation?.meta.score;
+  const planLoading = (buildLoading || recLoading) && !plan;
+  const strongAgainst = championBuild?.counters ?? recommendation?.counters ?? [];
+  const watchOut = championBuild?.threats ?? [];
+  const planTips = championBuild
+    ? Array.from(new Set([...championBuild.tips, ...championBuild.notes]))
+    : (recommendation?.tips ?? []);
+  const planWarnings = championBuild?.warnings ?? recommendation?.warnings ?? [];
 
   const syncLive = () => {
     if (!champSelect.active) return;
@@ -298,7 +311,7 @@ export default function DraftPage() {
             ) : picks.length ? (
               picks.map((pick) => {
                 const entry = bootstrap.champions.find((champ) => champ.name === pick.champion);
-                const selected = pick.champion === recommendation?.champion;
+                const selected = pick.champion === plan?.champion;
                 return (
                   <button
                     key={pick.champion}
@@ -365,36 +378,47 @@ export default function DraftPage() {
             <Panel
               icon={Swords}
               title="Matchup plan"
-              subtitle={recommendation ? `${recommendation.champion} · ${recommendation.roleLabel}` : "Select a pick"}
+              subtitle={plan ? `${plan.champion} · ${plan.roleLabel}` : "Select a pick"}
               action={
-                recommendation ? (
-                  <span className={cn("rounded border px-1.5 py-0.5 font-mono text-[10px]", tierTone(recommendation.meta.tier))}>
-                    {recommendation.meta.tier} · {recommendation.meta.score}
+                planTier ? (
+                  <span className={cn("rounded border px-1.5 py-0.5 font-mono text-[10px]", tierTone(planTier))}>
+                    {planTier} · {planScore}
                   </span>
                 ) : null
               }
               bodyClassName="space-y-3 p-3"
             >
-              {recLoading && !recommendation ? (
+              {planLoading ? (
                 <div className="flex items-center justify-center gap-2 py-8 text-xs text-fog">
                   <Spinner /> Loading matchup plan…
                 </div>
-              ) : recommendation ? (
+              ) : plan ? (
                 <>
                   <div>
                     <p className="hud-label mb-1.5">Strong against</p>
                     <MatchupList
                       bootstrap={bootstrap}
-                      entries={recommendation.counters}
-                      tone="counter"
+                      entries={strongAgainst}
+                      tone="strong"
                       empty="No counter data."
                     />
                   </div>
+                  {watchOut.length ? (
+                    <div>
+                      <p className="hud-label mb-1.5">Watch out for</p>
+                      <MatchupList
+                        bootstrap={bootstrap}
+                        entries={watchOut}
+                        tone="threat"
+                        empty="No counter data."
+                      />
+                    </div>
+                  ) : null}
                   <div>
                     <p className="hud-label mb-1.5">Works with</p>
                     <MatchupList
                       bootstrap={bootstrap}
-                      entries={recommendation.synergies}
+                      entries={plan.synergies}
                       tone="synergy"
                       empty="No synergy data."
                     />
@@ -411,21 +435,21 @@ export default function DraftPage() {
 
             <div className="space-y-3.5">
               <Panel icon={Sparkles} title="Draft tips" subtitle="Patch heuristics" bodyClassName="p-3">
-                {recommendation ? (
-                  <TipList tips={recommendation.tips} />
+                {planTips.length ? (
+                  <TipList tips={planTips} />
                 ) : (
                   <p className="py-4 text-center text-xs text-fog">Tips appear when a pick is selected.</p>
                 )}
               </Panel>
 
-              {recommendation?.warnings.length ? (
+              {planWarnings.length ? (
                 <Panel
                   icon={AlertTriangle}
                   title="Data warnings"
                   subtitle="Items or runes missing from this patch"
                   bodyClassName="space-y-1 p-3"
                 >
-                  {recommendation.warnings.map((warning) => (
+                  {planWarnings.map((warning) => (
                     <p key={warning} className="text-[10px] leading-relaxed text-gold-400">
                       {warning}
                     </p>

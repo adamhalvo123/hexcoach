@@ -3,12 +3,12 @@ use crate::{
     meta,
     util::{normalize_role, role_label},
 };
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::State;
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase", default)]
 pub struct ItemRef {
     pub id: u32,
     pub name: String,
@@ -18,8 +18,8 @@ pub struct ItemRef {
     pub description: String,
 }
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase", default)]
 pub struct BuildSet {
     pub starter: Vec<ItemRef>,
     pub boots: Vec<ItemRef>,
@@ -27,16 +27,16 @@ pub struct BuildSet {
     pub situational: Vec<ItemRef>,
 }
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase", default)]
 pub struct RuneRef {
     pub id: u32,
     pub name: String,
     pub icon: String,
 }
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase", default)]
 pub struct RunePage {
     pub primary_style_id: u32,
     pub sub_style_id: u32,
@@ -50,8 +50,8 @@ pub struct RunePage {
     pub page_name: String,
 }
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase", default)]
 pub struct SkillPlan {
     pub order: Vec<String>,
     pub max: Vec<String>,
@@ -68,8 +68,8 @@ pub struct MetaView {
     pub note: String,
 }
 
-#[derive(Clone, Debug, Serialize, Default)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase", default)]
 pub struct Matchup {
     pub champion: String,
     pub champion_id: String,
@@ -113,7 +113,7 @@ pub struct RolePick {
     pub reason: String,
 }
 
-fn strings(value: &Value, key: &str) -> Vec<String> {
+pub(crate) fn strings(value: &Value, key: &str) -> Vec<String> {
     value
         .get(key)
         .and_then(|v| v.as_array())
@@ -125,15 +125,15 @@ fn strings(value: &Value, key: &str) -> Vec<String> {
         .unwrap_or_default()
 }
 
-fn integer(value: &Value, key: &str, fallback: i64) -> i64 {
+pub(crate) fn integer(value: &Value, key: &str, fallback: i64) -> i64 {
     value.get(key).and_then(|v| v.as_i64()).unwrap_or(fallback)
 }
 
-fn estimated_win_rate(score: i64) -> f64 {
+pub(crate) fn estimated_win_rate(score: i64) -> f64 {
     ((50.0 + (score as f64 - 70.0) * 0.18).clamp(44.0, 58.0) * 10.0).round() / 10.0
 }
 
-fn class_for(champion: &Champion, role: &str) -> &'static str {
+pub(crate) fn class_for(champion: &Champion, role: &str) -> &'static str {
     let has = |tag: &str| {
         champion
             .tags
@@ -169,7 +169,7 @@ fn class_for(champion: &Champion, role: &str) -> &'static str {
     }
 }
 
-fn default_profiles(class: &str) -> (&'static str, &'static str) {
+pub(crate) fn default_profiles(class: &str) -> (&'static str, &'static str) {
     match class {
         "mage" => ("mage_burst", "electrocute_mage"),
         "marksman" => ("marksman", "lethal_tempo"),
@@ -224,7 +224,7 @@ fn resolve_items(items: &[Item], names: &[String], warnings: &mut Vec<String>) -
     resolved
 }
 
-fn build_items(
+pub(crate) fn build_items(
     data: &DdragonData,
     profile: &Value,
     entry: &Value,
@@ -336,7 +336,7 @@ fn shards_from(value: &Value) -> Vec<u32> {
     }
 }
 
-fn make_rune_page(
+pub(crate) fn make_rune_page(
     data: &DdragonData,
     profile_name: &str,
     champion_name: &str,
@@ -462,7 +462,7 @@ fn make_rune_page(
     }
 }
 
-fn skill_plan(entry: &Value, class: &str) -> SkillPlan {
+pub(crate) fn skill_plan(entry: &Value, class: &str) -> SkillPlan {
     let mut priority = strings(entry, "skillOrder");
     if priority.is_empty() {
         priority = match class {
@@ -530,7 +530,7 @@ fn skill_plan(entry: &Value, class: &str) -> SkillPlan {
     }
 }
 
-fn matchup_list(
+pub(crate) fn matchup_list(
     data: &DdragonData,
     entry: &Value,
     key: &str,

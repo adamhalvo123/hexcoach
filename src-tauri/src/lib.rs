@@ -5,6 +5,7 @@ mod ddragon;
 mod live_client;
 mod lcu;
 mod meta;
+mod meta_builds;
 mod profile;
 mod recommend;
 mod riot;
@@ -40,6 +41,7 @@ pub fn run() {
             app.manage(ddragon::DdragonState::default());
             app.manage(live_client::LiveState::default());
             app.manage(lcu::LcuState::default());
+            app.manage(meta_builds::MetaBuildsState::new(app.handle()));
             app.manage(commands::PerfState::new(app.handle()));
             app.manage(commands::CompactState::default());
             app.manage(shortcuts::ClickThroughState::default());
@@ -76,6 +78,7 @@ pub fn run() {
             lcu::apply_runes,
             recommend::get_recommendation,
             recommend::get_draft_recommendations,
+            meta_builds::get_champion_build,
             settings::get_settings,
             settings::save_settings,
             settings::clear_riot_api_key,

@@ -123,7 +123,7 @@ function EnemyFlashRow({
 }
 
 export default function InGameHud() {
-  const { bootstrap, live, recommendation, settings, hudClickThrough } = useApp();
+  const { bootstrap, live, recommendation, championBuild, settings, hudClickThrough } = useApp();
   const [now, setNow] = useState(Date.now());
   const [cosmic, setCosmic] = useState(false);
   const [clickThrough, setClickThrough] = useState(hudClickThrough);
@@ -150,12 +150,23 @@ export default function InGameHud() {
     [bootstrap, live.augments],
   );
 
+  const plannedItems = useMemo(
+    () =>
+      championBuild
+        ? [...championBuild.coreItems, ...championBuild.situationalItems]
+        : recommendation
+          ? [...recommendation.items.core, ...recommendation.items.boots, ...recommendation.items.situational]
+          : [],
+    [championBuild, recommendation],
+  );
+
+  const plannedSkills = championBuild?.skillOrder ?? recommendation?.skills;
+
   const nextItem = useMemo(() => {
-    if (!recommendation) return null;
+    if (!plannedItems.length) return null;
     const owned = new Set((localPlayer?.items ?? []).map((item) => item.displayName.toLowerCase()));
-    const order = [...recommendation.items.core, ...recommendation.items.boots, ...recommendation.items.situational];
-    return order.find((item) => !owned.has(item.name.toLowerCase())) ?? null;
-  }, [recommendation, localPlayer]);
+    return plannedItems.find((item) => !owned.has(item.name.toLowerCase())) ?? null;
+  }, [plannedItems, localPlayer]);
 
   const isAram = isAramGame(live);
   const mayhem = isMayhemGame(live);
@@ -356,7 +367,7 @@ export default function InGameHud() {
               Skill max
             </p>
             <div className="flex items-center gap-1">
-              {(recommendation?.skills.max ?? []).map((skill, index) => (
+              {(plannedSkills?.max ?? []).map((skill, index) => (
                 <span
                   key={`${skill}-${index}`}
                   className={cn(
@@ -369,7 +380,7 @@ export default function InGameHud() {
                   {skill}
                 </span>
               ))}
-              {!recommendation ? <span className="text-[9px] text-fog">No recommendation</span> : null}
+              {!plannedSkills ? <span className="text-[9px] text-fog">No recommendation</span> : null}
             </div>
           </section>
 

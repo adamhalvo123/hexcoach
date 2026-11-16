@@ -6,6 +6,7 @@ import type {
   ArenaAugment,
   Bootstrap,
   Champion,
+  ChampionBuild,
   Item,
   ItemRef,
   Matchup,
@@ -17,6 +18,7 @@ import type {
   RuneRef,
   Settings,
   SkillPlan,
+  SpellRef,
   SummonerSpell,
 } from "./types";
 
@@ -523,6 +525,142 @@ export function browserRecommendation(
         ],
     warnings,
   };
+}
+
+export function browserChampionBuild(
+  bootstrap: Bootstrap,
+  championQuery: string,
+  requestedRole?: string,
+  requestedMode?: string,
+): ChampionBuild {
+  const recommendation = browserRecommendation(bootstrap, championQuery, requestedRole);
+  const champion =
+    bootstrap.champions.find((candidate) => candidate.id === recommendation.championId) ??
+    bootstrap.champions[0];
+  const mode = normalizeMode(requestedMode);
+  const role = recommendation.role;
+
+  const spellNames =
+    mode === "ARAM"
+      ? ["Flash", "Mark"]
+      : mode === "CHERRY"
+        ? ["Flash", "Ignite"]
+        : role === "JUNGLE"
+          ? ["Flash", "Smite"]
+          : role === "TOP"
+            ? ["Flash", "Teleport"]
+            : role === "BOTTOM"
+              ? ["Flash", "Heal"]
+              : ["Flash", "Ignite"];
+
+  const summonerSpells: SpellRef[] = spellNames.map((name) => {
+    const spell =
+      bootstrap.spells.find(
+        (entry) => entry.name.toLowerCase() === name.toLowerCase() || entry.id.toLowerCase() === name.toLowerCase(),
+      ) ??
+      (name === "Mark"
+        ? bootstrap.spells.find((entry) => entry.id.toLowerCase() === "summonersnowball")
+        : undefined);
+    return {
+      id: spell?.id ?? name,
+      name: spell?.name ?? name,
+      icon: spell?.image.full ?? "",
+    };
+  });
+
+  const counters = reverseCounters(bootstrap, recommendation.champion);
+  const notes =
+    mode === "ARAM"
+      ? [
+          "ARAM uses curated items and runes because live build sites only cover Summoner's Rift.",
+          "Flash + Mark (Snowball) are the default summoner spells.",
+        ]
+      : mode === "CHERRY"
+        ? [
+            "Arena uses curated items and runes. Pair this plan with the Arena augment page.",
+            "Flash + Ignite are the default Arena summoner spells.",
+          ]
+        : [];
+
+  const coreItems = [...recommendation.items.boots, ...recommendation.items.core].slice(0, 3);
+  const coreIds = new Set(coreItems.map((item) => item.id));
+  const situationalItems = [...recommendation.items.core, ...recommendation.items.situational]
+    .filter((item) => !coreIds.has(item.id))
+    .filter((item, index, list) => list.findIndex((entry) => entry.id === item.id) === index);
+
+  return {
+    champion: recommendation.champion,
+    championId: recommendation.championId,
+    championKey: champion?.key ?? "",
+    championTitle: recommendation.championTitle,
+    tags: recommendation.tags,
+    role,
+    roleLabel: recommendation.roleLabel,
+    gameMode: mode,
+    gameModeLabel: mode === "ARAM" ? "ARAM" : mode === "CHERRY" ? "Arena" : "Summoner's Rift",
+    patch: bootstrap.version,
+    tier: recommendation.meta.tier,
+    score: recommendation.meta.score,
+    winRate: recommendation.meta.estimatedWinRate,
+    pickRate: Math.round((2 + Math.max(0, recommendation.meta.score - 65) * 0.3) * 10) / 10,
+    banRate: 0,
+    games: 0,
+    winRateLabel: "EST. WR",
+    rank: 0,
+    totalChampions: 0,
+    source: "curated",
+    sourceDetail:
+      "Curated patch snapshot + Data Dragon. The browser preview cannot call the desktop meta provider.",
+    cached: false,
+    fetchedAtMs: Date.now(),
+    runes: recommendation.runes,
+    summonerSpells,
+    startingItems: recommendation.items.starter,
+    coreItems,
+    situationalItems,
+    items: recommendation.items,
+    skillOrder: recommendation.skills,
+    counters,
+    threats: recommendation.counters,
+    synergies: recommendation.synergies,
+    tips: recommendation.tips,
+    notes,
+    warnings: recommendation.warnings,
+  };
+}
+
+function normalizeMode(value?: string): "CLASSIC" | "ARAM" | "CHERRY" {
+  const mode = (value ?? "").toUpperCase();
+  if (mode === "ARAM" || mode === "ARAM_MAYHEM" || mode === "MAYHEM") return "ARAM";
+  if (mode === "CHERRY" || mode === "ARENA") return "CHERRY";
+  return "CLASSIC";
+}
+
+function reverseCounters(bootstrap: Bootstrap, championName: string): Matchup[] {
+  const found: Matchup[] = [];
+  for (const [name, value] of Object.entries<any>(meta.champions ?? {})) {
+    if (name.toLowerCase() === championName.toLowerCase()) continue;
+    for (const entry of Object.values<any>(value?.roles ?? {})) {
+      const hit = (entry?.counters ?? []).find(
+        (counter: any) =>
+          (counter?.champion ?? "").toLowerCase() === championName.toLowerCase(),
+      );
+      if (!hit) continue;
+      const champion = bootstrap.champions.find(
+        (candidate) => candidate.name.toLowerCase() === name.toLowerCase(),
+      );
+      if (champion && !found.some((matchup) => matchup.championId === champion.id)) {
+        found.push({
+          champion: champion.name,
+          championId: champion.id,
+          reason: hit.reason ?? "You have the tools to punish this pick.",
+          score: 74,
+        });
+      }
+      break;
+    }
+  }
+  return found.slice(0, 5);
 }
 
 export function browserDraftRecommendations(

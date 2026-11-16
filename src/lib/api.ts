@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import {
+  browserChampionBuild,
   browserDraftRecommendations,
   browserRecommendation,
   getBrowserPerformance,
@@ -15,6 +16,7 @@ import type {
   AppInfo,
   Bootstrap,
   ChampSelect,
+  ChampionBuild,
   DdragonStatus,
   HudOverlayState,
   LiveGame,
@@ -121,6 +123,24 @@ export async function getRecommendation(
   }
   const bootstrap = await loadBrowserBootstrap();
   return browserRecommendation(bootstrap, champion, role);
+}
+
+export async function getChampionBuild(
+  championKey: string,
+  role?: string,
+  gameMode?: string,
+  refresh = false,
+): Promise<ChampionBuild> {
+  if (isDesktop()) {
+    return invoke<ChampionBuild>("get_champion_build", {
+      championKey,
+      role,
+      gameMode,
+      refresh,
+    });
+  }
+  const bootstrap = await loadBrowserBootstrap();
+  return browserChampionBuild(bootstrap, championKey, role, gameMode);
 }
 
 export async function getDraftRecommendations(

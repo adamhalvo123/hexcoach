@@ -86,6 +86,10 @@ export function spellIcon(bootstrap: Bootstrap, spell: SummonerSpell): AssetSour
   );
 }
 
+export function spellRefIcon(bootstrap: Bootstrap, icon: string): AssetSources {
+  return localOr(bootstrap, `img/spell/${icon}`, `${DDRAGON}/${bootstrap.version}/img/spell/${icon}`);
+}
+
 export function augmentIcon(
   bootstrap: Bootstrap,
   augment: ArenaAugment,

@@ -17,6 +17,7 @@ import {
   getAppInfo,
   getBootstrap,
   getChampSelect,
+  getChampionBuild,
   getDdragonStatus,
   getLiveState,
   getLcuStatus,
@@ -36,6 +37,7 @@ import type {
   AppInfo,
   Bootstrap,
   ChampSelect,
+  ChampionBuild,
   DdragonStatus,
   HudOverlayState,
   LiveGame,
@@ -127,6 +129,11 @@ interface AppStore {
   role: Role;
   setRole: (role: Role) => void;
   recommendation: Recommendation | null;
+  championBuild: ChampionBuild | null;
+  buildLoading: boolean;
+  buildError: string | null;
+  buildMode: string;
+  refreshBuild: () => void;
   recLoading: boolean;
   recError: string | null;
   refreshRecommendation: () => void;
@@ -170,6 +177,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [champion, setChampion] = useState(savedSelection.champion);
   const [role, setRole] = useState<Role>(savedSelection.role);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
+  const [championBuild, setChampionBuild] = useState<ChampionBuild | null>(null);
+  const [buildLoading, setBuildLoading] = useState(false);
+  const [buildError, setBuildError] = useState<string | null>(null);
+  const [buildTick, setBuildTick] = useState(0);
   const [recLoading, setRecLoading] = useState(false);
   const [recError, setRecError] = useState<string | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
@@ -178,8 +189,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const toastId = useRef(0);
   const reqId = useRef(0);
+  const buildReqId = useRef(0);
   const autoImportKey = useRef("");
   const trackedGame = useRef("");
+  const trackedSelect = useRef("");
 
   const pushToast = useCallback((kind: ToastKind, title: string, message?: string) => {
     const id = ++toastId.current;
@@ -402,6 +415,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (nextRole !== "NONE") setRole(nextRole);
   }, [settings.demoMode, live.active, live.myChampion, live.myRole]);
 
+  // Mirror champ select as soon as the local client announces a pick.
+  useEffect(() => {
+    if (settings.demoMode || !champSelect.active || !champSelect.myChampion) return;
+    const key = `${champSelect.myChampion}:${champSelect.myRole}`;
+    if (trackedSelect.current === key) return;
+    trackedSelect.current = key;
+    setChampion(champSelect.myChampion);
+    const nextRole = normalizeRole(champSelect.myRole);
+    if (nextRole !== "NONE") setRole(nextRole);
+  }, [settings.demoMode, champSelect.active, champSelect.myChampion, champSelect.myRole]);
+
+  const buildMode = useMemo(() => {
+    if (live.active) {
+      if (live.isAram || live.isMayhem) return "ARAM";
+      if (live.gameMode.toUpperCase() === "CHERRY") return "CHERRY";
+    }
+    return "CLASSIC";
+  }, [live.active, live.isAram, live.isMayhem, live.gameMode]);
+
   const lcu = useMemo<LcuStatus>(() => {
     if (settings.demoMode) {
       return {
@@ -444,6 +476,37 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [bootstrap, champion, role, refreshTick]);
+
+  // Fetch the full meta build (live provider -> curated -> cache).
+  useEffect(() => {
+    if (!bootstrap || !champion) {
+      setChampionBuild(null);
+      setBuildLoading(false);
+      return;
+    }
+    let cancelled = false;
+    const current = ++buildReqId.current;
+    setBuildLoading(true);
+    setBuildError(null);
+
+    void getChampionBuild(champion, role, buildMode, buildTick > 0)
+      .then((next) => {
+        if (cancelled || current !== buildReqId.current) return;
+        setChampionBuild(next);
+      })
+      .catch((error) => {
+        if (cancelled || current !== buildReqId.current) return;
+        setBuildError(errorMessage(error));
+      })
+      .finally(() => {
+        if (cancelled || current !== buildReqId.current) return;
+        setBuildLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [bootstrap, champion, role, buildMode, buildTick]);
 
   const setCompact = useCallback((value: boolean) => {
     setCompactState(value);
@@ -498,21 +561,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setRefreshTick((value) => value + 1);
   }, []);
 
+  const refreshBuild = useCallback(() => {
+    setBuildTick((value) => value + 1);
+  }, []);
+
   const retryBootstrap = useCallback(() => {
     setBootstrapError(null);
     setReloadToken((value) => value + 1);
   }, []);
 
   const importRunes = useCallback(async () => {
-    if (!recommendation) {
+    const runes = championBuild?.runes ?? recommendation?.runes;
+    if (!runes) {
       pushToast("info", "No rune page yet", "Pick a champion before importing runes.");
       return;
     }
     const page: RunePageInput = {
-      name: recommendation.runes.pageName,
-      primaryStyleId: recommendation.runes.primaryStyleId,
-      subStyleId: recommendation.runes.subStyleId,
-      selectedPerkIds: recommendation.runes.selectedPerkIds,
+      name: runes.pageName,
+      primaryStyleId: runes.primaryStyleId,
+      subStyleId: runes.subStyleId,
+      selectedPerkIds: runes.selectedPerkIds,
       current: true,
     };
     try {
@@ -521,13 +589,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       pushToast("error", "Rune import failed", errorMessage(error));
     }
-  }, [recommendation, pushToast]);
+  }, [championBuild, recommendation, pushToast]);
 
   // Optionally auto-apply the recommended page once per game/champion combination.
   useEffect(() => {
     if (!settings.autoImport || settings.demoMode) return;
-    if (!live.active || !recommendation || !lcu.connected) return;
-    const key = `${live.myChampion}:${live.myRole}:${recommendation.champion}:${recommendation.role}:${recommendation.runes.pageName}`;
+    const plan = championBuild ?? recommendation;
+    if (!live.active || !plan || !lcu.connected) return;
+    const key = `${live.myChampion}:${live.myRole}:${plan.champion}:${plan.role}:${plan.runes.pageName}`;
     if (autoImportKey.current === key) return;
     autoImportKey.current = key;
     void importRunes();
@@ -538,6 +607,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     live.myChampion,
     live.myRole,
     lcu.connected,
+    championBuild,
     recommendation,
     importRunes,
   ]);
@@ -563,6 +633,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     role,
     setRole,
     recommendation,
+    championBuild,
+    buildLoading,
+    buildError,
+    buildMode,
+    refreshBuild,
     recLoading,
     recError,
     refreshRecommendation,

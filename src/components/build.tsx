@@ -1,7 +1,16 @@
-import { ClipboardCopy, Download, Info, ShieldCheck, Sparkles, Zap } from "lucide-react";
-import { runeIcon, championIcon } from "@/lib/assets";
-import { cn, tierTone } from "@/lib/format";
-import type { BuildSet, Bootstrap, Matchup, Recommendation, RunePage, SkillPlan } from "@/lib/types";
+import { ArrowRight, ClipboardCopy, Download, Info, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { runeIcon, championIcon, spellRefIcon } from "@/lib/assets";
+import { cn, tierTone, winRateTone } from "@/lib/format";
+import type {
+  BuildSet,
+  Bootstrap,
+  ChampionBuild,
+  Matchup,
+  Recommendation,
+  RunePage,
+  SkillPlan,
+  SpellRef,
+} from "@/lib/types";
 import { useApp } from "@/state/store";
 import { ItemTile, RuneOrb, ScoreBar, SmartImage, TierBadge, copyText } from "./shared";
 
@@ -41,6 +50,110 @@ export function BuildGroups({ bootstrap, items }: { bootstrap: Bootstrap; items:
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function TimelineStage({
+  bootstrap,
+  label,
+  hint,
+  items,
+  accent,
+}: {
+  bootstrap: Bootstrap;
+  label: string;
+  hint: string;
+  items: ChampionBuild["startingItems"];
+  accent?: boolean;
+}) {
+  const total = items.reduce((sum, item) => sum + item.price, 0);
+  return (
+    <div
+      className={cn(
+        "min-w-[150px] flex-1 rounded-lg border bg-abyss/30 p-2.5",
+        accent ? "border-gold-500/25" : "border-white/[0.06]",
+      )}
+    >
+      <div className="mb-2 flex items-baseline justify-between gap-2">
+        <div>
+          <p className="hud-label">{label}</p>
+          <p className="text-[9px] text-fog/80">{hint}</p>
+        </div>
+        <span className="font-mono text-[9px] text-gold-400">{total ? `${total}g` : "—"}</span>
+      </div>
+      <div className="space-y-1">
+        {items.length ? (
+          items.map((item) => <ItemTile key={item.id} bootstrap={bootstrap} item={item} size="sm" />)
+        ) : (
+          <p className="rounded-md border border-dashed border-white/[0.06] px-2 py-3 text-center text-[10px] text-fog">
+            Situational slot
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Start → core → situational purchase timeline. */
+export function ItemTimeline({
+  bootstrap,
+  start,
+  core,
+  situational,
+}: {
+  bootstrap: Bootstrap;
+  start: ChampionBuild["startingItems"];
+  core: ChampionBuild["coreItems"];
+  situational: ChampionBuild["situationalItems"];
+}) {
+  return (
+    <div className="flex flex-col gap-2 lg:flex-row lg:items-start">
+      <TimelineStage bootstrap={bootstrap} label="Start" hint="First buy" items={start} />
+      <div className="hidden items-center px-0.5 text-fog lg:mt-16 lg:flex" aria-hidden>
+        <ArrowRight className="h-4 w-4" />
+      </div>
+      <TimelineStage bootstrap={bootstrap} label="Core" hint="Power spikes" items={core} accent />
+      <div className="hidden items-center px-0.5 text-fog lg:mt-16 lg:flex" aria-hidden>
+        <ArrowRight className="h-4 w-4" />
+      </div>
+      <TimelineStage bootstrap={bootstrap} label="Situational" hint="Adapt" items={situational} />
+    </div>
+  );
+}
+
+export function SummonerSpellList({
+  bootstrap,
+  spells,
+}: {
+  bootstrap: Bootstrap;
+  spells: SpellRef[];
+}) {
+  if (!spells.length) {
+    return <p className="text-[11px] text-fog">No summoner spells available.</p>;
+  }
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {spells.map((spell) => (
+        <div
+          key={`${spell.id}-${spell.name}`}
+          className="flex items-center gap-2 rounded-md border border-white/[0.06] bg-abyss/40 px-2 py-1.5"
+          title={spell.name}
+        >
+          {spell.icon ? (
+            <SmartImage
+              sources={spellRefIcon(bootstrap, spell.icon)}
+              alt={spell.name}
+              className="h-8 w-8 shrink-0 rounded ring-1 ring-paper/20"
+            />
+          ) : (
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-dashed border-white/10 text-[9px] text-fog">
+              ?
+            </span>
+          )}
+          <span className="text-[11px] font-semibold text-slate-200">{spell.name}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -162,7 +275,7 @@ export function RunePagePanel({
             title={importDisabled ? importHint : "Import rune page via LCU"}
           >
             <Download className="h-3.5 w-3.5" />
-            Import runes
+            Import runes to client
           </button>
         ) : null}
       </div>
@@ -244,7 +357,7 @@ export function MatchupList({
 }: {
   bootstrap: Bootstrap;
   entries: Matchup[];
-  tone: "counter" | "synergy";
+  tone: "counter" | "synergy" | "strong" | "threat";
   empty: string;
 }) {
   if (!entries.length) {
@@ -277,10 +390,12 @@ export function MatchupList({
             <span
               className={cn(
                 "font-mono text-[10px]",
-                tone === "counter" ? "text-enemy-400" : "text-emerald-400",
+                tone === "synergy" || tone === "strong"
+                  ? "text-emerald-400"
+                  : "text-enemy-400",
               )}
             >
-              {tone === "counter" ? "vs" : "+"} {entry.score}
+              {tone === "synergy" || tone === "strong" ? "+" : "vs"} {entry.score}
             </span>
           </div>
         );
@@ -312,9 +427,45 @@ export function MetaScore({ recommendation }: { recommendation: Recommendation }
   );
 }
 
+export function BuildScore({ build }: { build: ChampionBuild }) {
+  const metaLine =
+    build.games > 0
+      ? `${build.games.toLocaleString()} games`
+      : build.winRateLabel === "EST. WR"
+        ? "Offline estimate"
+        : "Live provider";
+  return (
+    <div className="flex items-center gap-3 rounded-lg border border-white/[0.06] bg-abyss/30 px-3 py-2">
+      <TierBadge tier={build.tier} size="lg" />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="hud-label">Meta score</span>
+          <span className={cn("font-mono text-[11px]", tierTone(build.tier))}>
+            {build.score}/100
+          </span>
+        </div>
+        <ScoreBar score={build.score} className="mt-1" />
+        <div className="mt-1 flex items-baseline justify-between gap-2">
+          <span className="text-[9px] text-fog">{build.winRateLabel}</span>
+          <span className={cn("font-mono text-[10px]", winRateTone(build.winRate))}>
+            {build.winRate.toFixed(1)}%
+          </span>
+        </div>
+        <div className="mt-0.5 flex items-baseline justify-between gap-2">
+          <span className="text-[9px] text-fog">Pick rate</span>
+          <span className="font-mono text-[10px] text-hextech-300">
+            {build.pickRate.toFixed(1)}%
+          </span>
+        </div>
+        <p className="mt-1 truncate text-[9px] text-fog">{metaLine}</p>
+      </div>
+    </div>
+  );
+}
+
 export function ImportRunesButton({ compact }: { compact?: boolean }) {
-  const { importRunes, lcu, settings, recommendation } = useApp();
-  const disabled = !recommendation || !lcu.connected || settings.demoMode;
+  const { importRunes, lcu, settings, recommendation, championBuild } = useApp();
+  const disabled = !(championBuild ?? recommendation) || !lcu.connected || settings.demoMode;
   return (
     <button
       type="button"
@@ -336,34 +487,71 @@ export function ImportRunesButton({ compact }: { compact?: boolean }) {
 }
 
 export function CopyBuildButton({ compact }: { compact?: boolean }) {
-  const { recommendation, pushToast } = useApp();
+  const { championBuild, recommendation, pushToast } = useApp();
 
   const copy = async () => {
-    if (!recommendation) return;
-    const { items, runes, champion, roleLabel } = recommendation;
-    const text = [
-      `${champion} — ${roleLabel} (HexCoach)`,
-      `Starter: ${items.starter.map((item) => item.name).join(", ") || "—"}`,
-      `Boots: ${items.boots.map((item) => item.name).join(", ") || "—"}`,
-      `Core: ${items.core.map((item) => item.name).join(" → ") || "—"}`,
-      `Situational: ${items.situational.map((item) => item.name).join(", ") || "—"}`,
-      `Runes: ${runes.primaryStyleName} / ${runes.subStyleName} — ${runes.keystone.name}`,
-      `Skill order: ${recommendation.skills.max.join(" > ")}`,
-      "Estimates are offline heuristics, not Riot match data.",
-    ].join("\n");
+    let text: string | null = null;
+    if (championBuild) {
+      text = [
+        `${championBuild.champion} — ${championBuild.roleLabel} (${championBuild.gameModeLabel})`,
+        `Start: ${championBuild.startingItems.map((item) => item.name).join(", ") || "—"}`,
+        `Core: ${championBuild.coreItems.map((item) => item.name).join(" → ") || "—"}`,
+        `Situational: ${championBuild.situationalItems.map((item) => item.name).join(", ") || "—"}`,
+        `Summoner spells: ${championBuild.summonerSpells.map((spell) => spell.name).join(" + ")}`,
+        `Runes: ${championBuild.runes.primaryStyleName} / ${championBuild.runes.subStyleName} — ${championBuild.runes.keystone.name}`,
+        `Skill order: ${championBuild.skillOrder.max.join(" > ")}`,
+        `Win rate: ${championBuild.winRate.toFixed(1)}% (${championBuild.winRateLabel}, patch ${championBuild.patch})`,
+        championBuild.sourceDetail,
+      ].join("\n");
+    } else if (recommendation) {
+      const { items, runes, champion, roleLabel } = recommendation;
+      text = [
+        `${champion} — ${roleLabel} (HexCoach)`,
+        `Starter: ${items.starter.map((item) => item.name).join(", ") || "—"}`,
+        `Boots: ${items.boots.map((item) => item.name).join(", ") || "—"}`,
+        `Core: ${items.core.map((item) => item.name).join(" → ") || "—"}`,
+        `Situational: ${items.situational.map((item) => item.name).join(", ") || "—"}`,
+        `Runes: ${runes.primaryStyleName} / ${runes.subStyleName} — ${runes.keystone.name}`,
+        `Skill order: ${recommendation.skills.max.join(" > ")}`,
+        "Estimates are offline heuristics, not Riot match data.",
+      ].join("\n");
+    }
+    if (!text) return;
     const ok = await copyText(text);
-    pushToast(ok ? "success" : "error", ok ? "Build copied" : "Clipboard unavailable", ok ? "Build and runes are on your clipboard." : "Copy the build manually.");
+    pushToast(
+      ok ? "success" : "error",
+      ok ? "Build copied" : "Clipboard unavailable",
+      ok ? "Build and runes are on your clipboard." : "Copy the build manually.",
+    );
   };
 
   return (
-    <button type="button" className="btn btn-ghost" onClick={() => void copy()} disabled={!recommendation}>
+    <button
+      type="button"
+      className="btn btn-ghost"
+      onClick={() => void copy()}
+      disabled={!championBuild && !recommendation}
+    >
       <ClipboardCopy className="h-3.5 w-3.5" />
       {compact ? "Copy" : "Copy build"}
     </button>
   );
 }
 
-export function DataSourceNote({ compact }: { compact?: boolean }) {
+export function DataSourceNote({ compact, build }: { compact?: boolean; build?: ChampionBuild }) {
+  if (build) {
+    return (
+      <p className="flex items-start gap-1.5 text-[10px] leading-relaxed text-fog">
+        <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
+        <span>
+          {build.sourceDetail}
+          {build.cached ? (
+            <span className="ml-1 text-gold-400">Cached build, refreshed within 12 hours.</span>
+          ) : null}
+        </span>
+      </p>
+    );
+  }
   return (
     <p className="flex items-start gap-1.5 text-[10px] leading-relaxed text-fog">
       <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />

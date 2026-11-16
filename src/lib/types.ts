@@ -436,6 +436,53 @@ export interface Recommendation {
   warnings: string[];
 }
 
+export interface SpellRef {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+export interface ChampionBuild {
+  champion: string;
+  championId: string;
+  championKey: string;
+  championTitle: string;
+  tags: string[];
+  role: Role | string;
+  roleLabel: string;
+  gameMode: string;
+  gameModeLabel: string;
+  patch: string;
+  tier: string;
+  score: number;
+  winRate: number;
+  pickRate: number;
+  banRate: number;
+  games: number;
+  winRateLabel: string;
+  rank: number;
+  totalChampions: number;
+  source: string;
+  sourceDetail: string;
+  cached: boolean;
+  fetchedAtMs: number;
+  runes: RunePage;
+  summonerSpells: SpellRef[];
+  startingItems: ItemRef[];
+  coreItems: ItemRef[];
+  situationalItems: ItemRef[];
+  items: BuildSet;
+  skillOrder: SkillPlan;
+  /** Champions this champion beats. */
+  counters: Matchup[];
+  /** Champions that beat this champion. */
+  threats: Matchup[];
+  synergies: Matchup[];
+  tips: string[];
+  notes: string[];
+  warnings: string[];
+}
+
 export interface RolePick {
   champion: string;
   championId: string;

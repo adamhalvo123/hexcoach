@@ -33,7 +33,7 @@ All colours come from the Tailwind theme in `tailwind.config.js` and the compone
 - **Click-through in-game HUD** — a separate transparent `hud-overlay` window shows enemy respawn timers, enemy Flash cooldowns (300s, or 255s with Cosmic Insight), the next recommended item against your gold and inventory, skill max order and active augments. It starts click-through; `Alt+X` toggles interactive mode.
 - **Profile** — resolves your Riot ID to a PUUID, shows Solo/Duo and Flex rank, LP, total win rate, the last ten Match-v5 games and a **Frequent teammates** table with shared wins, losses and win rate. The Rust backend aggregates everything; React only receives the summary.
 - **Draft helper** — counters, synergies and estimated win-rate heuristics, plus a live champ-select mirror from the local League Client API.
-- **Builds & runes** — starter, boots, core and situational items, full rune pages, shard selection and an 18-level skill order.
+- **Builds & runes** — current patch builds for Summoner's Rift, ARAM and Arena. The build card shows the live Emerald+ win/pick/ban rate and tier when the provider is reachable, curated items and runes otherwise, a start → core → situational purchase timeline, full rune tree with Data Dragon icons, mode-aware summoner spells, an 18-level skill order, and strong/weak matchups. A role switcher exposes off-meta builds.
 - **Arena Lab** — searchable augment library with tier list, rarity filters, champion-class synergy scoring and active-game augment detection. If CommunityDragon is unreachable, a bundled 34-augment curated library keeps the page useful offline.
 - **One-click rune import** — writes the recommended page into the League client through the local LCU API (`127.0.0.1:<lockfile port>`). No Riot API key needed.
 - **Compact overlay** — `432 × 590` always-on-top HUD with core items, runes, skill order and fed enemies.
@@ -170,6 +170,18 @@ Arena augments are fetched from CommunityDragon and cached for 12 hours. If the 
 
 Howling Abyss modifiers come from CommunityDragon's ARAM balance feed. The result is cached, and if the feed is unreachable HexCoach falls back to `src/data/aram-balance.json` and labels the page **CURATED SNAPSHOT**. These values are percentage-point estimates, not Riot match data. ARAM Mayhem augment tiers in `src/data/aram-mayhem.json` are drafting heuristics, matched to the Arena augment library for icons and descriptions.
 
+### Meta build providers
+
+`get_champion_build(championKey, role, gameMode)` resolves a build through a provider chain:
+
+1. **LoLalytics live summary** (Summoner's Rift only) — reads the server-rendered champion page and extracts the Emerald+ win rate, pick rate, ban rate, games, tier, rank and counter names. Item and rune sections on that site are client-rendered, so those stay curated.
+2. **Curated snapshot** — `src/data/meta.json` supplies items, runes, skill order and tips, enriched with Data Dragon item/rune/spell metadata. This provider always succeeds, including for ARAM (`ARAM`) and Arena (`CHERRY`).
+3. **Disk cache** — successful builds are written to `builds_cache.json` in the app data directory, keyed by champion, role, game mode and patch with a **12 hour TTL**. Reopening a champion loads the cached build immediately and labels it **Cached**.
+
+Provider timeouts, rate limits, HTTP errors and layout changes never fail the command: the next provider is used and the reason appears in the build notes. Pass `refresh: true` to bypass the TTL and retry live data.
+
+
+
 ## In-game overlay
 
 The `hud-overlay` window is a separate Tauri window configured in `src-tauri/tauri.conf.json`:
@@ -184,7 +196,7 @@ The HUD intentionally stays minimal: enemy respawn timers, clickable enemy summo
 
 ## About win rates
 
-HexCoach labels its estimates **EST. WR**. They are derived from the curated meta scores in `src/data/meta.json` plus class heuristics — **not** from Riot match history or a live win-rate provider. Treat them as drafting guidance, not statistics.
+HexCoach labels curated numbers **EST. WR**. They are derived from the meta scores in `src/data/meta.json` plus class heuristics. When the LoLalytics provider responds, the Builds page instead shows the live **Emerald+** win rate, pick rate, ban rate and sample size for Summoner's Rift, labelled with that source. Arena and ARAM always use curated estimates. Treat all values as drafting guidance, not authoritative statistics.
 
 ## Releases
 
