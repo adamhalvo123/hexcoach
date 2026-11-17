@@ -6,6 +6,16 @@ HexCoach reads the local Riot Live Client API and League Client API, then shows 
 
 > HexCoach isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
 
+## Download
+
+Every release ships a ready-to-install Windows MSI — no compiler or build tools required.
+
+1. Open [Releases](https://github.com/adamhalvo123/hexcoach/releases/latest) and download `HexCoach_<version>_x64_en-US.msi`.
+2. Run the MSI and follow the installer (per-user install, no admin prompt).
+3. Launch **HexCoach** from the Start menu.
+
+Windows SmartScreen may warn about an unsigned build — choose **More info** → **Run anyway**. Windows 11 already includes the WebView2 runtime; on Windows 10 the installer will prompt to fetch it if it is missing.
+
 ## Screenshots
 
 | Live game | Draft helper |
@@ -16,30 +26,41 @@ HexCoach reads the local Riot Live Client API and League Client API, then shows 
 | --- | --- |
 | ![Builds and runes](docs/builds.png) | ![Arena Lab](docs/arena.png) |
 
-| Settings | Compact overlay |
+| In-game HUD | Compact overlay |
 | --- | --- |
-| ![Settings](docs/settings.png) | ![Compact overlay](docs/compact.png) |
+| ![In-game HUD](docs/hud.png) | ![Compact overlay](docs/compact.png) |
+
+| Settings |
+| --- |
+| ![Settings](docs/settings.png) |
 
 ## Design
 
-The interface is a monochrome, industrial hazard-label system: warm black paper stock (`#0a0a08`), cream label bands (`#e9e2ce`), heavy condensed uppercase type, 2px corners, diagonal hazard stripes and barcode accents. Cream surfaces carry black type; data panels stay dark so champion art and item icons do the talking.
+HexCoach ships three themes, switchable live in Settings and persisted locally:
 
-All colours come from the Tailwind theme in `tailwind.config.js` and the component classes in `src/styles.css`, so the whole app can be re-skinned from two files.
+- **Dark** (default) — deep navy-black surfaces (`#090d16`), layered panels (`#161b22`), slate type and cyan/gold accents.
+- **Light** — cool slate paper (`#f1f5f9`) with white panels and inverted slate type for daytime use.
+- **OLED** — true black (`#000000`) chrome and near-black panels for OLED displays and low-light play.
+
+Layout is a compact, data-dense overlay language: hairline borders, condensed uppercase labels, monospace numerics and restrained accent colour, so champion art and item icons stay the loudest thing on screen. The in-game HUD follows the selected theme automatically.
+
+Every colour is a CSS token block in `src/styles.css` (`[data-theme="dark"]`, `[data-theme="light"]`, `[data-theme="oled"]`) mapped into Tailwind utilities by `tailwind.config.js`, so a full reskin is one token set plus the shared component classes.
 
 ## Features
 
 - **Live game HUD** — polls `https://127.0.0.1:2999/liveclientdata/allgamedata` every ~2 seconds, tolerates the self-signed local certificate, and detects champion, role, game mode, scoreboard, items, events, Arena augments and ARAM / ARAM Mayhem state.
 - **ARAM / Mayhem** — Howling Abyss balance modifiers (damage dealt/taken, healing, shielding, tenacity, ability haste, regen), Guardian starter builds, ARAM rune pages and a curated ARAM Mayhem augment tier list when Mayhem is detected.
-- **Click-through in-game HUD** — a separate transparent `hud-overlay` window shows enemy respawn timers, enemy Flash cooldowns (300s, or 255s with Cosmic Insight), the next recommended item against your gold and inventory, skill max order and active augments. It starts click-through; `Alt+X` toggles interactive mode.
+- **Click-through in-game HUD** — a separate transparent `hud-overlay` window shows enemy respawn timers, enemy Flash cooldowns (300s, or 255s with Cosmic Insight), the next recommended item against your gold and inventory, skill max order and active augments. It starts click-through; `Alt+C` toggles interactive mode so you can click the HUD without moving your cursor away from the fight.
 - **Profile** — resolves your Riot ID to a PUUID, shows Solo/Duo and Flex rank, LP, total win rate, the last ten Match-v5 games and a **Frequent teammates** table with shared wins, losses and win rate. The Rust backend aggregates everything; React only receives the summary.
 - **Draft helper** — counters, synergies and estimated win-rate heuristics, plus a live champ-select mirror from the local League Client API.
 - **Builds & runes** — current patch builds for Summoner's Rift, ARAM and Arena. The build card shows the live Emerald+ win/pick/ban rate and tier when the provider is reachable, curated items and runes otherwise, a start → core → situational purchase timeline, full rune tree with Data Dragon icons, mode-aware summoner spells, an 18-level skill order, and strong/weak matchups. A role switcher exposes off-meta builds.
 - **Arena Lab** — searchable augment library with tier list, rarity filters, champion-class synergy scoring and active-game augment detection. If CommunityDragon is unreachable, a bundled 34-augment curated library keeps the page useful offline.
 - **One-click rune import** — writes the recommended page into the League client through the local LCU API (`127.0.0.1:<lockfile port>`). No Riot API key needed.
-- **Compact overlay** — `432 × 590` always-on-top HUD with core items, runes, skill order and fed enemies.
+- **Compact overlay** — `432 × 590` always-on-top HUD with core items, runes, skill order and fed enemies, toggled with `Alt+X`.
 - **Local-first data** — Data Dragon and CommunityDragon files plus images are cached per patch in the app cache directory.
 - **Performance HUD** — RAM, local API latency, patch, cache size and cached image progress.
-- **Global hotkeys** — compact mode, click-through, show/hide and the in-game HUD toggle, registered by Rust.
+- **Global hotkeys** — registered by Rust through the `global-shortcut` plugin, so they work even while League owns keyboard focus: `Alt+X` compact / full overlay, `Alt+Z` dashboard click-through, `Alt+H` show / hide HexCoach, `Alt+C` in-game HUD interaction. All four are rebindable in Settings and duplicates are rejected before saving.
+- **Themes** — Dark, Light and OLED palettes applied live through CSS tokens, including the separate in-game HUD window.
 - **Server-side Riot API proxy** — Account-v1, League-v4, Match-v5 and Summoner-v4 calls are made by Rust. The key is read from local Settings or the build-time `RIOT_API_KEY` and only ever attached as `X-Riot-Token` on the backend.
 
 ## Stack
@@ -92,10 +113,10 @@ http://127.0.0.1:1420/?hud=1&mode=mayhem
 ### Production build
 
 ```powershell
-npm run tauri:build
+npm run tauri:build -- --bundles msi
 ```
 
-Installers are written to `src-tauri/target/release/bundle/`.
+The MSI is written to `src-tauri/target/release/bundle/msi/`. Omit `--bundles msi` to build every bundle target enabled in `src-tauri/tauri.conf.json`.
 
 ### Data validation
 
@@ -190,7 +211,7 @@ The `hud-overlay` window is a separate Tauri window configured in `src-tauri/tau
 - loads `index.html?hud=1`
 - created hidden and shown only while `liveGame.active` is true and the **In-game HUD** setting is enabled
 - starts with `set_ignore_cursor_events(true)` so mouse clicks pass through to League
-- `set_overlay_clickthrough(ignore)` calls `window.set_ignore_cursor_events(ignore)`; the default `Alt+X` global shortcut toggles interactive vs click-through and emits `hud-clickthrough-changed`
+- `set_overlay_clickthrough(ignore)` calls `window.set_ignore_cursor_events(ignore)`; the default `Alt+C` global shortcut toggles interactive vs click-through and emits `hud-clickthrough-changed`
 
 The HUD intentionally stays minimal: enemy respawn timers, clickable enemy summoner-spell timers, the next affordable build item, skill max order and active Arena / Mayhem augments.
 
@@ -200,7 +221,23 @@ HexCoach labels curated numbers **EST. WR**. They are derived from the meta scor
 
 ## Releases
 
-`.github/workflows/release.yml` builds the Windows NSIS installer with the official [`tauri-action`](https://github.com/tauri-apps/tauri-action) on every push to `main`, on `v*` tags, and on manual dispatch. The workflow creates a GitHub Release and attaches the generated `.exe` installer (plus `.msi` if you extend the bundle list).
+Every push to `main`, every `v*` tag and each manual dispatch runs `.github/workflows/release.yml`. The workflow builds on `windows-latest` with the official [`tauri-action`](https://github.com/tauri-apps/tauri-action), bundles an MSI (`--bundles msi`) and publishes it as the downloadable asset on a GitHub Release tagged `v<version>`.
+
+The version comes from `src-tauri/tauri.conf.json` (`__VERSION__`), so a release only needs matching version bumps in:
+
+- `package.json`
+- `package-lock.json` (both the root `version` and `packages[""]` entry)
+- `src-tauri/Cargo.toml`
+- `src-tauri/tauri.conf.json`
+
+Then push to `main`:
+
+```powershell
+git commit -am "release: v0.1.2"
+git push origin main
+```
+
+The release appears with `HexCoach_<version>_x64_en-US.msi` attached — users download and run it, with no compilation step. `workflow_dispatch` re-runs the build for an existing version if a release needs to be rebuilt.
 
 To publish the repository for the first time:
 
@@ -215,8 +252,9 @@ Settings and the Data Dragon cache live in your app config/cache directories. No
 
 - Demo mode (default on) shows a realistic fake game so the UI is explorable without League running.
 - Turn demo mode off to read the real Live Client and League Client APIs.
-- Global hotkeys use Tauri accelerator syntax, e.g. `CommandOrControl+Shift+C`.
-- The in-game HUD toggle defaults to `Alt+X` and works globally, even while League has focus.
+- Appearance switches between **Dark**, **Light** and **OLED** instantly; the in-game HUD window follows the same theme.
+- Global hotkeys use Tauri accelerator syntax, e.g. `CommandOrControl+Shift+C`. Defaults are `Alt+X` (compact), `Alt+Z` (dashboard click-through), `Alt+H` (show / hide) and `Alt+C` (in-game HUD interaction), and they work globally even while League has focus.
+- Saving hotkeys re-registers them immediately; Windows conflicts (an accelerator already owned by another app) are reported per binding in Settings instead of failing silently.
 - The Riot key field is write-only: it is blank on load, and blank means "keep the saved key".
 
 ## License

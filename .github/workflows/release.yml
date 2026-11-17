@@ -54,15 +54,26 @@ jobs:
           releaseBody: |
             HexCoach v__VERSION__ — League of Legends overlay coach.
 
-            Download the `*-setup.exe` installer below, run it and launch **HexCoach**.
+            **Download the `.msi` installer below**, run it and launch **HexCoach**.
+            No compilation, Node.js or Rust needed — the MSI bundles everything except the
+            WebView2 runtime, which ships with Windows 11 and is already present on most Windows 10 installs.
             Windows SmartScreen may warn about an unsigned build; choose "More info" → "Run anyway".
 
+            ### Highlights
+            - Global hotkeys, working even while League has keyboard focus
+              - `Alt+X` compact / full overlay
+              - `Alt+Z` dashboard click-through
+              - `Alt+H` show / hide HexCoach
+              - `Alt+C` in-game HUD interaction
+            - Dark, light and OLED themes with a matching in-game HUD
             - Draft helper (counters, synergies, estimated win rates)
             - Live game scoreboard, build, runes and skill order
+            - Click-through in-game HUD with respawns, Flash timers and next item
             - Arena augment tier list and synergy reads
             - ARAM / ARAM Mayhem balance, builds and augment tiers
-            - Click-through in-game HUD (Alt+X to interact)
             - One-click rune import through the local League Client API
+
+            Requires Windows 10/11 x64. HexCoach isn't endorsed by Riot Games.
           releaseDraft: false
           prerelease: false
-          args: --bundles nsis
+          args: --bundles msi

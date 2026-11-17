@@ -1,6 +1,6 @@
 [package]
 name = "hexcoach"
-version = "0.1.0"
+version = "0.1.1"
 description = "HexCoach — League of Legends overlay coach"
 authors = ["Adam"]
 edition = "2021"

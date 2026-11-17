@@ -1,7 +1,7 @@
 {
   "name": "hexcoach",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "HexCoach — a lightning-fast League of Legends overlay coach built with Tauri v2.",
   "scripts": {

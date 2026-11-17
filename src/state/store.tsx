@@ -417,8 +417,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
               "info",
               event.payload.interactive ? "HUD interactive" : "HUD click-through",
               event.payload.interactive
-                ? "You can now click the in-game HUD. Press Alt+X to pass clicks through again."
-                : "Mouse clicks pass straight through to League. Press Alt+X to interact.",
+                ? "You can now click the in-game HUD. Press Alt+C to pass clicks through again."
+                : "Mouse clicks pass straight through to League. Press Alt+C to interact.",
             );
           }
         }),
