@@ -149,10 +149,9 @@ fn build_url(request: &RiotApiRequest, settings_region: &str) -> Result<String, 
     Ok(url.to_string())
 }
 
-/// Server-side Riot API proxy. The key is read from the local Settings override
-/// or from the build-time `RIOT_API_KEY` environment and only ever attached as
-/// the `X-Riot-Token` header here. The frontend receives the response body, not
-/// the key or the request headers.
+/// Server-side Riot API proxy. The key comes from the local Settings entry and
+/// is only ever attached as the `X-Riot-Token` header here. The frontend
+/// receives the response body, not the key or the request headers.
 #[tauri::command]
 pub async fn fetch_riot_api(
     clients: State<'_, Clients>,
@@ -160,7 +159,7 @@ pub async fn fetch_riot_api(
     request: RiotApiRequest,
 ) -> Result<RiotApiResponse, String> {
     let key = settings.effective_riot_key().ok_or_else(|| {
-        "No Riot API key configured. Add one in Settings or build with RIOT_API_KEY.".to_string()
+        "No Riot API key configured. Add your own key in Settings.".to_string()
     })?;
     let url = build_url(&request, &settings.get().region)?;
 

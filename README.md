@@ -62,7 +62,7 @@ Every colour is a CSS token block in `src/styles.css` (`[data-theme="dark"]`, `[
 - **Global hotkeys** — registered by Rust through the `global-shortcut` plugin, so they work even while League owns keyboard focus: `Alt+X` compact / full overlay, `Alt+Z` dashboard click-through, `Alt+H` show / hide HexCoach, `Alt+C` in-game HUD interaction. All four are rebindable in Settings and duplicates are rejected before saving.
 - **Close to tray** — the title bar X hides HexCoach into the Windows notification area instead of quitting; live polling, hotkeys and the in-game HUD keep running in the background. Left-click or double-click the tray icon to restore the dashboard, use the tray menu (**Otvoriť HexCoach** / **Ukončiť aplikáciu**) to restore or fully exit, or press **Quit** in Settings.
 - **Themes** — Dark, Light and OLED palettes applied live through CSS tokens, including the separate in-game HUD window.
-- **Server-side Riot API proxy** — Account-v1, League-v4, Match-v5 and Summoner-v4 calls are made by Rust. The key is read from local Settings or the build-time `RIOT_API_KEY` and only ever attached as `X-Riot-Token` on the backend.
+- **Server-side Riot API proxy** — Account-v1, League-v4, Match-v5 and Summoner-v4 calls are made by Rust. The key is read from your local Settings and only ever attached as `X-Riot-Token` on the backend; no key is bundled with the app.
 
 ## Stack
 
@@ -150,7 +150,7 @@ src-tauri/src/
   shortcuts.rs       Global hotkeys and HUD click-through
   settings.rs        Local settings persistence and masked Riot key handling
   commands.rs        Performance, compact mode, HUD overlay commands, app info
-scripts/             Data validation and publishing helpers
+scripts/             Data validation helpers
 ```
 
 ## Riot endpoints used
@@ -168,21 +168,14 @@ scripts/             Data validation and publishing helpers
 
 ### Riot API key
 
-The key is never hardcoded or sent to the frontend.
+HexCoach never ships, embeds or accepts a Riot API key at build time. Every install uses the key its user enters in Settings.
 
-- A local key entered in Settings is written to the app config directory and takes priority.
-- Release builds can inject a community key at compile time: the workflow passes `${{ secrets.RIOT_API_KEY }}` into the `tauri-action` build environment, and Rust reads it with `option_env!("RIOT_API_KEY")`.
-- `get_settings` always returns an empty `riotApiKey` plus `riotKeyConfigured` and `riotKeySource` (`local`, `environment` or `none`). Saving with an empty field keeps the existing key, and **Remove local key** clears only the local override.
+- The key is stored only in the app config directory on that PC. It is never committed, bundled, logged or sent to the frontend.
+- The build workflow has no key environment variable and the Rust backend has no compile-time key path, so a released MSI cannot contain one.
+- `get_settings` always returns an empty `riotApiKey` plus `riotKeyConfigured` and `riotKeySource` (`local` or `none`). Saving with an empty field keeps the existing key, and **Remove local key** deletes it.
 - `fetch_riot_api` builds Account-v1, Match-v5 or Summoner-v4 URLs in Rust and adds `X-Riot-Token` server-side.
 - `get_player_profile` resolves the Riot ID, loads Summoner-v4, League-v4 and the last ten Match-v5 games, then aggregates frequent teammates entirely in Rust. It returns only the summary to React.
 - Live builds, rune import and static data do not require a key.
-
-To bake a key into a local release build without committing it:
-
-```powershell
-$env:RIOT_API_KEY = "RGAPI-…"
-npm run tauri:build
-```
 
 ### Arena data fallback
 
@@ -240,12 +233,13 @@ git push origin main
 
 The release appears with `HexCoach_<version>_x64_en-US.msi` attached — users download and run it, with no compilation step. `workflow_dispatch` re-runs the build for an existing version if a release needs to be rebuilt.
 
-To publish the repository for the first time:
+## Security and privacy
 
-```powershell
-gh auth login
-powershell -ExecutionPolicy Bypass -File scripts/publish.ps1 -Name hexcoach
-```
+- **No secrets in the repository or the installers.** HexCoach does not contain a Riot API key, and the release workflow does not receive one. Each user adds their own key locally.
+- **The key never reaches the UI.** React only gets a `riotKeyConfigured` flag; the Rust backend attaches `X-Riot-Token` to outbound requests.
+- **Local-only storage.** Settings, the Riot key and all cached data stay in the Windows app config/cache directories. There is no account, backend server, telemetry or cloud sync.
+- **No source maps in release builds**, and the production bundle ships minified through Vite.
+- The app only talks to `127.0.0.1` Riot clients plus Data Dragon, CommunityDragon and Riot's API hosts listed above.
 
 ## Settings
 
@@ -257,7 +251,7 @@ Settings and the Data Dragon cache live in your app config/cache directories. No
 - Global hotkeys use Tauri accelerator syntax, e.g. `CommandOrControl+Shift+C`. Defaults are `Alt+X` (compact), `Alt+Z` (dashboard click-through), `Alt+H` (show / hide) and `Alt+C` (in-game HUD interaction), and they work globally even while League has focus.
 - Saving hotkeys re-registers them immediately; Windows conflicts (an accelerator already owned by another app) are reported per binding in Settings instead of failing silently.
 - Closing the window with the title bar X hides HexCoach to the system tray. The tray icon restores it; the tray menu and the **Quit** button in Settings stop the process completely.
-- The Riot key field is write-only: it is blank on load, and blank means "keep the saved key".
+- The Riot key field is write-only: it is blank on load, and blank means "keep the saved key". The key is stored only on this PC.
 
 ## License
 

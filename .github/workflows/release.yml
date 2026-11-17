@@ -47,7 +47,6 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
         with:
           tagName: v__VERSION__
           releaseName: "HexCoach v__VERSION__"
@@ -57,7 +56,8 @@ jobs:
             **Download the `.msi` installer below**, run it and launch **HexCoach**.
             No compilation, Node.js or Rust needed — the MSI bundles everything except the
             WebView2 runtime, which ships with Windows 11 and is already present on most Windows 10 installs.
-            Windows SmartScreen may warn about an unsigned build; choose "More info" → "Run anyway".
+            No Riot API key is included; add your own in Settings. Windows SmartScreen may warn about an
+            unsigned build; choose "More info" → "Run anyway".
 
             ### Highlights
             - Global hotkeys, working even while League has keyboard focus

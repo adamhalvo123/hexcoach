@@ -425,8 +425,6 @@ export default function ProfilePage() {
             <span className="chip border-gold-500/50 bg-gold-500/[0.08] text-gold-300">
               DEMO PREVIEW
             </span>
-          ) : settings.riotKeySource === "environment" ? (
-            <span className="chip border-emerald-500/40 text-emerald-300">BUILD KEY</span>
           ) : null}
         </div>
         <p className="mt-0.5 text-[11px] text-fog">

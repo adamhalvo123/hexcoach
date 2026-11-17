@@ -2,10 +2,6 @@ use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf, sync::Mutex};
 use tauri::{AppHandle, Manager};
 
-/// Build-time community key. Never hardcode a key here: CI injects the
-/// repository secret into the build environment, and local builds can omit it.
-const ENV_RIOT_API_KEY: Option<&str> = option_env!("RIOT_API_KEY");
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct Hotkeys {
@@ -90,12 +86,6 @@ pub struct SettingsView {
     pub hotkeys: Hotkeys,
 }
 
-fn env_riot_key_configured() -> bool {
-    ENV_RIOT_API_KEY
-        .map(str::trim)
-        .is_some_and(|key| !key.is_empty())
-}
-
 pub struct SettingsState {
     path: PathBuf,
     inner: Mutex<Settings>,
@@ -128,18 +118,11 @@ impl SettingsState {
 
     pub fn view(&self) -> SettingsView {
         let settings = self.get();
-        let local_configured = !settings.riot_api_key.trim().is_empty();
-        let source = if local_configured {
-            "local"
-        } else if env_riot_key_configured() {
-            "environment"
-        } else {
-            "none"
-        };
+        let configured = !settings.riot_api_key.trim().is_empty();
         SettingsView {
             riot_api_key: String::new(),
-            riot_key_configured: local_configured || env_riot_key_configured(),
-            riot_key_source: source.into(),
+            riot_key_configured: configured,
+            riot_key_source: if configured { "local" } else { "none" }.into(),
             riot_id: settings.riot_id,
             region: settings.region,
             always_on_top: settings.always_on_top,
@@ -153,16 +136,11 @@ impl SettingsState {
         }
     }
 
-    /// Local override first, then the build-time environment key.
+    /// Returns the locally stored key, if the user configured one. HexCoach
+    /// never reads a key from the environment or bundles one with the app.
     pub fn effective_riot_key(&self) -> Option<String> {
         let local = self.get().riot_api_key.trim().to_string();
-        if !local.is_empty() {
-            return Some(local);
-        }
-        ENV_RIOT_API_KEY
-            .map(str::trim)
-            .filter(|key| !key.is_empty())
-            .map(str::to_string)
+        (!local.is_empty()).then_some(local)
     }
 
     pub fn save(&self, next: &Settings) -> Result<(), String> {

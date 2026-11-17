@@ -269,7 +269,7 @@ export interface Settings {
   /** Write-only in the UI: the backend always responds with an empty string. */
   riotApiKey: string;
   riotKeyConfigured: boolean;
-  riotKeySource: "local" | "environment" | "none" | string;
+  riotKeySource: "local" | "none" | string;
   riotId: string;
   region: string;
   alwaysOnTop: boolean;

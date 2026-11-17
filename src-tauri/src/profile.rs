@@ -412,7 +412,7 @@ pub async fn get_player_profile(
     let count = request.count.unwrap_or(10).clamp(1, 20);
 
     let key = settings.effective_riot_key().ok_or_else(|| {
-        "No Riot API key configured. Add one in Settings or build with RIOT_API_KEY.".to_string()
+        "No Riot API key configured. Add your own key in Settings.".to_string()
     })?;
     let (game_name, tag_line) = split_riot_id(riot_id_raw)?;
     let region = normalise_region(region_value)?;

@@ -241,7 +241,7 @@ export async function refreshDdragon(): Promise<void> {
 
 export async function getAppInfo(): Promise<AppInfo> {
   if (isDesktop()) return invoke<AppInfo>("get_app_info");
-  return { version: "0.1.2", buildProfile: "web-preview" };
+  return { version: "0.1.3", buildProfile: "web-preview" };
 }
 
 // Exits the desktop app. The title bar X only hides to the tray, so Settings

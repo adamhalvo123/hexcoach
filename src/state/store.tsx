@@ -639,7 +639,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const saved = await clearRiotKeyRequest();
       setSettings(saved);
-      pushToast("success", "Local Riot key removed", "HexCoach will use the build-time key if one was provided.");
+      pushToast("success", "Local Riot key removed", "The key was deleted from this PC.");
     } catch (error) {
       pushToast("error", "Could not clear the Riot key", errorMessage(error));
       throw error;

@@ -41,9 +41,7 @@ const THEME_ICONS: Record<Theme, typeof Moon> = {
 };
 
 function keySourceLabel(source: string): string {
-  if (source === "local") return "local override";
-  if (source === "environment") return "build-time key";
-  return "not configured";
+  return source === "local" ? "local key" : "not configured";
 }
 
 function Toggle({
@@ -407,10 +405,10 @@ export default function SettingsPage() {
             <p className="flex items-start gap-1.5 rounded-md border border-line bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
               <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-emerald-400" />
               <span>
-                HexCoach only masks the key in the UI; the Rust backend attaches{" "}
-                <span className="font-mono text-slate-300">X-Riot-Token</span> server-side. Leave the field blank to
-                keep the existing key. Release builds fall back to the build-time{" "}
-                <span className="font-mono text-slate-300">RIOT_API_KEY</span>.
+                HexCoach never ships a Riot API key. The key you enter is stored only in this app's local
+                settings, masked in the UI, and attached as{" "}
+                <span className="font-mono text-slate-300">X-Riot-Token</span> by the Rust backend. Leave the field
+                blank to keep the existing key.
               </span>
             </p>
             <div className="flex items-start gap-1.5 rounded-md border border-line bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
@@ -684,7 +682,7 @@ export default function SettingsPage() {
           <Panel icon={Info} title="About HexCoach" subtitle="Tauri v2 · Rust · React" bodyClassName="space-y-2 p-3">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-fog">Version</span>
-              <span className="font-mono text-slate-200">{appInfo?.version ?? "0.1.2"}</span>
+              <span className="font-mono text-slate-200">{appInfo?.version ?? "0.1.3"}</span>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-fog">Build</span>
