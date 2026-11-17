@@ -36,12 +36,30 @@ async function windowAction(action: "minimize" | "close") {
 }
 
 export default function TitleBar() {
-  const { bootstrap, live, settings, ddragon, compact, setCompact, lcu, theme, setTheme } = useApp();
+  const { bootstrap, live, settings, ddragon, compact, setCompact, lcu, theme, setTheme, pushToast } = useApp();
   const { Icon: ThemeIcon, label: themeLabel } = THEME_META[theme];
 
   function cycleTheme() {
     const index = THEME_CYCLE.indexOf(theme);
     setTheme(THEME_CYCLE[(index + 1) % THEME_CYCLE.length]);
+  }
+
+  // The Rust side intercepts CloseRequested and hides the window instead of
+  // exiting. Explain that once, on the first close, while the window is still
+  // visible long enough to read the toast.
+  async function closeToTray() {
+    if (!isDesktop()) return;
+    const hintKey = "hexcoach.trayHintShown.v1";
+    if (!localStorage.getItem(hintKey)) {
+      localStorage.setItem(hintKey, "1");
+      pushToast(
+        "info",
+        "Running in the tray",
+        "HexCoach keeps running next to the clock. Reopen it from the tray icon; quit it from the tray menu or Settings.",
+      );
+      await new Promise((resolve) => window.setTimeout(resolve, 2400));
+    }
+    await windowAction("close");
   }
 
   return (
@@ -135,8 +153,8 @@ export default function TitleBar() {
         <button
           type="button"
           className="icon-btn hover:border-enemy-500/40 hover:bg-enemy-500/15 hover:text-enemy-400"
-          onClick={() => windowAction("close")}
-          title="Close HexCoach"
+          onClick={() => void closeToTray()}
+          title="Close to tray"
         >
           <X className="h-3.5 w-3.5" />
         </button>

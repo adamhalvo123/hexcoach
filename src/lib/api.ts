@@ -241,7 +241,13 @@ export async function refreshDdragon(): Promise<void> {
 
 export async function getAppInfo(): Promise<AppInfo> {
   if (isDesktop()) return invoke<AppInfo>("get_app_info");
-  return { version: "0.1.1", buildProfile: "web-preview" };
+  return { version: "0.1.2", buildProfile: "web-preview" };
+}
+
+// Exits the desktop app. The title bar X only hides to the tray, so Settings
+// exposes this explicit quit action backed by the `quit_app` command.
+export async function quitApp(): Promise<void> {
+  if (isDesktop()) await invoke("quit_app");
 }
 
 export { EMPTY_LIVE, EMPTY_SELECT };

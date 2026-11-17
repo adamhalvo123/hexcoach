@@ -66,6 +66,8 @@ jobs:
               - `Alt+H` show / hide HexCoach
               - `Alt+C` in-game HUD interaction
             - Dark, light and OLED themes with a matching in-game HUD
+            - Close to tray: the title bar X keeps HexCoach running next to the clock.
+              Left-click the tray icon to restore it; the tray menu or Settings → Overlay → Quit stops it completely.
             - Draft helper (counters, synergies, estimated win rates)
             - Live game scoreboard, build, runes and skill order
             - Click-through in-game HUD with respawns, Flash timers and next item

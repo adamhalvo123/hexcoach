@@ -14,7 +14,59 @@ mod shortcuts;
 mod util;
 
 use std::time::Duration;
-use tauri::Manager;
+use tauri::{
+    menu::{Menu, MenuItem},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    Manager, WindowEvent,
+};
+
+/// Brings the main dashboard back from the tray, restoring it from a minimized
+/// or hidden state and giving it keyboard focus.
+fn show_main_window(app: &tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.show();
+        let _ = window.unminimize();
+        let _ = window.set_focus();
+    }
+}
+
+/// Creates the notification-area icon and its context menu. The menu is the
+/// only place that fully quits the app; closing the window merely hides it.
+fn init_tray(app: &tauri::AppHandle) -> tauri::Result<()> {
+    let show = MenuItem::with_id(app, "show", "Otvoriť HexCoach", true, None::<&str>)?;
+    let quit = MenuItem::with_id(app, "quit", "Ukončiť aplikáciu", true, None::<&str>)?;
+    let menu = Menu::with_items(app, &[&show, &quit])?;
+
+    TrayIconBuilder::with_id("hexcoach-tray")
+        .icon(
+            app.default_window_icon()
+                .expect("HexCoach bundle is missing its window icon")
+                .clone(),
+        )
+        .tooltip("HexCoach")
+        .menu(&menu)
+        .show_menu_on_left_click(false)
+        .on_menu_event(|app, event| match event.id.as_ref() {
+            "show" => show_main_window(app),
+            "quit" => app.exit(0),
+            _ => {}
+        })
+        .on_tray_icon_event(|tray, event| match event {
+            TrayIconEvent::Click {
+                button: MouseButton::Left,
+                button_state: MouseButtonState::Up,
+                ..
+            }
+            | TrayIconEvent::DoubleClick {
+                button: MouseButton::Left,
+                ..
+            } => show_main_window(tray.app_handle()),
+            _ => {}
+        })
+        .build(app)?;
+
+    Ok(())
+}
 
 pub struct Clients {
     pub http: reqwest::Client,
@@ -48,6 +100,8 @@ pub fn run() {
             app.manage(shortcuts::HotkeyRegistry::default());
             app.manage(commands::HudState::default());
 
+            init_tray(app.handle())?;
+
             let status = shortcuts::register(app.handle());
             if !status.all_registered() {
                 for binding in status.bindings.iter().filter(|binding| !binding.registered) {
@@ -77,6 +131,16 @@ pub fn run() {
 
             Ok(())
         })
+        .on_window_event(|window, event| {
+            // The X button closes to the notification area instead of exiting.
+            // The tray menu and Settings still expose an explicit quit.
+            if window.label() == "main" {
+                if let WindowEvent::CloseRequested { api, .. } = event {
+                    api.prevent_close();
+                    let _ = window.hide();
+                }
+            }
+        })
         .invoke_handler(tauri::generate_handler![
             ddragon::get_bootstrap,
             ddragon::get_ddragon_status,
@@ -101,6 +165,7 @@ pub fn run() {
             commands::set_overlay_clickthrough,
             commands::get_overlay_state,
             commands::set_hud_visible,
+            commands::quit_app,
         ])
         .run(tauri::generate_context!())
         .expect("error while running HexCoach");

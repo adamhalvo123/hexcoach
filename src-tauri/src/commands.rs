@@ -241,3 +241,10 @@ pub async fn get_app_info() -> Result<AppInfo, String> {
         },
     })
 }
+
+/// Fully exits HexCoach. Closing the title bar only hides the window to the
+/// tray, so this command backs the explicit "Quit" action in Settings.
+#[tauri::command]
+pub fn quit_app(app: AppHandle) {
+    app.exit(0);
+}

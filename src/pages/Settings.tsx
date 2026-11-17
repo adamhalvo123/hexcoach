@@ -16,6 +16,7 @@ import {
   MousePointerClick,
   Palette,
   Play,
+  Power,
   RefreshCw,
   RotateCcw,
   Save,
@@ -25,7 +26,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { DEFAULT_SETTINGS, REGIONS } from "@/lib/defaults";
-import { fetchRiotApi } from "@/lib/api";
+import { errorMessage, fetchRiotApi, quitApp } from "@/lib/api";
 import { isDesktop } from "@/lib/env";
 import { cn, shortPatch } from "@/lib/format";
 import { THEME_OPTIONS } from "@/lib/theme";
@@ -161,6 +162,14 @@ export default function SettingsPage() {
       region: draft.region,
     });
     pushToast("info", "Defaults restored", "Review the values, then save to apply.");
+  };
+
+  const quitHexCoach = async () => {
+    try {
+      await quitApp();
+    } catch (error) {
+      pushToast("error", "Could not quit HexCoach", errorMessage(error));
+    }
   };
 
   const applyHotkeyChanges = async () => {
@@ -468,6 +477,25 @@ export default function SettingsPage() {
               </div>
               <span className="chip">432 × 590</span>
             </div>
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-line bg-abyss/30 px-3 py-2">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-slate-200">Close to tray</p>
+                <p className="mt-0.5 text-[10px] leading-relaxed text-fog">
+                  The title bar X hides HexCoach next to the clock. Reopen it from the tray icon or press{" "}
+                  {draft.hotkeys.toggleVisibility}.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="btn btn-ghost shrink-0"
+                onClick={() => void quitHexCoach()}
+                disabled={!isDesktop()}
+                title="Stop HexCoach completely (the X only hides it to the tray)"
+              >
+                <Power className="h-3.5 w-3.5" />
+                Quit
+              </button>
+            </div>
           </Panel>
 
           <Panel icon={Sparkles} title="Behaviour" subtitle="Demo data and rune automation" bodyClassName="space-y-2.5 p-3">
@@ -656,7 +684,7 @@ export default function SettingsPage() {
           <Panel icon={Info} title="About HexCoach" subtitle="Tauri v2 · Rust · React" bodyClassName="space-y-2 p-3">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-fog">Version</span>
-              <span className="font-mono text-slate-200">{appInfo?.version ?? "0.1.1"}</span>
+              <span className="font-mono text-slate-200">{appInfo?.version ?? "0.1.2"}</span>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-fog">Build</span>

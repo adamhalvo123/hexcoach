@@ -60,6 +60,7 @@ Every colour is a CSS token block in `src/styles.css` (`[data-theme="dark"]`, `[
 - **Local-first data** — Data Dragon and CommunityDragon files plus images are cached per patch in the app cache directory.
 - **Performance HUD** — RAM, local API latency, patch, cache size and cached image progress.
 - **Global hotkeys** — registered by Rust through the `global-shortcut` plugin, so they work even while League owns keyboard focus: `Alt+X` compact / full overlay, `Alt+Z` dashboard click-through, `Alt+H` show / hide HexCoach, `Alt+C` in-game HUD interaction. All four are rebindable in Settings and duplicates are rejected before saving.
+- **Close to tray** — the title bar X hides HexCoach into the Windows notification area instead of quitting; live polling, hotkeys and the in-game HUD keep running in the background. Left-click or double-click the tray icon to restore the dashboard, use the tray menu (**Otvoriť HexCoach** / **Ukončiť aplikáciu**) to restore or fully exit, or press **Quit** in Settings.
 - **Themes** — Dark, Light and OLED palettes applied live through CSS tokens, including the separate in-game HUD window.
 - **Server-side Riot API proxy** — Account-v1, League-v4, Match-v5 and Summoner-v4 calls are made by Rust. The key is read from local Settings or the build-time `RIOT_API_KEY` and only ever attached as `X-Riot-Token` on the backend.
 
@@ -255,6 +256,7 @@ Settings and the Data Dragon cache live in your app config/cache directories. No
 - Appearance switches between **Dark**, **Light** and **OLED** instantly; the in-game HUD window follows the same theme.
 - Global hotkeys use Tauri accelerator syntax, e.g. `CommandOrControl+Shift+C`. Defaults are `Alt+X` (compact), `Alt+Z` (dashboard click-through), `Alt+H` (show / hide) and `Alt+C` (in-game HUD interaction), and they work globally even while League has focus.
 - Saving hotkeys re-registers them immediately; Windows conflicts (an accelerator already owned by another app) are reported per binding in Settings instead of failing silently.
+- Closing the window with the title bar X hides HexCoach to the system tray. The tray icon restores it; the tray menu and the **Quit** button in Settings stop the process completely.
 - The Riot key field is write-only: it is blank on load, and blank means "keep the saved key".
 
 ## License
