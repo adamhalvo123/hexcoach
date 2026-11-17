@@ -18,6 +18,8 @@ import type {
   ChampSelect,
   ChampionBuild,
   DdragonStatus,
+  HotkeyStatus,
+  Hotkeys,
   HudOverlayState,
   LiveGame,
   LcuStatus,
@@ -112,6 +114,35 @@ export async function getSettings(): Promise<Settings> {
 export async function saveSettings(settings: Settings): Promise<Settings> {
   if (isDesktop()) return invoke<Settings>("save_settings", { settings });
   return saveBrowserSettings(settings);
+}
+
+function browserHotkeyStatus(hotkeys: Hotkeys): HotkeyStatus {
+  const bindings: Array<[string, string, string]> = [
+    ["toggle-compact", "Compact / full overlay", hotkeys.toggleCompact],
+    ["toggle-click-through", "Dashboard click-through", hotkeys.toggleClickThrough],
+    ["toggle-visibility", "Show / hide HexCoach", hotkeys.toggleVisibility],
+    ["toggle-hud", "In-game HUD interaction", hotkeys.toggleHud],
+  ];
+  return {
+    bindings: bindings.map(([action, label, accelerator]) => ({
+      action,
+      label,
+      accelerator,
+      registered: Boolean(accelerator.trim()),
+      error: accelerator.trim() ? null : "Shortcut is empty.",
+    })),
+  };
+}
+
+export async function registerHotkeys(hotkeys: Hotkeys): Promise<HotkeyStatus> {
+  if (isDesktop()) return invoke<HotkeyStatus>("register_hotkeys", { hotkeys });
+  return browserHotkeyStatus(hotkeys);
+}
+
+export async function getHotkeyStatus(): Promise<HotkeyStatus> {
+  if (isDesktop()) return invoke<HotkeyStatus>("get_hotkey_status");
+  const settings = getBrowserSettings();
+  return browserHotkeyStatus(settings.hotkeys);
 }
 
 export async function getRecommendation(

@@ -18,11 +18,20 @@ pub struct Hotkeys {
 impl Default for Hotkeys {
     fn default() -> Self {
         Self {
-            toggle_compact: "CommandOrControl+Shift+C".into(),
-            toggle_click_through: "CommandOrControl+Shift+X".into(),
-            toggle_visibility: "CommandOrControl+Shift+H".into(),
-            toggle_hud: "Alt+X".into(),
+            // Work even while the League window owns keyboard focus.
+            toggle_compact: "Alt+X".into(),
+            toggle_click_through: "Alt+Z".into(),
+            toggle_visibility: "Alt+H".into(),
+            toggle_hud: "Alt+C".into(),
         }
+    }
+}
+
+pub fn normalize_theme(value: &str) -> String {
+    match value.trim().to_ascii_lowercase().as_str() {
+        "light" => "light".into(),
+        "oled" | "oled-black" | "black" => "oled".into(),
+        _ => "dark".into(),
     }
 }
 
@@ -39,6 +48,7 @@ pub struct Settings {
     pub performance_hud: bool,
     pub auto_import: bool,
     pub hud_overlay: bool,
+    pub theme: String,
     pub hotkeys: Hotkeys,
 }
 
@@ -54,6 +64,7 @@ impl Default for Settings {
             performance_hud: true,
             auto_import: false,
             hud_overlay: true,
+            theme: "dark".into(),
             hotkeys: Hotkeys::default(),
         }
     }
@@ -75,6 +86,7 @@ pub struct SettingsView {
     pub performance_hud: bool,
     pub auto_import: bool,
     pub hud_overlay: bool,
+    pub theme: String,
     pub hotkeys: Hotkeys,
 }
 
@@ -136,6 +148,7 @@ impl SettingsState {
             performance_hud: settings.performance_hud,
             auto_import: settings.auto_import,
             hud_overlay: settings.hud_overlay,
+            theme: settings.theme,
             hotkeys: settings.hotkeys,
         }
     }
@@ -180,6 +193,7 @@ pub async fn save_settings(
         settings.riot_api_key = current.riot_api_key;
     }
     settings.overlay_opacity = settings.overlay_opacity.clamp(0.55, 1.0);
+    settings.theme = crate::settings::normalize_theme(&settings.theme);
     crate::shortcuts::validate(&settings)?;
     state.save(&settings)?;
 
@@ -191,8 +205,16 @@ pub async fn save_settings(
             let _ = window.hide();
         }
     }
-    if let Err(error) = crate::shortcuts::register(&app) {
-        eprintln!("HexCoach: global hotkeys were not re-registered: {error}");
+    let status = crate::shortcuts::register(&app);
+    if !status.all_registered() {
+        for binding in status.bindings.iter().filter(|binding| !binding.registered) {
+            eprintln!(
+                "HexCoach: {} hotkey '{}' was not registered: {}",
+                binding.label,
+                binding.accelerator,
+                binding.error.as_deref().unwrap_or("unknown error")
+            );
+        }
     }
     Ok(state.view())
 }

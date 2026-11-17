@@ -123,7 +123,7 @@ export default function AramMayhemPage() {
             <h1 className="font-display text-xl font-bold uppercase tracking-[0.08em] text-slate-100">
               ARAM / Mayhem
             </h1>
-            <span className="chip border-paper/40 bg-paper/[0.06] text-paper">
+            <span className="chip border-hextech-500/40 bg-hextech-500/10 text-hextech-300">
               <Flame className="h-2.5 w-2.5" />
               HOWLING ABYSS
             </span>
@@ -174,7 +174,7 @@ export default function AramMayhemPage() {
                 <SmartImage
                   sources={championIcon(bootstrap, myChampion)}
                   alt={myChampion.name}
-                  className="h-12 w-12 shrink-0 border border-paper/30"
+                  className="h-12 w-12 shrink-0 border border-line-strong"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-slate-100">{myChampion.name}</p>
@@ -227,7 +227,7 @@ export default function AramMayhemPage() {
             {build ? (
               <>
                 <BuildGroups bootstrap={bootstrap} items={build} />
-                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-paper/10 pt-2.5 text-[10px] text-fog">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-2.5 text-[10px] text-fog">
                   <span className="flex items-center gap-1.5">
                     <Target className="h-3 w-3 text-hextech-400" />
                     Guardian starter is applied automatically for ARAM.
@@ -252,7 +252,7 @@ export default function AramMayhemPage() {
               <span
                 className={cn(
                   "chip",
-                  mayhemActive ? "border-gold-500/50 text-gold-300" : "border-paper/20 text-fog",
+                  mayhemActive ? "border-gold-500/50 text-gold-300" : "border-line-strong text-fog",
                 )}
               >
                 {mayhemActive ? "ACTIVE GAME" : "STANDBY"}
@@ -275,7 +275,7 @@ export default function AramMayhemPage() {
                       {activeAugments.map((augment) => (
                         <div
                           key={augment.id}
-                          className="flex items-center gap-2 border border-paper/25 bg-paper/[0.04] p-1.5"
+                          className="flex items-center gap-2 border border-line-strong bg-slate-500/[0.06] p-1.5"
                         >
                           <SmartImage
                             sources={augmentIcon(bootstrap, augment)}
@@ -309,8 +309,8 @@ export default function AramMayhemPage() {
                             className="h-8 w-8 shrink-0 border border-line"
                           />
                         ) : (
-                          <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-paper/25 bg-abyss">
-                            <span className="h-2 w-2 rotate-45 border border-paper/70" />
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-line-strong bg-abyss">
+                            <span className="h-2 w-2 rotate-45 border border-hextech-400/70" />
                           </span>
                         )}
                         <div className="min-w-0 flex-1">
@@ -330,7 +330,7 @@ export default function AramMayhemPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 border-t border-paper/10 pt-2.5">
+                <div className="space-y-2 border-t border-line pt-2.5">
                   {tiers.map((entries) => {
                     const tier = entries[0]?.tier ?? "C";
                     return (
@@ -406,7 +406,7 @@ export default function AramMayhemPage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-3 border-t border-paper/10 pt-2 text-[9px] leading-relaxed text-fog/70">
+            <p className="mt-3 border-t border-line pt-2 text-[9px] leading-relaxed text-fog/70">
               Balance values are an offline curated snapshot, not Riot match data. Mayhem tiers are drafting
               heuristics; verify the current patch in the client.
             </p>

@@ -77,10 +77,10 @@ function EnemyFlashRow({
           <SmartImage
             sources={championIcon(bootstrap, champion)}
             alt={player.champion}
-            className="h-7 w-7 border border-paper/25"
+            className="h-7 w-7 border border-line-strong"
           />
         ) : (
-          <span className="flex h-7 w-7 items-center justify-center border border-paper/25 bg-abyss text-[9px] text-mist">
+          <span className="flex h-7 w-7 items-center justify-center border border-line-strong bg-abyss text-[9px] text-mist">
             {player.champion.slice(0, 2).toUpperCase()}
           </span>
         )}
@@ -192,8 +192,8 @@ export default function InGameHud() {
 
   if (!bootstrap) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-transparent p-3">
-        <div className="border border-paper/30 bg-void/95 px-4 py-3 font-mono text-[11px] uppercase tracking-[0.16em] text-paper">
+      <div className="flex h-screen w-screen items-center justify-center bg-transparent p-3" data-theme="dark">
+        <div className="border border-line bg-abyss/95 px-4 py-3 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-100">
           Loading live game…
         </div>
       </div>
@@ -202,10 +202,10 @@ export default function InGameHud() {
 
   if (!live.active) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-transparent p-3">
-        <div className="border border-paper/30 bg-void/95 px-4 py-3 text-center">
+      <div className="flex h-screen w-screen items-center justify-center bg-transparent p-3" data-theme="dark">
+        <div className="border border-line bg-abyss/95 px-4 py-3 text-center">
           <p className="hud-label">HexCoach HUD</p>
-          <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.16em] text-paper">Standby</p>
+          <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-100">Standby</p>
           <p className="mt-1 text-[10px] text-fog">Starts automatically with a live game.</p>
         </div>
       </div>
@@ -213,15 +213,15 @@ export default function InGameHud() {
   }
 
   return (
-    <div className="pointer-events-none flex h-screen w-screen items-start justify-end overflow-hidden bg-transparent p-2">
+    <div className="pointer-events-none flex h-screen w-screen items-start justify-end overflow-hidden bg-transparent p-2" data-theme="dark">
       <div className="pointer-events-auto w-full max-w-[440px] space-y-1.5">
-        <header className="flex items-center justify-between gap-2 border border-paper/40 bg-void/95 px-2 py-1.5">
+        <header className="flex items-center justify-between gap-2 border border-line bg-abyss/95 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center border border-paper/40 bg-paper text-void">
+            <span className="flex h-5 w-5 items-center justify-center border border-hextech-500/60 bg-hextech-500/15 text-hextech-300">
               <Crosshair className="h-3 w-3" />
             </span>
-            <span className="font-display text-[10px] font-bold uppercase tracking-[0.18em] text-paper">HexCoach</span>
-            <span className="chip border-paper/25 text-[8px] text-mist">
+            <span className="font-display text-[10px] font-bold uppercase tracking-[0.18em] text-slate-100">HexCoach</span>
+            <span className="chip border-line-strong text-[8px] text-mist">
               {isAram ? (mayhem ? "MAYHEM" : "ARAM") : gameModeLabel(live.gameMode)}
             </span>
           </div>
@@ -236,19 +236,19 @@ export default function InGameHud() {
               className={cn(
                 "flex h-5 items-center gap-1 border px-1.5 text-[8px] font-semibold uppercase tracking-[0.12em] transition-colors",
                 clickThrough
-                  ? "border-paper/25 text-fog hover:border-paper/50 hover:text-paper"
+                  ? "border-line-strong text-fog hover:border-line-strong hover:text-slate-200"
                   : "border-gold-500/60 bg-gold-500/10 text-gold-300",
               )}
-              title="Toggle click-through. The Alt+X global hotkey does the same from inside the game."
+              title={`Toggle HUD interaction (${settings.hotkeys.toggleHud}).`}
             >
               {clickThrough ? <Lock className="h-2.5 w-2.5" /> : <Unlock className="h-2.5 w-2.5" />}
-              {clickThrough ? "Alt+X" : "Interactive"}
+              {clickThrough ? settings.hotkeys.toggleHud : "Interactive"}
             </button>
           </div>
         </header>
 
         <div className="grid grid-cols-[1fr_1fr] gap-1.5">
-          <section className="border border-paper/30 bg-void/90 p-1.5">
+          <section className="border border-line bg-abyss/90 p-1.5">
             <div className="mb-1 flex items-center justify-between">
               <p className="hud-label flex items-center gap-1">
                 <Skull className="h-2.5 w-2.5 text-enemy-400" />
@@ -266,7 +266,7 @@ export default function InGameHud() {
                         <SmartImage
                           sources={championIcon(bootstrap, champion)}
                           alt={player.champion}
-                          className="h-6 w-6 border border-paper/25 grayscale"
+                          className="h-6 w-6 border border-line-strong grayscale"
                         />
                       ) : null}
                       <span className="min-w-0 flex-1 truncate text-[10px] text-mist">{player.champion}</span>
@@ -282,7 +282,7 @@ export default function InGameHud() {
             )}
           </section>
 
-          <section className="border border-paper/30 bg-void/90 p-1.5">
+          <section className="border border-line bg-abyss/90 p-1.5">
             <div className="mb-1 flex items-center justify-between">
               <p className="hud-label flex items-center gap-1">
                 <Zap className="h-2.5 w-2.5 text-gold-400" />
@@ -296,7 +296,7 @@ export default function InGameHud() {
                   "border px-1 py-0.5 font-mono text-[8px] uppercase tracking-[0.1em] transition-colors",
                   cosmic
                     ? "border-gold-500/60 bg-gold-500/10 text-gold-300"
-                    : "border-paper/20 text-fog hover:border-paper/40 hover:text-paper",
+                    : "border-line-strong text-fog hover:border-line-strong hover:text-slate-200",
                 )}
               >
                 CI {cosmic ? "255" : "300"}
@@ -322,7 +322,7 @@ export default function InGameHud() {
           </section>
         </div>
 
-        <section className="border border-paper/30 bg-void/90 p-1.5">
+        <section className="border border-line bg-abyss/90 p-1.5">
           <div className="mb-1 flex items-center justify-between">
             <p className="hud-label flex items-center gap-1">
               <Swords className="h-2.5 w-2.5 text-hextech-400" />
@@ -335,7 +335,7 @@ export default function InGameHud() {
               <SmartImage
                 sources={itemRefIcon(bootstrap, nextItem.icon)}
                 alt={nextItem.name}
-                className="h-8 w-8 border border-paper/30"
+                className="h-8 w-8 border border-line-strong"
               />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[11px] font-semibold text-slate-100">{nextItem.name}</p>
@@ -347,7 +347,7 @@ export default function InGameHud() {
                 </p>
               </div>
               <div className="w-14">
-                <div className="h-1 w-full bg-paper/15">
+                <div className="h-1 w-full bg-slate-700">
                   <div
                     className={cn("h-full", live.myGold >= nextItem.price ? "bg-emerald-400" : "bg-gold-400")}
                     style={{ width: `${Math.min(100, (live.myGold / Math.max(1, nextItem.price)) * 100)}%` }}
@@ -361,9 +361,9 @@ export default function InGameHud() {
         </section>
 
         <div className="grid grid-cols-[1fr_1fr] gap-1.5">
-          <section className="border border-paper/30 bg-void/90 p-1.5">
+          <section className="border border-line bg-abyss/90 p-1.5">
             <p className="hud-label mb-1 flex items-center gap-1">
-              <Crosshair className="h-2.5 w-2.5 text-paper" />
+              <Crosshair className="h-2.5 w-2.5 text-hextech-300" />
               Skill max
             </p>
             <div className="flex items-center gap-1">
@@ -373,8 +373,8 @@ export default function InGameHud() {
                   className={cn(
                     "flex h-6 w-6 items-center justify-center border font-display text-[11px] font-bold",
                     index === 0
-                      ? "border-paper/70 bg-paper text-void"
-                      : "border-paper/30 bg-abyss text-mist",
+                      ? "border-hextech-500 bg-hextech-500 text-white"
+                      : "border-line-strong bg-abyss text-mist",
                   )}
                 >
                   {skill}
@@ -384,7 +384,7 @@ export default function InGameHud() {
             </div>
           </section>
 
-          <section className="border border-paper/30 bg-void/90 p-1.5">
+          <section className="border border-line bg-abyss/90 p-1.5">
             <p className="hud-label mb-1 flex items-center gap-1">
               <Sparkles className="h-2.5 w-2.5 text-gold-400" />
               Augments
@@ -396,7 +396,7 @@ export default function InGameHud() {
                     <SmartImage
                       sources={augmentIcon(bootstrap, augment)}
                       alt={augment.name}
-                      className="h-6 w-6 border border-paper/30"
+                      className="h-6 w-6 border border-line-strong"
                     />
                     <TierBadge tier={augment.tier} size="sm" />
                   </div>
@@ -410,10 +410,12 @@ export default function InGameHud() {
           </section>
         </div>
 
-        <footer className="flex items-center justify-between border border-paper/20 bg-void/80 px-1.5 py-1 font-mono text-[8px] uppercase tracking-[0.12em] text-fog/80">
+        <footer className="flex items-center justify-between border border-line bg-abyss/80 px-1.5 py-1 font-mono text-[8px] uppercase tracking-[0.12em] text-fog/80">
           <span className="flex items-center gap-1">
             <MousePointerClick className="h-2.5 w-2.5" />
-            {clickThrough ? "Click-through · Alt+X to interact" : "Interactive · Alt+X to pass through"}
+            {clickThrough
+              ? `Click-through · ${settings.hotkeys.toggleHud} to interact`
+              : `Interactive · ${settings.hotkeys.toggleHud} to pass through`}
           </span>
           <span className="flex items-center gap-1">
             <Flame className="h-2.5 w-2.5" />

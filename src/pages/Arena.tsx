@@ -17,10 +17,10 @@ import { ChampionPicker } from "@/components/pickers";
 import { EmptyState, Panel, SmartImage, TierBadge } from "@/components/shared";
 
 const RARITY_TONE: Record<string, string> = {
-  Silver: "border-paper/25 text-mist",
+  Silver: "border-line-strong text-mist",
   Gold: "border-gold-500/50 text-gold-300",
-  Prismatic: "border-paper/60 bg-paper/[0.08] text-paper",
-  Special: "border-paper/40 text-paper",
+  Prismatic: "border-arcane-500/50 bg-arcane-500/10 text-slate-100",
+  Special: "border-line-strong text-slate-100",
 };
 
 function tagTone(tag: string): string {
@@ -34,9 +34,9 @@ function tagTone(tag: string): string {
       return "border-emerald-600/40 text-emerald-300";
     case "Crit":
     case "Mobility":
-      return "border-paper/40 text-paper";
+      return "border-line-strong text-slate-100";
     default:
-      return "border-paper/20 text-mist";
+      return "border-line-strong text-mist";
   }
 }
 
@@ -46,7 +46,7 @@ function AugmentCard({ augment, matchScore }: { augment: ArenaAugment; matchScor
 
   return (
     <article
-      className="group relative flex h-full flex-col border border-line bg-panel-2 p-2.5 transition-colors hover:border-paper/40 hover:bg-panel-3"
+      className="group relative flex h-full flex-col border border-line bg-panel-2 p-2.5 transition-colors hover:border-hextech-500/40 hover:bg-panel-3"
       title={augment.desc}
     >
       <div className="flex items-start gap-2.5">
@@ -58,11 +58,11 @@ function AugmentCard({ augment, matchScore }: { augment: ArenaAugment; matchScor
           />
         ) : (
           <div
-            className="flex h-10 w-10 shrink-0 items-center justify-center border border-paper/25 bg-abyss"
+            className="flex h-10 w-10 shrink-0 items-center justify-center border border-line-strong bg-abyss"
             title="Curated offline entry"
             aria-hidden
           >
-            <span className="h-2.5 w-2.5 rotate-45 border border-paper/70" />
+            <span className="h-2.5 w-2.5 rotate-45 border border-hextech-400/70" />
           </div>
         )}
         <div className="min-w-0 flex-1">
@@ -82,7 +82,7 @@ function AugmentCard({ augment, matchScore }: { augment: ArenaAugment; matchScor
           </span>
         </div>
         <div className="shrink-0 text-right">
-          <p className="font-display text-base font-bold leading-none text-paper">{matchScore ?? augment.score}</p>
+          <p className="font-display text-base font-bold leading-none text-slate-100">{matchScore ?? augment.score}</p>
           <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.14em] text-fog">score</p>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default function ArenaPage() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="font-display text-xl font-bold uppercase tracking-[0.08em] text-slate-100">Arena Lab</h1>
-            <span className="chip border-paper/40 bg-paper/[0.06] text-paper">
+            <span className="chip border-line-strong bg-hextech-500/10 text-slate-100">
               <Sparkles className="h-2.5 w-2.5" />
               CHERRY
             </span>
@@ -170,8 +170,8 @@ export default function ArenaPage() {
       </div>
 
       {curated ? (
-        <div className="flex flex-wrap items-center gap-2 border border-paper/20 bg-paper/[0.03] px-3 py-2 text-[10px] leading-relaxed text-mist">
-          <span className="h-1.5 w-1.5 shrink-0 bg-paper" />
+        <div className="flex flex-wrap items-center gap-2 border border-line-strong bg-slate-500/[0.06] px-3 py-2 text-[10px] leading-relaxed text-mist">
+          <span className="h-1.5 w-1.5 shrink-0 bg-hextech-400" />
           CommunityDragon is unreachable, so HexCoach loaded a bundled {bootstrap.arena.length}-augment library with
           curated tiers and summaries. Effects and icons refresh automatically the next time the feed is available.
         </div>
@@ -186,12 +186,12 @@ export default function ArenaPage() {
         <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
           {picks.map((pick, index) => (
             <div key={pick.id} className="relative">
-              <span className="absolute -left-1 -top-1 z-10 flex h-5 min-w-5 items-center justify-center border border-ink bg-paper px-1 font-mono text-[9px] font-bold text-ink">
+              <span className="absolute -left-1 -top-1 z-10 flex h-5 min-w-5 items-center justify-center border border-hextech-500 bg-hextech-500 px-1 font-mono text-[9px] font-bold text-white">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <div className="border border-paper/15 bg-paper/[0.02] p-1.5">
+              <div className="border border-line bg-slate-500/[0.04] p-1.5">
                 <AugmentCard augment={pick} matchScore={pick.matchScore} />
-                <p className="mt-1 border-t border-paper/10 px-1 pt-1 text-[9px] leading-relaxed text-fog">
+                <p className="mt-1 border-t border-line px-1 pt-1 text-[9px] leading-relaxed text-fog">
                   {pick.reason}
                 </p>
               </div>
@@ -236,8 +236,8 @@ export default function ArenaPage() {
                   className={cn(
                     "flex h-6 min-w-[26px] items-center justify-center px-1.5 font-mono text-[10px] font-bold transition-colors",
                     tier === value
-                      ? "bg-paper text-ink"
-                      : "text-fog hover:bg-paper/10 hover:text-paper",
+                      ? "bg-hextech-500 text-white"
+                      : "text-fog hover:bg-slate-500/15 hover:text-slate-100",
                   )}
                 >
                   {value}
@@ -261,7 +261,7 @@ export default function ArenaPage() {
             {query || tier !== "ALL" || rarity !== "ALL" ? (
               <button
                 type="button"
-                className="font-mono text-[10px] uppercase tracking-[0.12em] text-fog underline-offset-2 hover:text-paper hover:underline"
+                className="font-mono text-[10px] uppercase tracking-[0.12em] text-fog underline-offset-2 hover:text-slate-100 hover:underline"
                 onClick={() => {
                   setQuery("");
                   setTier("ALL");
@@ -301,13 +301,13 @@ export default function ArenaPage() {
               icon={Activity}
               title="Your active augments"
               subtitle="Detected from the live Arena game"
-              accent="bg-paper/40"
+              accent="bg-hextech-500/50"
               bodyClassName="space-y-1.5 p-3"
             >
               {active.map((augment) => (
                 <div
                   key={augment.id}
-                  className="flex items-center gap-2 border border-paper/25 bg-paper/[0.04] p-1.5"
+                  className="flex items-center gap-2 border border-line-strong bg-slate-500/[0.06] p-1.5"
                 >
                   <SmartImage
                     sources={augmentIcon(bootstrap, augment)}
@@ -335,7 +335,7 @@ export default function ArenaPage() {
                 <SmartImage
                   sources={championIcon(bootstrap, myChampion)}
                   alt={myChampion.name}
-                  className="h-11 w-11 border border-paper/30"
+                  className="h-11 w-11 border border-line-strong"
                 />
                 <div className="min-w-0">
                   <p className="truncate text-xs font-semibold text-slate-100">{myChampion.name}</p>
@@ -355,9 +355,9 @@ export default function ArenaPage() {
                     </span>
                     <span className="font-mono text-fog">{count} picks</span>
                   </div>
-                  <div className="mt-1 h-1 overflow-hidden bg-paper/10">
+                  <div className="mt-1 h-1 overflow-hidden bg-slate-700/60">
                     <div
-                      className="h-full bg-paper"
+                      className="h-full bg-hextech-500"
                       style={{ width: `${Math.min(100, (count / Math.max(1, picks.length)) * 100)}%` }}
                     />
                   </div>
@@ -366,7 +366,7 @@ export default function ArenaPage() {
             </div>
 
             <div className="space-y-1.5 border border-line bg-abyss p-2.5 text-[10px] leading-relaxed text-fog">
-              <p className="flex items-center gap-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-paper">
+              <p className="flex items-center gap-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-100">
                 <Sparkles className="h-3 w-3" />
                 How the score works
               </p>

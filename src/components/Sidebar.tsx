@@ -31,9 +31,9 @@ export default function Sidebar() {
   const { page, setPage, live, champSelect, ddragon, bootstrap, refreshData } = useApp();
 
   return (
-    <aside className="hidden w-[188px] shrink-0 flex-col border-r border-ink bg-paper text-ink md:flex">
+    <aside className="hidden w-[188px] shrink-0 flex-col border-r border-line bg-chrome text-chrome-ink md:flex">
       <div className="min-h-0 flex-1 overflow-y-auto px-2.5 py-3">
-        <p className="px-2.5 pb-2 font-mono text-[9px] font-semibold uppercase tracking-[0.24em] text-ink/50">Workspace</p>
+        <p className="px-2.5 pb-2 font-mono text-[9px] font-semibold uppercase tracking-[0.24em] text-chrome-ink/45">Workspace</p>
         <nav className="space-y-1">
           {NAV.map((item) => {
             const Icon = item.icon;
@@ -48,28 +48,28 @@ export default function Sidebar() {
                 <Icon
                   className={cn(
                     "h-4 w-4 shrink-0 transition-colors",
-                    active ? "text-paper" : "text-ink/55 group-hover:text-ink",
+                    active ? "text-hextech-300" : "text-chrome-ink/50 group-hover:text-chrome-ink",
                   )}
                   strokeWidth={1.9}
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate">{item.label}</span>
-                  <span className="block truncate text-[10px] font-normal normal-case tracking-normal text-ink/45">
+                  <span className="block truncate text-[10px] font-normal normal-case tracking-normal text-chrome-ink/40">
                     {item.hint}
                   </span>
                 </span>
                 {item.id === "live" && live.active ? (
-                  <span className="h-1.5 w-1.5 shrink-0 animate-pulse-soft rounded-full bg-emerald-600" />
+                  <span className="h-1.5 w-1.5 shrink-0 animate-pulse-soft rounded-full bg-emerald-500" />
                 ) : null}
                 {item.id === "draft" && champSelect.active ? (
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold-600" />
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
                 ) : null}
               </button>
             );
           })}
         </nav>
 
-        <div className="my-3 h-px bg-ink/15" />
+        <div className="my-3 h-px bg-chrome-ink/10" />
 
         <button
           type="button"
@@ -79,29 +79,29 @@ export default function Sidebar() {
           <Settings2
             className={cn(
               "h-4 w-4 shrink-0",
-              page === "settings" ? "text-paper" : "text-ink/55 group-hover:text-ink",
+              page === "settings" ? "text-hextech-300" : "text-chrome-ink/50 group-hover:text-chrome-ink",
             )}
             strokeWidth={1.9}
           />
           <span className="min-w-0 flex-1">
             <span className="block">Settings</span>
-            <span className="block text-[10px] font-normal normal-case tracking-normal text-ink/45">
+            <span className="block text-[10px] font-normal normal-case tracking-normal text-chrome-ink/40">
               Overlay & account
             </span>
           </span>
         </button>
       </div>
 
-      <div className="shrink-0 space-y-2 border-t border-ink/20 p-2.5">
-        <div className="border border-ink/25 bg-ink/[0.035] p-2.5">
+      <div className="shrink-0 space-y-2 border-t border-line p-2.5">
+        <div className="border border-line bg-panel/60 p-2.5">
           <div className="flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-ink/70">
+            <span className="flex items-center gap-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-chrome-ink/60">
               <Database className="h-3 w-3" />
               Data
             </span>
             <button
               type="button"
-              className="icon-btn h-6 w-6 text-ink/60 hover:bg-ink hover:text-paper"
+              className="icon-btn h-6 w-6"
               onClick={() => void refreshData()}
               disabled={ddragon.state === "loading"}
               title="Refresh Data Dragon"
@@ -111,12 +111,12 @@ export default function Sidebar() {
               />
             </button>
           </div>
-          <p className="mt-1.5 font-mono text-[10px] tabular-nums text-ink">
+          <p className="mt-1.5 font-mono text-[10px] tabular-nums text-chrome-ink">
             {bootstrap ? bootstrap.version : ddragon.state === "error" ? "Offline cache" : "Loading…"}
           </p>
-          <div className="mt-1.5 h-1 overflow-hidden bg-ink/15">
+          <div className="mt-1.5 h-1 overflow-hidden bg-chrome-ink/10">
             <div
-              className="h-full bg-ink transition-all duration-500"
+              className="h-full bg-hextech-500 transition-all duration-500"
               style={{
                 width: `${
                   ddragon.totalImages
@@ -128,17 +128,17 @@ export default function Sidebar() {
               }}
             />
           </div>
-          <p className="mt-1 text-[9px] text-ink/50">
+          <p className="mt-1 text-[9px] text-chrome-ink/45">
             {ddragon.totalImages
               ? `${ddragon.cachedImages}/${ddragon.totalImages} images cached`
               : "Static assets are local-cached"}
           </p>
         </div>
-        <p className="px-1 text-[9px] leading-relaxed text-ink/45">
+        <p className="px-1 text-[9px] leading-relaxed text-chrome-ink/40">
           EST. WR values are offline heuristics, not Riot match data.
         </p>
-        <div className="barcode w-full text-ink" />
-        <p className="px-1 font-mono text-[8px] uppercase tracking-[0.18em] text-ink/40">
+        <div className="barcode w-full text-chrome-ink/50" />
+        <p className="px-1 font-mono text-[8px] uppercase tracking-[0.18em] text-chrome-ink/35">
           LOT 16.22 · LOCAL ONLY
         </p>
       </div>

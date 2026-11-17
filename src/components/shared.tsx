@@ -75,7 +75,7 @@ export function Panel({
   return (
     <section className={cn("hud-panel", className)}>
       {accent ? <div className={cn("absolute inset-x-0 top-0 h-px", accent)} /> : null}
-      <header className="relative flex min-h-[42px] items-center justify-between gap-3 border-b border-white/[0.05] px-4 py-2.5">
+      <header className="relative flex min-h-[42px] items-center justify-between gap-3 border-b border-line px-4 py-2.5">
         <div className="flex min-w-0 items-center gap-2.5">
           {Icon ? <Icon className="h-4 w-4 shrink-0 text-hextech-400" strokeWidth={1.8} /> : null}
           <div className="min-w-0">
@@ -110,9 +110,9 @@ export function TierBadge({ tier, size = "md" }: { tier: string; size?: "sm" | "
 
 export function ScoreBar({ score, className }: { score: number; className?: string }) {
   return (
-    <div className={cn("h-1.5 w-full overflow-hidden bg-paper/10", className)}>
+    <div className={cn("h-1.5 w-full overflow-hidden bg-slate-700/60", className)}>
       <div
-        className="h-full bg-paper transition-all duration-500"
+        className="h-full bg-hextech-500 transition-all duration-500"
         style={{ width: `${clamp(score, 0, 100)}%` }}
       />
     </div>
@@ -157,12 +157,12 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 border border-dashed border-paper/20 bg-abyss px-6 py-9 text-center",
+        "flex flex-col items-center justify-center gap-3 border border-dashed border-line-strong bg-abyss px-6 py-9 text-center",
         className,
       )}
     >
-      <div className="flex h-11 w-11 items-center justify-center border border-paper/30 bg-paper/[0.04]">
-        <Icon className="h-5 w-5 text-paper" strokeWidth={1.7} />
+      <div className="flex h-11 w-11 items-center justify-center border border-hextech-500/40 bg-hextech-500/10">
+        <Icon className="h-5 w-5 text-hextech-300" strokeWidth={1.7} />
       </div>
       <div>
         <p className="font-display text-sm font-semibold text-slate-200">{title}</p>
@@ -192,7 +192,7 @@ export function ItemTile({
   return (
     <div
       className={cn(
-        "group flex min-w-0 items-center gap-2 border border-line bg-panel-2 p-1.5 transition-colors hover:border-paper/40 hover:bg-panel-3",
+        "group flex min-w-0 items-center gap-2 border border-line bg-panel-2 p-1.5 transition-colors hover:border-hextech-500/40 hover:bg-panel-3",
         !showText && "justify-center border-transparent bg-transparent p-0 hover:bg-transparent",
       )}
       title={`${item.name} — ${item.price}g\n${item.description}`}
@@ -200,7 +200,7 @@ export function ItemTile({
       <SmartImage
         sources={itemRefIcon(bootstrap, item.icon)}
         alt={item.name}
-        className={cn("shrink-0 rounded-md ring-1 ring-paper/20", box)}
+        className={cn("shrink-0 rounded-md ring-1 ring-line-strong", box)}
       />
       {showText ? (
         <div className="min-w-0">
@@ -230,7 +230,7 @@ export function RuneOrb({
     <SmartImage
       sources={runeRefIcon(bootstrap, icon)}
       alt={name}
-      className={cn("rounded-full bg-abyss", box, ring ? "ring-2 ring-paper/50" : "ring-1 ring-paper/20")}
+      className={cn("rounded-full bg-abyss", box, ring ? "ring-2 ring-hextech-400/60" : "ring-1 ring-line-strong")}
       imgClassName="object-contain p-0.5"
     />
   );
@@ -247,9 +247,9 @@ export function SkillOrderStrip({ plan, compact }: { plan: SkillPlan; compact?: 
             skill === "R"
               ? "border-gold-500/50 bg-gold-500/[0.08] text-gold-300"
               : skill === "Q"
-                ? "border-paper/50 bg-paper/[0.08] text-paper"
+                ? "border-hextech-500/60 bg-hextech-500/15 text-hextech-300"
                 : skill === "W"
-                  ? "border-paper/25 bg-paper/[0.03] text-mist"
+                  ? "border-line-strong bg-slate-500/[0.06] text-mist"
                   : "border-emerald-600/40 bg-emerald-600/[0.08] text-emerald-300",
             compact && "h-6 w-6 text-[10px]",
           )}
@@ -277,7 +277,7 @@ export function RuneSummary({ bootstrap, runes }: { bootstrap: Bootstrap; runes:
         {runes.primaryPerks.map((rune) => (
           <RuneOrb key={rune.id} bootstrap={bootstrap} icon={rune.icon} name={rune.name} size="sm" />
         ))}
-        <span className="mx-1 h-4 w-px bg-paper/15" />
+        <span className="mx-1 h-4 w-px bg-slate-600" />
         {runes.subPerks.map((rune) => (
           <RuneOrb key={rune.id} bootstrap={bootstrap} icon={rune.icon} name={rune.name} size="sm" />
         ))}

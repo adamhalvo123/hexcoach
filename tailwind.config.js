@@ -1,72 +1,38 @@
 /** @type {import('tailwindcss').Config} */
+
+// Every structural colour reads a CSS variable so the same utility classes work
+// in dark, light and OLED-black themes. Values are defined in styles.css.
+const token = (name) => `rgb(var(--c-${name}) / <alpha-value>)`;
+
+const ramp = (prefix, shades) =>
+  Object.fromEntries(shades.map((shade) => [shade, token(`${prefix}-${shade}`)]));
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        // Acid-label monochrome: warm black paper stock + ink.
-        void: "#0a0a08",
-        abyss: "#10100c",
-        panel: "#15150f",
-        "panel-2": "#1a1a13",
-        "panel-3": "#232218",
-        line: "#35332a",
-        paper: "#e9e2ce",
-        "paper-2": "#ded5bd",
-        ink: "#0c0c09",
-        hextech: {
-          50: "#fbf8ee",
-          100: "#f4efdf",
-          200: "#ebe4cf",
-          300: "#ddd3b8",
-          400: "#cbbf9f",
-          500: "#b3a681",
-          600: "#8f8262",
-          700: "#6d6248",
-          800: "#4a4334",
-          900: "#2c2820",
-        },
-        gold: {
-          300: "#efe3b8",
-          400: "#dccb8d",
-          500: "#c4ae63",
-          600: "#9d8944",
-          700: "#71622f",
-        },
-        enemy: {
-          400: "#ff7a5c",
-          500: "#e8502f",
-          600: "#c33a1e",
-          700: "#8f2913",
-        },
-        arcane: {
-          400: "#b7a8d8",
-          500: "#9c88c4",
-          600: "#7b679f",
-        },
-        mist: "#b8b19f",
-        fog: "#827b69",
-        // Warm neutral remap so existing slate utilities stay on-palette.
-        slate: {
-          50: "#faf8f2",
-          100: "#f0ece0",
-          200: "#e2dccb",
-          300: "#c9c2af",
-          400: "#a8a191",
-          500: "#8b8576",
-          600: "#6d6759",
-          700: "#524d41",
-          800: "#39352c",
-          900: "#23211b",
-          950: "#14130f",
-        },
-        emerald: {
-          300: "#c3ddc0",
-          400: "#9ec79b",
-          500: "#7bab78",
-          600: "#5d8a5b",
-          700: "#426442",
-        },
+        void: token("void"),
+        abyss: token("abyss"),
+        panel: token("panel"),
+        "panel-2": token("panel-2"),
+        "panel-3": token("panel-3"),
+        line: token("line"),
+        "line-strong": token("line-strong"),
+        chrome: token("chrome"),
+        "chrome-ink": token("chrome-ink"),
+        paper: token("paper"),
+        "paper-2": token("paper-2"),
+        ink: token("ink"),
+        mist: token("mist"),
+        fog: token("fog"),
+        hextech: ramp("hextech", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]),
+        gold: ramp("gold", [300, 400, 500, 600, 700]),
+        enemy: ramp("enemy", [400, 500, 600, 700]),
+        arcane: ramp("arcane", [400, 500, 600]),
+        emerald: ramp("emerald", [300, 400, 500, 600, 700]),
+        slate: ramp("slate", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]),
       },
       fontFamily: {
         sans: ["Bahnschrift", "Segoe UI Variable", "Segoe UI", "system-ui", "sans-serif"],
@@ -85,21 +51,22 @@ export default {
         full: "9999px",
       },
       boxShadow: {
-        panel: "0 30px 90px rgba(0, 0, 0, 0.65)",
-        glow: "none",
-        "glow-sm": "none",
-        "inner-line": "none",
-        enemy: "none",
+        panel: "0 24px 80px rgb(var(--c-shadow) / 0.55)",
+        glow: "0 0 24px rgb(var(--c-hextech-500) / 0.25)",
+        "glow-sm": "0 0 12px rgb(var(--c-hextech-500) / 0.2)",
+        "inner-line": "inset 0 1px 0 rgb(var(--c-paper) / 0.06)",
+        enemy: "0 0 18px rgb(var(--c-enemy-500) / 0.25)",
       },
       backgroundImage: {
         "hud-grid":
-          "linear-gradient(rgba(233,226,206,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(233,226,206,0.045) 1px, transparent 1px)",
-        "hex-glow": "none",
-        "gold-line": "linear-gradient(90deg, transparent, rgba(233,226,206,.6), transparent)",
+          "linear-gradient(rgb(var(--c-paper) / 0.045) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--c-paper) / 0.045) 1px, transparent 1px)",
+        "hex-glow": "radial-gradient(circle at 50% 0%, rgb(var(--c-hextech-500) / 0.18), transparent 65%)",
+        "gold-line":
+          "linear-gradient(90deg, transparent, rgb(var(--c-gold-500) / 0.6), transparent)",
         hazard:
-          "repeating-linear-gradient(-45deg, #e9e2ce 0 7px, #0a0a08 7px 14px)",
+          "repeating-linear-gradient(-45deg, rgb(var(--c-hextech-500)) 0 7px, rgb(var(--c-void)) 7px 14px)",
         "paper-grain":
-          "repeating-linear-gradient(0deg, rgba(233,226,206,0.022) 0 1px, transparent 1px 3px)",
+          "repeating-linear-gradient(0deg, rgb(var(--c-paper) / 0.022) 0 1px, transparent 1px 3px)",
       },
       keyframes: {
         shimmer: {

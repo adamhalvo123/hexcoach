@@ -17,7 +17,7 @@ export default function MobileNav() {
   const { page, setPage } = useApp();
 
   return (
-    <nav className="relative z-10 flex shrink-0 items-stretch overflow-x-auto border-b border-ink bg-paper md:hidden">
+    <nav className="relative z-10 flex shrink-0 items-stretch overflow-x-auto border-b border-line bg-chrome md:hidden">
       {ITEMS.map((item) => {
         const Icon = item.icon;
         const active = page === item.id;
@@ -28,7 +28,9 @@ export default function MobileNav() {
             onClick={() => setPage(item.id)}
             className={cn(
               "flex flex-1 shrink-0 items-center justify-center gap-1.5 px-3 py-2 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] transition-colors",
-              active ? "bg-ink text-paper" : "text-ink/60 hover:bg-ink/[0.07] hover:text-ink",
+              active
+                ? "bg-hextech-500/15 text-hextech-300"
+                : "text-chrome-ink/55 hover:bg-chrome-ink/[0.06] hover:text-chrome-ink",
             )}
           >
             <Icon className="h-3.5 w-3.5" strokeWidth={2} />

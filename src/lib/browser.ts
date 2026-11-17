@@ -1,6 +1,7 @@
 import metaJson from "@/data/meta.json";
 import { FALLBACK_ARAM_BALANCE } from "./aram";
 import { DEFAULT_SETTINGS } from "./defaults";
+import { normalizeTheme } from "./theme";
 import { normalizeRole, roleLabel } from "./format";
 import type {
   ArenaAugment,
@@ -717,6 +718,7 @@ export function getBrowserSettings(): Settings {
       riotApiKey: "",
       riotKeyConfigured: configured,
       riotKeySource: configured ? (parsed.riotKeySource ?? "local") : "none",
+      theme: normalizeTheme(parsed.theme ?? DEFAULT_SETTINGS.theme),
       hotkeys: { ...DEFAULT_SETTINGS.hotkeys, ...(parsed.hotkeys ?? {}) },
     };
   } catch {
@@ -733,6 +735,7 @@ export function saveBrowserSettings(settings: Settings): Settings {
     riotKeyConfigured: configured,
     riotKeySource: configured ? "local" : "none",
     overlayOpacity: Math.min(1, Math.max(0.55, settings.overlayOpacity)),
+    theme: normalizeTheme(settings.theme),
   };
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
   return next;

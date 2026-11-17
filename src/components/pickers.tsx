@@ -55,7 +55,7 @@ export function ChampionPicker({ compact }: { compact?: boolean }) {
         type="button"
         onClick={() => setOpen(true)}
         className={cn(
-          "group flex w-full items-center gap-2.5 rounded-lg border border-white/10 bg-abyss/60 p-2 text-left transition-colors hover:border-hextech-500/40 hover:bg-panel-2/70",
+          "group flex w-full items-center gap-2.5 rounded-lg border border-line-strong bg-abyss/60 p-2 text-left transition-colors hover:border-hextech-500/40 hover:bg-panel-2/70",
           compact && "p-1.5",
         )}
       >
@@ -68,7 +68,7 @@ export function ChampionPicker({ compact }: { compact?: boolean }) {
         ) : (
           <div
             className={cn(
-              "flex shrink-0 items-center justify-center rounded-md border border-dashed border-white/15 bg-panel-2 text-fog",
+              "flex shrink-0 items-center justify-center rounded-md border border-dashed border-line-strong bg-panel-2 text-fog",
               compact ? "h-9 w-9" : "h-11 w-11",
             )}
           >
@@ -95,7 +95,7 @@ export function ChampionPicker({ compact }: { compact?: boolean }) {
             className="flex max-h-[82vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-hextech-500/20 bg-void/95 shadow-panel"
             onMouseDown={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center gap-3 border-b border-white/[0.06] px-4 py-3">
+            <div className="flex items-center gap-3 border-b border-line px-4 py-3">
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fog" />
                 <input
@@ -111,7 +111,7 @@ export function ChampionPicker({ compact }: { compact?: boolean }) {
               </button>
             </div>
 
-            <div className="flex flex-wrap gap-1.5 border-b border-white/[0.05] px-4 py-2">
+            <div className="flex flex-wrap gap-1.5 border-b border-line px-4 py-2">
               {TAGS.map((value) => (
                 <button
                   key={value}
@@ -121,7 +121,7 @@ export function ChampionPicker({ compact }: { compact?: boolean }) {
                     "rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider transition-colors",
                     tag === value
                       ? "border-hextech-500/40 bg-hextech-500/15 text-hextech-200"
-                      : "border-white/10 bg-white/[0.02] text-fog hover:border-white/20 hover:text-slate-200",
+                      : "border-line-strong bg-slate-500/10 text-fog hover:border-line-strong hover:text-slate-200",
                   )}
                 >
                   {value === "ALL" ? "All" : value}
@@ -142,7 +142,7 @@ export function ChampionPicker({ compact }: { compact?: boolean }) {
                         "group relative overflow-hidden rounded-lg border p-1 text-left transition-all",
                         active
                           ? "border-hextech-500/60 bg-hextech-500/10 shadow-glow-sm"
-                          : "border-white/[0.05] bg-panel-2/40 hover:border-hextech-500/30 hover:bg-panel-3/60",
+                          : "border-line bg-panel-2/40 hover:border-hextech-500/30 hover:bg-panel-3/60",
                       )}
                     >
                       <div className="relative">
@@ -167,7 +167,7 @@ export function ChampionPicker({ compact }: { compact?: boolean }) {
               ) : null}
             </div>
 
-            <div className="flex items-center justify-between border-t border-white/[0.06] px-4 py-2 text-[10px] text-fog">
+            <div className="flex items-center justify-between border-t border-line px-4 py-2 text-[10px] text-fog">
               <span>{filtered.length} champions</span>
               <span>Data Dragon · current patch</span>
             </div>
@@ -182,7 +182,7 @@ export function RoleTabs({ compact }: { compact?: boolean }) {
   const { role, setRole } = useApp();
   const options: Role[] = [...ROLES, "NONE"];
   return (
-    <div className="flex flex-wrap items-center gap-1 rounded-lg border border-white/[0.06] bg-abyss/50 p-1">
+    <div className="flex flex-wrap items-center gap-1 rounded-lg border border-line bg-abyss/50 p-1">
       {options.map((value) => {
         const active = role === value;
         return (
@@ -194,7 +194,7 @@ export function RoleTabs({ compact }: { compact?: boolean }) {
               "rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors",
               active
                 ? "bg-hextech-500/15 text-hextech-200 shadow-inner-line"
-                : "text-fog hover:bg-white/[0.05] hover:text-slate-200",
+                : "text-fog hover:bg-slate-500/10 hover:text-slate-200",
             )}
             title={value === "NONE" ? "Auto-detect role" : roleLabel(value)}
           >

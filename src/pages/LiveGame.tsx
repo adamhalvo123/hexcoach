@@ -43,7 +43,7 @@ function PlayerRow({ bootstrap, player }: { bootstrap: Bootstrap; player: LivePl
         "flex items-center gap-2 rounded-md border px-1.5 py-1.5 transition-colors",
         player.isLocal
           ? "border-hextech-500/30 bg-hextech-500/[0.06]"
-          : "border-transparent hover:border-white/[0.06] hover:bg-white/[0.02]",
+          : "border-transparent hover:border-line hover:bg-slate-500/10",
       )}
     >
       <div className="relative shrink-0">
@@ -51,7 +51,7 @@ function PlayerRow({ bootstrap, player }: { bootstrap: Bootstrap; player: LivePl
           <SmartImage
             sources={championIcon(bootstrap, champion)}
             alt={player.champion}
-            className={cn("h-8 w-8 rounded ring-1", player.isLocal ? "ring-hextech-500/50" : "ring-white/10")}
+            className={cn("h-8 w-8 rounded ring-1", player.isLocal ? "ring-hextech-500/50" : "ring-line-strong")}
           />
         ) : (
           <div className="h-8 w-8 rounded bg-panel-3" />
@@ -96,10 +96,10 @@ function PlayerRow({ bootstrap, player }: { bootstrap: Bootstrap; player: LivePl
               key={index}
               sources={itemIcon(bootstrap, item)}
               alt={item.name}
-              className="h-4 w-4 ring-1 ring-white/10"
+              className="h-4 w-4 ring-1 ring-line-strong"
             />
           ) : (
-            <span key={index} className="h-4 w-4 border border-white/[0.04] bg-black/20" />
+            <span key={index} className="h-4 w-4 border border-line bg-black/20" />
           );
         })}
       </div>
@@ -153,7 +153,7 @@ function EventRow({ event }: { event: { name: string; time: number; killer: stri
   const isObjective = ["DragonKill", "BaronKill", "HeraldKill", "TurretKilled", "InhibKilled"].includes(event.name);
   const Icon = isKill ? Swords : isObjective ? Flame : Activity;
   return (
-    <div className="flex items-center gap-2 rounded-md border border-white/[0.04] bg-abyss/30 px-2 py-1.5">
+    <div className="flex items-center gap-2 rounded-md border border-line bg-abyss/30 px-2 py-1.5">
       <span className="w-9 shrink-0 font-mono text-[9px] text-fog">{formatGameTime(event.time)}</span>
       <Icon className={cn("h-3 w-3 shrink-0", isKill ? "text-enemy-400" : "text-gold-400")} />
       <p className="min-w-0 flex-1 truncate text-[10px] text-slate-300">
@@ -389,7 +389,7 @@ export default function LiveGamePage() {
             ) : recommendation ? (
               <>
                 <BuildGroups bootstrap={bootstrap} items={recommendation.items} />
-                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.05] pt-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-2.5">
                   <DataSourceNote compact />
                   <span className="font-mono text-[9px] text-fog">
                     Skill max: {recommendation.skills.max.join(" > ")}
@@ -519,7 +519,7 @@ export default function LiveGamePage() {
                 {augmentPicks.map((augment) => (
                   <div
                     key={augment.id}
-                    className="flex items-center gap-1.5 rounded-md border border-white/[0.05] bg-abyss/30 p-1.5"
+                    className="flex items-center gap-1.5 rounded-md border border-line bg-abyss/30 p-1.5"
                     title={augment.desc}
                   >
                     <SmartImage
@@ -541,7 +541,7 @@ export default function LiveGamePage() {
             </Panel>
           ) : null}
 
-          <div className="flex items-center justify-between gap-2 rounded-lg border border-white/[0.05] bg-abyss/30 px-3 py-2 text-[10px] text-fog">
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-line bg-abyss/30 px-3 py-2 text-[10px] text-fog">
             <span className="flex items-center gap-1.5">
               <Eye className="h-3 w-3 text-hextech-400" />
               Overlay stays on top

@@ -26,17 +26,17 @@ function DraftRow({ champion, name, position, local }: { champion: any; name: st
     <div
       className={cn(
         "flex items-center gap-2 rounded-md border px-2 py-1.5",
-        local ? "border-hextech-500/30 bg-hextech-500/[0.06]" : "border-white/[0.05] bg-abyss/30",
+        local ? "border-hextech-500/30 bg-hextech-500/[0.06]" : "border-line bg-abyss/30",
       )}
     >
       {champion && bootstrap ? (
         <SmartImage
           sources={championIcon(bootstrap, champion)}
           alt={champion.name}
-          className="h-7 w-7 shrink-0 rounded ring-1 ring-white/10"
+          className="h-7 w-7 shrink-0 rounded ring-1 ring-line-strong"
         />
       ) : (
-        <span className="h-7 w-7 shrink-0 rounded border border-dashed border-white/10 bg-panel-2" />
+        <span className="h-7 w-7 shrink-0 rounded border border-dashed border-line-strong bg-panel-2" />
       )}
       <div className="min-w-0 flex-1">
         <p className={cn("truncate text-[11px] font-semibold", local ? "text-hextech-200" : "text-slate-200")}>
@@ -191,7 +191,7 @@ export default function DraftPage() {
               <EnemySelects enemies={enemies} onChange={setEnemy} />
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border border-white/[0.05] bg-abyss/30 px-2.5 py-2 text-[10px] text-fog">
+            <div className="flex items-center justify-between rounded-lg border border-line bg-abyss/30 px-2.5 py-2 text-[10px] text-fog">
               <span>
                 Analyzing <span className="text-hextech-300">{activeEnemies.length}</span> enemy picks
               </span>
@@ -267,7 +267,7 @@ export default function DraftPage() {
                 </button>
               </>
             ) : (
-              <p className="rounded-lg border border-dashed border-white/[0.06] px-3 py-6 text-center text-[11px] text-fog">
+              <p className="rounded-lg border border-dashed border-line px-3 py-6 text-center text-[11px] text-fog">
                 Open the League client champ select to mirror picks live.
               </p>
             )}
@@ -298,12 +298,12 @@ export default function DraftPage() {
                 {Array.from({ length: 5 }).map((_, index) => (
                   <div
                     key={index}
-                    className="flex animate-pulse items-center gap-3 rounded-lg border border-white/[0.04] bg-white/[0.02] p-2.5"
+                    className="flex animate-pulse items-center gap-3 rounded-lg border border-line bg-slate-500/10 p-2.5"
                   >
-                    <div className="h-11 w-11 rounded-md bg-white/[0.05]" />
+                    <div className="h-11 w-11 rounded-md bg-slate-500/10" />
                     <div className="flex-1 space-y-1.5">
-                      <div className="h-2.5 w-1/3 rounded bg-white/[0.06]" />
-                      <div className="h-2 w-2/3 rounded bg-white/[0.04]" />
+                      <div className="h-2.5 w-1/3 rounded bg-slate-500/10" />
+                      <div className="h-2 w-2/3 rounded bg-slate-500/10" />
                     </div>
                   </div>
                 ))}
@@ -321,14 +321,14 @@ export default function DraftPage() {
                       "group flex w-full items-center gap-3 rounded-lg border p-2 text-left transition-all",
                       selected
                         ? "border-hextech-500/40 bg-hextech-500/[0.07] shadow-inner-line"
-                        : "border-white/[0.05] bg-abyss/20 hover:border-hextech-500/25 hover:bg-panel-3/40",
+                        : "border-line bg-abyss/20 hover:border-hextech-500/25 hover:bg-panel-3/40",
                     )}
                   >
                     {entry ? (
                       <SmartImage
                         sources={championIcon(bootstrap, entry)}
                         alt={entry.name}
-                        className="h-11 w-11 shrink-0 rounded-md ring-1 ring-white/10"
+                        className="h-11 w-11 shrink-0 rounded-md ring-1 ring-line-strong"
                       />
                     ) : (
                       <span className="h-11 w-11 shrink-0 rounded-md bg-panel-3" />
@@ -457,7 +457,7 @@ export default function DraftPage() {
                 </Panel>
               ) : null}
 
-              <div className="rounded-lg border border-white/[0.05] bg-abyss/30 px-3 py-2 text-[10px] leading-relaxed text-fog">
+              <div className="rounded-lg border border-line bg-abyss/30 px-3 py-2 text-[10px] leading-relaxed text-fog">
                 <span className="text-gold-400">EST. WR</span> is calculated from curated scores and class
                 heuristics. It is not derived from Riot match history or a live win-rate provider.
                 {settings.demoMode ? (

@@ -1,4 +1,4 @@
-import type { Settings } from "./types";
+import type { Settings, Theme } from "./types";
 
 export const DEFAULT_SETTINGS: Settings = {
   riotApiKey: "",
@@ -12,11 +12,12 @@ export const DEFAULT_SETTINGS: Settings = {
   performanceHud: true,
   autoImport: false,
   hudOverlay: true,
+  theme: "dark",
   hotkeys: {
-    toggleCompact: "CommandOrControl+Shift+C",
-    toggleClickThrough: "CommandOrControl+Shift+X",
-    toggleVisibility: "CommandOrControl+Shift+H",
-    toggleHud: "Alt+X",
+    toggleCompact: "Alt+X",
+    toggleClickThrough: "Alt+Z",
+    toggleVisibility: "Alt+H",
+    toggleHud: "Alt+C",
   },
 };
 

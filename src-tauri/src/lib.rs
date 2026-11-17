@@ -45,10 +45,19 @@ pub fn run() {
             app.manage(commands::PerfState::new(app.handle()));
             app.manage(commands::CompactState::default());
             app.manage(shortcuts::ClickThroughState::default());
+            app.manage(shortcuts::HotkeyRegistry::default());
             app.manage(commands::HudState::default());
 
-            if let Err(error) = shortcuts::register(app.handle()) {
-                eprintln!("HexCoach: global hotkeys unavailable: {error}");
+            let status = shortcuts::register(app.handle());
+            if !status.all_registered() {
+                for binding in status.bindings.iter().filter(|binding| !binding.registered) {
+                    eprintln!(
+                        "HexCoach: {} hotkey '{}' unavailable: {}",
+                        binding.label,
+                        binding.accelerator,
+                        binding.error.as_deref().unwrap_or("unknown error")
+                    );
+                }
             }
 
             let handle = app.handle().clone();
@@ -82,6 +91,8 @@ pub fn run() {
             settings::get_settings,
             settings::save_settings,
             settings::clear_riot_api_key,
+            shortcuts::register_hotkeys,
+            shortcuts::get_hotkey_status,
             riot::fetch_riot_api,
             profile::get_player_profile,
             commands::get_performance,

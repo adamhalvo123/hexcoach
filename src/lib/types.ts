@@ -1,6 +1,7 @@
 export type Page = "profile" | "live" | "draft" | "builds" | "arena" | "aram" | "settings";
 export type Role = "TOP" | "JUNGLE" | "MIDDLE" | "BOTTOM" | "UTILITY" | "NONE";
 export type ToastKind = "success" | "error" | "info";
+export type Theme = "dark" | "light" | "oled";
 
 export interface ImageData {
   full: string;
@@ -247,6 +248,23 @@ export interface Hotkeys {
   toggleHud: string;
 }
 
+export interface HotkeyBinding {
+  action: string;
+  label: string;
+  accelerator: string;
+  registered: boolean;
+  error: string | null;
+}
+
+export interface HotkeyStatus {
+  bindings: HotkeyBinding[];
+}
+
+export interface ShortcutTrigger {
+  action: string;
+  active: boolean | null;
+}
+
 export interface Settings {
   /** Write-only in the UI: the backend always responds with an empty string. */
   riotApiKey: string;
@@ -260,6 +278,7 @@ export interface Settings {
   performanceHud: boolean;
   autoImport: boolean;
   hudOverlay: boolean;
+  theme: Theme;
   hotkeys: Hotkeys;
 }
 

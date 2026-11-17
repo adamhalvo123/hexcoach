@@ -73,7 +73,7 @@ function tierTone(tier: string): string {
     case "CHALLENGER":
       return "text-cyan-200 border-cyan-400/50 bg-cyan-400/10";
     default:
-      return "text-mist border-paper/15 bg-transparent";
+      return "text-mist border-line bg-transparent";
   }
 }
 
@@ -229,7 +229,7 @@ function RankCard({ rank, queueLabel }: { rank?: ProfileRank; queueLabel: string
             </span>
           </p>
           <div className="mt-1 flex items-center gap-2">
-            <div className="h-1 flex-1 overflow-hidden bg-paper/10">
+            <div className="h-1 flex-1 overflow-hidden bg-slate-700/60">
               <div
                 className={cn("h-full", rateBar(rank.winRate))}
                 style={{ width: `${Math.min(100, Math.max(0, rank.winRate))}%` }}
@@ -276,7 +276,7 @@ function MatchRow({
         <SmartImage
           sources={champion ? championIcon(bootstrap, champion) : undefined}
           alt={match.champion || "Champion"}
-          className="h-10 w-10 border border-paper/20"
+          className="h-10 w-10 border border-line-strong"
         />
         <span
           className={cn(
@@ -331,13 +331,13 @@ function TeammateRow({
   index: number;
 }) {
   return (
-    <div className="grid grid-cols-[18px_minmax(0,1fr)_34px_26px_26px_46px] items-center gap-1.5 border-b border-white/[0.04] px-1.5 py-2 last:border-b-0">
+    <div className="grid grid-cols-[18px_minmax(0,1fr)_34px_26px_26px_46px] items-center gap-1.5 border-b border-line px-1.5 py-2 last:border-b-0">
       <span className="font-mono text-[9px] text-fog">{index + 1}</span>
       <div className="min-w-0">
         <p className="truncate text-[11px] font-semibold text-slate-200" title={teammate.name}>
           {teammate.name || "Unknown"}
         </p>
-        <div className="mt-1 h-1 w-full overflow-hidden bg-paper/10">
+        <div className="mt-1 h-1 w-full overflow-hidden bg-slate-700/60">
           <div
             className={cn("h-full", rateBar(teammate.winRate))}
             style={{ width: `${Math.min(100, Math.max(0, teammate.winRate))}%` }}
@@ -417,7 +417,7 @@ export default function ProfilePage() {
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="font-display text-xl font-bold tracking-wide text-slate-100">Profile</h1>
-          <span className="chip border-paper/40 bg-paper/[0.06] text-paper">
+          <span className="chip border-hextech-500/40 bg-hextech-500/10 text-hextech-300">
             <UserRound className="h-2.5 w-2.5" />
             RIOT ACCOUNT
           </span>
@@ -542,7 +542,7 @@ export default function ProfilePage() {
                 <SmartImage
                   sources={profileIcon(bootstrap, profile.profileIconId)}
                   alt={profile.riotId}
-                  className="h-[76px] w-[76px] shrink-0 border border-paper/30"
+                  className="h-[76px] w-[76px] shrink-0 border border-line-strong"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-display text-xl font-bold text-slate-100">
@@ -675,7 +675,7 @@ export default function ProfilePage() {
 
             {profile.teammates.length ? (
               <div>
-                <div className="grid grid-cols-[18px_minmax(0,1fr)_34px_26px_26px_46px] gap-1.5 border-b border-paper/15 px-1.5 pb-1.5">
+                <div className="grid grid-cols-[18px_minmax(0,1fr)_34px_26px_26px_46px] gap-1.5 border-b border-line px-1.5 pb-1.5">
                   <span />
                   <span className="hud-label">Player</span>
                   <span className="hud-label text-right">G</span>
@@ -729,7 +729,7 @@ export default function ProfilePage() {
                 </span>
               </li>
             </ul>
-            <p className="border-t border-paper/10 pt-2 font-mono text-[9px] text-fog/70">
+            <p className="border-t border-line pt-2 font-mono text-[9px] text-fog/70">
               {profile.riotId} · {profile.puuid.slice(0, 18)}…
             </p>
           </Panel>

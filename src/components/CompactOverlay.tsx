@@ -40,7 +40,7 @@ export default function CompactOverlay() {
   if (!bootstrap) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-transparent p-2">
-        <div className="flex h-full w-full flex-col items-center justify-center gap-3 border border-paper/30 bg-void">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-3 border border-line bg-abyss">
           <Spinner />
           <p className="text-xs text-fog">Loading match data…</p>
         </div>
@@ -59,22 +59,22 @@ export default function CompactOverlay() {
   return (
     <div className="h-screen w-screen overflow-hidden bg-transparent p-1.5 font-sans">
       <div
-        className="relative flex h-full w-full flex-col overflow-hidden border border-paper/30 bg-void shadow-[0_24px_70px_rgba(0,0,0,0.7)]"
+        className="relative flex h-full w-full flex-col overflow-hidden border border-line bg-abyss shadow-panel"
         style={{ opacity: settings.overlayOpacity }}
       >
         <header
           data-tauri-drag-region
-          className="drag-region relative z-10 flex h-9 shrink-0 items-center justify-between gap-2 border-b border-ink bg-paper px-2 text-ink"
+          className="drag-region relative z-10 flex h-9 shrink-0 items-center justify-between gap-2 border-b border-line bg-chrome px-2 text-chrome-ink"
         >
           <div className="flex min-w-0 items-center gap-1.5" data-tauri-drag-region>
-            <div className="flex h-5 w-5 items-center justify-center border border-ink bg-ink">
-              <Swords className="h-3 w-3 text-paper" strokeWidth={2.2} />
+            <div className="flex h-5 w-5 items-center justify-center border border-hextech-500/60 bg-hextech-500/15">
+              <Swords className="h-3 w-3 text-hextech-300" strokeWidth={2.2} />
             </div>
-            <span className="font-display text-[10px] font-bold tracking-[0.2em] text-ink">
+            <span className="font-display text-[10px] font-bold tracking-[0.2em] text-chrome-ink">
               HEXCOACH
             </span>
             {settings.demoMode ? (
-              <span className="border border-ink/40 px-1 py-0.5 font-mono text-[7px] font-bold uppercase tracking-wider text-ink/70">
+              <span className="border border-chrome-ink/25 px-1 py-0.5 font-mono text-[7px] font-bold uppercase tracking-wider text-chrome-ink/60">
                 Demo
               </span>
             ) : null}
@@ -82,15 +82,15 @@ export default function CompactOverlay() {
           <div className="no-drag flex items-center gap-0.5">
             <button
               type="button"
-              className="icon-btn h-6 w-6 text-ink/60 hover:bg-ink hover:text-paper"
+              className="icon-btn h-6 w-6"
               onClick={() => setCompact(false)}
-              title="Open dashboard"
+              title={`Open dashboard (${settings.hotkeys.toggleCompact})`}
             >
               <Maximize2 className="h-3 w-3" />
             </button>
             <button
               type="button"
-              className="icon-btn h-6 w-6 text-ink/60 hover:bg-ink hover:text-paper"
+              className="icon-btn h-6 w-6"
               onClick={() => void closeWindow()}
               title="Close"
             >
@@ -117,7 +117,7 @@ export default function CompactOverlay() {
                     {myChampion?.name ?? "Waiting for game"}
                   </p>
                   {recommendation ? (
-                    <span className="border border-paper/30 px-1 font-mono text-[8px] font-bold text-paper">
+                    <span className="border border-hextech-500/50 px-1 font-mono text-[8px] font-bold text-hextech-300">
                       {recommendation.meta.tier}
                     </span>
                   ) : null}
@@ -238,7 +238,7 @@ export default function CompactOverlay() {
                             <SmartImage
                               sources={championIcon(bootstrap, enemyChampion)}
                               alt={player.champion}
-                              className="h-6 w-6 shrink-0 rounded ring-1 ring-white/10"
+                              className="h-6 w-6 shrink-0 rounded ring-1 ring-line-strong"
                             />
                           ) : null}
                           <p className="min-w-0 flex-1 truncate text-[10px] text-slate-200">
@@ -262,7 +262,7 @@ export default function CompactOverlay() {
               </section>
             </>
           ) : (
-            <div className="flex flex-col items-center gap-2 border border-dashed border-paper/20 bg-panel px-3 py-8 text-center">
+            <div className="flex flex-col items-center gap-2 border border-dashed border-line-strong bg-panel px-3 py-8 text-center">
               <Swords className="h-6 w-6 text-hextech-400" />
               <p className="text-[11px] font-semibold text-slate-200">No build loaded</p>
               <p className="text-[10px] text-fog">Pick a champion in the dashboard.</p>
@@ -273,16 +273,16 @@ export default function CompactOverlay() {
           )}
         </div>
 
-        <footer className="relative z-10 flex h-7 shrink-0 items-center justify-between border-t border-ink bg-paper px-2 text-[8px] text-ink/65">
+        <footer className="relative z-10 flex h-7 shrink-0 items-center justify-between border-t border-line bg-chrome px-2 text-[8px] text-chrome-ink/60">
           <span className="flex items-center gap-2">
             <span>PATCH {bootstrap.version}</span>
             <span>{settings.performanceHud ? `${perf.ramMb ? perf.ramMb.toFixed(0) : "—"} MB` : ""}</span>
           </span>
           <span className="flex items-center gap-2">
-            <span className="text-ink">{perf.liveLatencyMs || live.latencyMs} ms</span>
+            <span className="text-chrome-ink">{perf.liveLatencyMs || live.latencyMs} ms</span>
             <button
               type="button"
-              className="flex items-center gap-1 text-[8px] text-ink/60 hover:text-ink"
+              className="flex items-center gap-1 text-[8px] text-chrome-ink/60 hover:text-chrome-ink"
               onClick={() => setCompact(false)}
             >
               <Minimize2 className="h-2.5 w-2.5 rotate-180" />

@@ -10,15 +10,15 @@ const ICONS = {
 };
 
 const TONES: Record<ToastKind, string> = {
-  success: "border-emerald-700",
-  error: "border-enemy-500",
-  info: "border-paper/50",
+  success: "border-emerald-500/60",
+  error: "border-enemy-500/60",
+  info: "border-hextech-500/50",
 };
 
 const ICON_TONES: Record<ToastKind, string> = {
-  success: "text-emerald-700",
-  error: "text-enemy-600",
-  info: "text-ink",
+  success: "text-emerald-400",
+  error: "text-enemy-400",
+  info: "text-hextech-300",
 };
 
 export default function Toasts() {
@@ -34,20 +34,20 @@ export default function Toasts() {
           <div
             key={toast.id}
             className={cn(
-              "pointer-events-auto flex animate-rise items-start gap-2.5 border-2 bg-paper px-3 py-2.5 text-ink shadow-panel",
+              "pointer-events-auto flex animate-rise items-start gap-2.5 border-2 bg-panel px-3 py-2.5 text-slate-200 shadow-panel",
               TONES[toast.kind],
             )}
           >
             <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", ICON_TONES[toast.kind])} strokeWidth={2} />
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold uppercase tracking-[0.08em] text-ink">{toast.title}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-100">{toast.title}</p>
               {toast.message ? (
-                <p className="mt-0.5 text-[11px] leading-relaxed text-ink/65">{toast.message}</p>
+                <p className="mt-0.5 text-[11px] leading-relaxed text-slate-400">{toast.message}</p>
               ) : null}
             </div>
             <button
               type="button"
-              className="icon-btn h-5 w-5 shrink-0 text-ink/50 hover:bg-ink hover:text-paper"
+              className="icon-btn h-5 w-5 shrink-0"
               onClick={() => dismissToast(toast.id)}
               aria-label="Dismiss"
             >

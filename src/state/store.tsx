@@ -19,12 +19,14 @@ import {
   getChampSelect,
   getChampionBuild,
   getDdragonStatus,
+  getHotkeyStatus,
   getLiveState,
   getLcuStatus,
   getPerformance,
   getRecommendation,
   getSettings,
   refreshDdragon,
+  registerHotkeys as requestHotkeys,
   saveSettings as persistSettings,
   setCompactMode as applyCompactMode,
   clearRiotApiKey as clearRiotKeyRequest,
@@ -33,12 +35,21 @@ import { createDemoAram, createDemoChampSelect, createDemoLive } from "@/lib/dem
 import { DEFAULT_SETTINGS } from "@/lib/defaults";
 import { isDesktop } from "@/lib/env";
 import { normalizeRole } from "@/lib/format";
+import {
+  applyTheme,
+  hasStoredTheme,
+  normalizeTheme,
+  persistTheme,
+  readStoredTheme,
+} from "@/lib/theme";
 import type {
   AppInfo,
   Bootstrap,
   ChampSelect,
   ChampionBuild,
   DdragonStatus,
+  HotkeyStatus,
+  Hotkeys,
   HudOverlayState,
   LiveGame,
   LcuStatus,
@@ -48,6 +59,8 @@ import type {
   Role,
   RunePageInput,
   Settings,
+  ShortcutTrigger,
+  Theme,
   Toast,
   ToastKind,
 } from "@/lib/types";
@@ -124,6 +137,10 @@ interface AppStore {
   compact: boolean;
   setCompact: (compact: boolean) => void;
   hudClickThrough: boolean;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  hotkeyStatus: HotkeyStatus | null;
+  applyHotkeys: (hotkeys: Hotkeys) => Promise<HotkeyStatus>;
   champion: string;
   setChampion: (champion: string) => void;
   role: Role;
@@ -174,6 +191,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [page, setPage] = useState<Page>(initialPage);
   const [compact, setCompactState] = useState(initialCompact);
   const [hudClickThrough, setHudClickThrough] = useState(true);
+  const [theme, setThemeState] = useState<Theme>(readStoredTheme);
+  const [hotkeyStatus, setHotkeyStatus] = useState<HotkeyStatus | null>(null);
   const [champion, setChampion] = useState(savedSelection.champion);
   const [role, setRole] = useState<Role>(savedSelection.role);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
@@ -211,11 +230,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     void getSettings()
       .then((loaded) => {
-        if (!cancelled) setSettings(loaded);
+        if (cancelled) return;
+        setSettings(loaded);
+        // localStorage is the fast path that prevents a theme flash. When it is
+        // empty, adopt the theme stored in settings.json.
+        if (!hasStoredTheme()) {
+          const stored = normalizeTheme(loaded.theme);
+          setThemeState(stored);
+          applyTheme(stored);
+          persistTheme(stored);
+        }
       })
       .catch(() => {
         // Defaults are already in place.
       });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Apply and mirror the active theme. Dark is the default on every launch.
+  useEffect(() => {
+    applyTheme(theme);
+    persistTheme(theme);
+  }, [theme]);
+
+  // Read the shortcut registration result once so Settings can show failures.
+  useEffect(() => {
+    if (!isDesktop()) return;
+    let cancelled = false;
+    void getHotkeyStatus()
+      .then((status) => {
+        if (!cancelled) setHotkeyStatus(status);
+      })
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };
@@ -338,6 +386,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
           setBootstrapError(event.payload);
         }),
         listen<boolean>("compact-mode-changed", (event) => setCompactState(event.payload)),
+        listen<ShortcutTrigger>("shortcut-triggered", (event) => {
+          const { action, active } = event.payload;
+          if (action === "toggle-compact" && typeof active === "boolean") {
+            setCompactState(active);
+          }
+          if (action === "toggle-visibility" && active === false) {
+            pushToast("info", "Overlay hidden", "Use the visibility hotkey to bring HexCoach back.");
+          }
+        }),
+        listen<HotkeyStatus>("hotkeys-changed", (event) => setHotkeyStatus(event.payload)),
         listen<boolean>("click-through-changed", (event) => {
           pushToast(
             "info",
@@ -517,15 +575,60 @@ export function AppProvider({ children }: { children: ReactNode }) {
     async (next: Settings) => {
       const clamped: Settings = {
         ...next,
+        theme,
         overlayOpacity: Math.min(1, Math.max(0.55, next.overlayOpacity)),
         hotkeys: { ...next.hotkeys },
       };
       try {
         const saved = await persistSettings(clamped);
         setSettings(saved);
+        const savedTheme = normalizeTheme(saved.theme);
+        setThemeState(savedTheme);
+        applyTheme(savedTheme);
+        persistTheme(savedTheme);
         pushToast("success", "Settings saved", "Overlay preferences were written to disk.");
       } catch (error) {
         pushToast("error", "Could not save settings", errorMessage(error));
+        throw error;
+      }
+    },
+    [pushToast, theme],
+  );
+
+  const setTheme = useCallback((next: Theme) => {
+    const resolved = normalizeTheme(next);
+    setThemeState(resolved);
+    applyTheme(resolved);
+    persistTheme(resolved);
+  }, []);
+
+  const applyHotkeys = useCallback(
+    async (hotkeys: Hotkeys) => {
+      try {
+        const status = await requestHotkeys(hotkeys);
+        setHotkeyStatus(status);
+        const failed = status.bindings.filter((binding) => !binding.registered);
+        if (failed.length) {
+          pushToast(
+            "error",
+            "Some shortcuts were not registered",
+            failed
+              .map(
+                (binding) =>
+                  `${binding.accelerator || binding.label}: ${binding.error ?? "unavailable"}`,
+              )
+              .join(" · "),
+          );
+        } else {
+          pushToast(
+            "success",
+            "Global shortcuts active",
+            "They now fire even while League of Legends has keyboard focus.",
+          );
+        }
+        return status;
+      } catch (error) {
+        pushToast("error", "Could not register shortcuts", errorMessage(error));
         throw error;
       }
     },
@@ -628,6 +731,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     compact,
     setCompact,
     hudClickThrough,
+    theme,
+    setTheme,
+    hotkeyStatus,
+    applyHotkeys,
     champion,
     setChampion,
     role,

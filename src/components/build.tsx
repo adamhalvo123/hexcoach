@@ -28,7 +28,7 @@ export function BuildGroups({ bootstrap, items }: { bootstrap: Bootstrap; items:
         const entries = items[group.key];
         const total = entries.reduce((sum, item) => sum + item.price, 0);
         return (
-          <div key={group.key} className="rounded-lg border border-white/[0.06] bg-abyss/30 p-2.5">
+          <div key={group.key} className="rounded-lg border border-line bg-abyss/30 p-2.5">
             <div className="mb-2 flex items-baseline justify-between gap-2">
               <div>
                 <p className="hud-label">{group.label}</p>
@@ -42,7 +42,7 @@ export function BuildGroups({ bootstrap, items }: { bootstrap: Bootstrap; items:
                   <ItemTile key={item.id} bootstrap={bootstrap} item={item} size="sm" />
                 ))
               ) : (
-                <p className="rounded-md border border-dashed border-white/[0.06] px-2 py-3 text-center text-[10px] text-fog">
+                <p className="rounded-md border border-dashed border-line px-2 py-3 text-center text-[10px] text-fog">
                   Situational slot
                 </p>
               )}
@@ -72,7 +72,7 @@ function TimelineStage({
     <div
       className={cn(
         "min-w-[150px] flex-1 rounded-lg border bg-abyss/30 p-2.5",
-        accent ? "border-gold-500/25" : "border-white/[0.06]",
+        accent ? "border-gold-500/25" : "border-line",
       )}
     >
       <div className="mb-2 flex items-baseline justify-between gap-2">
@@ -86,7 +86,7 @@ function TimelineStage({
         {items.length ? (
           items.map((item) => <ItemTile key={item.id} bootstrap={bootstrap} item={item} size="sm" />)
         ) : (
-          <p className="rounded-md border border-dashed border-white/[0.06] px-2 py-3 text-center text-[10px] text-fog">
+          <p className="rounded-md border border-dashed border-line px-2 py-3 text-center text-[10px] text-fog">
             Situational slot
           </p>
         )}
@@ -137,17 +137,17 @@ export function SummonerSpellList({
       {spells.map((spell) => (
         <div
           key={`${spell.id}-${spell.name}`}
-          className="flex items-center gap-2 rounded-md border border-white/[0.06] bg-abyss/40 px-2 py-1.5"
+          className="flex items-center gap-2 rounded-md border border-line bg-abyss/40 px-2 py-1.5"
           title={spell.name}
         >
           {spell.icon ? (
             <SmartImage
               sources={spellRefIcon(bootstrap, spell.icon)}
               alt={spell.name}
-              className="h-8 w-8 shrink-0 rounded ring-1 ring-paper/20"
+              className="h-8 w-8 shrink-0 rounded ring-1 ring-line-strong"
             />
           ) : (
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-dashed border-white/10 text-[9px] text-fog">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-dashed border-line-strong text-[9px] text-fog">
               ?
             </span>
           )}
@@ -227,7 +227,7 @@ export function RunePagePanel({
               <SmartImage
                 sources={runeIcon(bootstrap, { icon: secondary.icon })}
                 alt={secondary.name}
-                className="h-7 w-7 rounded-full bg-abyss ring-1 ring-paper/20"
+                className="h-7 w-7 rounded-full bg-abyss ring-1 ring-line-strong"
                 imgClassName="object-contain p-0.5"
               />
             ) : null}
@@ -249,7 +249,7 @@ export function RunePagePanel({
             {runes.shards.map((shard, index) => (
               <span
                 key={`${shard}-${index}`}
-                className="border border-line bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-mist"
+                className="border border-line bg-slate-500/10 px-1.5 py-0.5 font-mono text-[9px] text-mist"
               >
                 {shardLabel(shard)}
               </span>
@@ -259,7 +259,7 @@ export function RunePagePanel({
       </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/[0.05] bg-abyss/30 px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-abyss/30 px-3 py-2">
         <p className="flex min-w-0 items-center gap-1.5 text-[10px] text-fog">
           <Info className="h-3 w-3 shrink-0 text-hextech-400" />
           <span className="truncate">
@@ -329,7 +329,7 @@ export function SkillPanel({ plan }: { plan: SkillPlan }) {
               "flex flex-col items-center rounded border py-1",
               skill === "R"
                 ? "border-gold-500/30 bg-gold-500/[0.08]"
-                : "border-white/[0.06] bg-abyss/40",
+                : "border-line bg-abyss/40",
             )}
             title={`Level ${index + 1}: ${skill}`}
           >
@@ -361,7 +361,7 @@ export function MatchupList({
   empty: string;
 }) {
   if (!entries.length) {
-    return <p className="rounded-lg border border-dashed border-white/[0.06] px-3 py-4 text-center text-[11px] text-fog">{empty}</p>;
+    return <p className="rounded-lg border border-dashed border-line px-3 py-4 text-center text-[11px] text-fog">{empty}</p>;
   }
 
   return (
@@ -373,14 +373,14 @@ export function MatchupList({
         return (
           <div
             key={`${entry.championId}-${entry.champion}`}
-            className="flex items-center gap-2 rounded-md border border-white/[0.05] bg-abyss/30 px-2 py-1.5"
+            className="flex items-center gap-2 rounded-md border border-line bg-abyss/30 px-2 py-1.5"
             title={entry.reason}
           >
             {champion ? (
               <SmartImage
                 sources={championIcon(bootstrap, champion)}
                 alt={champion.name}
-                className="h-7 w-7 shrink-0 rounded ring-1 ring-white/10"
+                className="h-7 w-7 shrink-0 rounded ring-1 ring-line-strong"
               />
             ) : null}
             <div className="min-w-0 flex-1">
@@ -406,7 +406,7 @@ export function MatchupList({
 
 export function MetaScore({ recommendation }: { recommendation: Recommendation }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-white/[0.06] bg-abyss/30 px-3 py-2">
+    <div className="flex items-center gap-3 rounded-lg border border-line bg-abyss/30 px-3 py-2">
       <TierBadge tier={recommendation.meta.tier} size="lg" />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
@@ -435,7 +435,7 @@ export function BuildScore({ build }: { build: ChampionBuild }) {
         ? "Offline estimate"
         : "Live provider";
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-white/[0.06] bg-abyss/30 px-3 py-2">
+    <div className="flex items-center gap-3 rounded-lg border border-line bg-abyss/30 px-3 py-2">
       <TierBadge tier={build.tier} size="lg" />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">

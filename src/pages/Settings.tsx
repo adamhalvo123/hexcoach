@@ -1,7 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  AlertTriangle,
   BadgeCheck,
   Check,
+  Circle,
   Database,
   Eye,
   EyeOff,
@@ -10,21 +12,32 @@ import {
   KeyRound,
   Keyboard,
   Monitor,
+  Moon,
   MousePointerClick,
+  Palette,
+  Play,
   RefreshCw,
   RotateCcw,
   Save,
   ShieldCheck,
   Sparkles,
+  Sun,
   Trash2,
 } from "lucide-react";
 import { DEFAULT_SETTINGS, REGIONS } from "@/lib/defaults";
 import { fetchRiotApi } from "@/lib/api";
 import { isDesktop } from "@/lib/env";
 import { cn, shortPatch } from "@/lib/format";
-import type { Hotkeys, Settings } from "@/lib/types";
+import { THEME_OPTIONS } from "@/lib/theme";
+import type { Hotkeys, Settings, Theme } from "@/lib/types";
 import { useApp } from "@/state/store";
 import { Panel, Spinner } from "@/components/shared";
+
+const THEME_ICONS: Record<Theme, typeof Moon> = {
+  dark: Moon,
+  light: Sun,
+  oled: Circle,
+};
 
 function keySourceLabel(source: string): string {
   if (source === "local") return "local override";
@@ -49,7 +62,7 @@ function Toggle({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className="flex w-full items-center gap-3 border border-line bg-abyss px-3 py-2.5 text-left transition-colors hover:border-paper/30 hover:bg-panel-3/40"
+      className="flex w-full items-center gap-3 border border-line bg-abyss px-3 py-2.5 text-left transition-colors hover:border-hextech-500/40 hover:bg-panel-3/40"
     >
       <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold text-slate-200">{label}</p>
@@ -58,13 +71,13 @@ function Toggle({
       <span
         className={cn(
           "relative h-5 w-10 shrink-0 border transition-colors",
-          checked ? "border-paper/70 bg-abyss" : "border-paper/25 bg-abyss",
+          checked ? "border-hextech-500/70 bg-hextech-500/10" : "border-line-strong bg-abyss",
         )}
       >
         <span
           className={cn(
             "absolute top-[1px] h-[16px] w-[16px] transition-transform",
-            checked ? "translate-x-[21px] bg-paper" : "translate-x-[1px] bg-fog",
+            checked ? "translate-x-[21px] bg-hextech-400" : "translate-x-[1px] bg-fog",
           )}
         />
       </span>
@@ -103,9 +116,14 @@ export default function SettingsPage() {
     appInfo,
     refreshData,
     pushToast,
+    theme,
+    setTheme,
+    hotkeyStatus,
+    applyHotkeys,
   } = useApp();
   const [draft, setDraft] = useState<Settings>(settings);
   const [saving, setSaving] = useState(false);
+  const [applyingHotkeys, setApplyingHotkeys] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verifyResult, setVerifyResult] = useState<{ ok: boolean; message: string } | null>(null);
@@ -143,6 +161,17 @@ export default function SettingsPage() {
       region: draft.region,
     });
     pushToast("info", "Defaults restored", "Review the values, then save to apply.");
+  };
+
+  const applyHotkeyChanges = async () => {
+    setApplyingHotkeys(true);
+    try {
+      await applyHotkeys(draft.hotkeys);
+    } catch {
+      // The store already surfaced the error toast.
+    } finally {
+      setApplyingHotkeys(false);
+    }
   };
 
   const verifyRiotKey = async () => {
@@ -223,6 +252,62 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 gap-3.5 xl:grid-cols-2">
         <div className="space-y-3.5">
           <Panel
+            icon={Palette}
+            title="Appearance"
+            subtitle="Applies instantly and persists across launches"
+            bodyClassName="space-y-3 p-3"
+          >
+            <div className="grid grid-cols-3 gap-2">
+              {THEME_OPTIONS.map((option) => {
+                const Icon = THEME_ICONS[option.id];
+                const active = theme === option.id;
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setTheme(option.id)}
+                    aria-pressed={active}
+                    className={cn(
+                      "group relative flex flex-col gap-1.5 border p-2 text-left transition-colors",
+                      active
+                        ? "border-hextech-500/70 bg-hextech-500/10"
+                        : "border-line bg-abyss hover:border-hextech-500/40 hover:bg-panel-3/40",
+                    )}
+                  >
+                    <span className="flex h-8 w-full overflow-hidden border border-line">
+                      {option.swatches.map((swatch) => (
+                        <span key={swatch} className="h-full flex-1" style={{ background: swatch }} />
+                      ))}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Icon className={cn("h-3 w-3", active ? "text-hextech-300" : "text-fog")} />
+                      <span
+                        className={cn(
+                          "font-mono text-[10px] font-semibold uppercase tracking-[0.1em]",
+                          active ? "text-hextech-300" : "text-slate-300",
+                        )}
+                      >
+                        {option.label}
+                      </span>
+                      {active ? <Check className="ml-auto h-3 w-3 text-hextech-300" /> : null}
+                    </span>
+                    <span className="text-[9px] leading-relaxed text-fog">{option.description}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="flex items-start gap-1.5 text-[10px] leading-relaxed text-fog">
+              <Info className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
+              <span>
+                Dark is the default on every launch. Your choice is stored in both{" "}
+                <span className="font-mono text-slate-300">localStorage</span> and{" "}
+                <span className="font-mono text-slate-300">settings.json</span>, so there is no flash of a light
+                shell while HexCoach starts.
+              </span>
+            </p>
+          </Panel>
+
+          <Panel
             icon={KeyRound}
             title="Riot account"
             subtitle="Optional · the key never reaches the frontend"
@@ -230,7 +315,7 @@ export default function SettingsPage() {
               <span
                 className={cn(
                   "chip",
-                  draft.riotKeyConfigured ? "border-emerald-500/40 text-emerald-300" : "border-paper/20 text-fog",
+                  draft.riotKeyConfigured ? "border-emerald-500/40 text-emerald-300" : "border-line-strong text-fog",
                 )}
               >
                 {draft.riotKeyConfigured ? keySourceLabel(draft.riotKeySource) : "no key"}
@@ -310,7 +395,7 @@ export default function SettingsPage() {
                 {verifyResult.message}
               </p>
             ) : null}
-            <p className="flex items-start gap-1.5 rounded-md border border-white/[0.05] bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
+            <p className="flex items-start gap-1.5 rounded-md border border-line bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
               <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-emerald-400" />
               <span>
                 HexCoach only masks the key in the UI; the Rust backend attaches{" "}
@@ -319,7 +404,7 @@ export default function SettingsPage() {
                 <span className="font-mono text-slate-300">RIOT_API_KEY</span>.
               </span>
             </p>
-            <div className="flex items-start gap-1.5 rounded-md border border-white/[0.05] bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
+            <div className="flex items-start gap-1.5 rounded-md border border-line bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
               <Info className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
               <span>
                 The <span className="font-semibold text-slate-200">Profile</span> page uses this Riot ID, region and
@@ -341,18 +426,18 @@ export default function SettingsPage() {
               label="In-game HUD"
               description="Click-through top-right overlay with enemy respawns, Flash timers, next item and skill order."
             />
-            <div className="flex items-start gap-2 rounded-md border border-white/[0.05] bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
+            <div className="flex items-start gap-2 rounded-md border border-line bg-abyss/40 px-2 py-1.5 text-[10px] leading-relaxed text-fog">
               <MousePointerClick className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
               <span>
                 The HUD starts click-through so fights keep mouse focus. Press{" "}
-                <span className="font-mono text-slate-300">Alt+X</span> to make it interactive, then again to pass
-                clicks straight back into League.
+                <span className="font-mono text-slate-300">{draft.hotkeys.toggleHud}</span> to make it interactive,
+                then again to pass clicks straight back into League.
               </span>
             </div>
             <div className="border border-line bg-abyss px-3 py-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-200">Overlay opacity</span>
-                <span className="font-mono text-[11px] text-paper">{Math.round(draft.overlayOpacity * 100)}%</span>
+                <span className="font-mono text-[11px] text-slate-100">{Math.round(draft.overlayOpacity * 100)}%</span>
               </div>
               <input
                 type="range"
@@ -374,10 +459,12 @@ export default function SettingsPage() {
               label="Performance HUD"
               description="Shows RAM, local API latency and cache progress in the status bar."
             />
-            <div className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-abyss/30 px-3 py-2">
+            <div className="flex items-center justify-between rounded-lg border border-line bg-abyss/30 px-3 py-2">
               <div>
                 <p className="text-xs font-semibold text-slate-200">Compact mode</p>
-                <p className="mt-0.5 text-[10px] text-fog">Toggle from the title bar or Ctrl+Shift+C.</p>
+                <p className="mt-0.5 text-[10px] text-fog">
+                  Toggle from the title bar or press {draft.hotkeys.toggleCompact}.
+                </p>
               </div>
               <span className="chip">432 × 590</span>
             </div>
@@ -405,8 +492,24 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-3.5">
-          <Panel icon={Keyboard} title="Global hotkeys" subtitle="Applied to the desktop window" bodyClassName="space-y-2.5 p-3">
-            <FieldRow label="Compact overlay" hint="Ctrl+Shift+C default">
+          <Panel
+            icon={Keyboard}
+            title="Global hotkeys"
+            subtitle="Registered by Rust · they fire even while League has focus"
+            action={
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => void applyHotkeyChanges()}
+                disabled={applyingHotkeys}
+              >
+                {applyingHotkeys ? <Spinner className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                Apply &amp; test
+              </button>
+            }
+            bodyClassName="space-y-2.5 p-3"
+          >
+            <FieldRow label="Compact overlay" hint="Alt+X default">
               <input
                 className="field font-mono text-xs"
                 value={draft.hotkeys.toggleCompact}
@@ -414,7 +517,7 @@ export default function SettingsPage() {
                 spellCheck={false}
               />
             </FieldRow>
-            <FieldRow label="Click-through" hint="Ctrl+Shift+X default">
+            <FieldRow label="Dashboard click-through" hint="Alt+Z default">
               <input
                 className="field font-mono text-xs"
                 value={draft.hotkeys.toggleClickThrough}
@@ -422,7 +525,7 @@ export default function SettingsPage() {
                 spellCheck={false}
               />
             </FieldRow>
-            <FieldRow label="Show / hide overlay" hint="Ctrl+Shift+H default">
+            <FieldRow label="Show / hide overlay" hint="Alt+H default">
               <input
                 className="field font-mono text-xs"
                 value={draft.hotkeys.toggleVisibility}
@@ -430,7 +533,7 @@ export default function SettingsPage() {
                 spellCheck={false}
               />
             </FieldRow>
-            <FieldRow label="HUD click-through" hint="Alt+X default">
+            <FieldRow label="In-game HUD interaction" hint="Alt+C default">
               <input
                 className="field font-mono text-xs"
                 value={draft.hotkeys.toggleHud}
@@ -438,14 +541,49 @@ export default function SettingsPage() {
                 spellCheck={false}
               />
             </FieldRow>
+
+            {hotkeyStatus?.bindings.length ? (
+              <div className="space-y-1 border border-line bg-abyss/50 p-2">
+                <p className="hud-label">Registration status</p>
+                {hotkeyStatus.bindings.map((binding) => (
+                  <div key={binding.action} className="flex items-start gap-1.5 text-[10px] leading-relaxed">
+                    {binding.registered ? (
+                      <Check className="mt-0.5 h-3 w-3 shrink-0 text-emerald-400" />
+                    ) : (
+                      <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-enemy-400" />
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="text-slate-300">{binding.label}</span>{" "}
+                      <span className="font-mono text-slate-400">{binding.accelerator || "—"}</span>
+                      {binding.registered ? null : (
+                        <span className="block text-[9px] text-enemy-400">
+                          {binding.error ?? "Not registered. Pick another combination."}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
             <p className="flex items-start gap-1.5 text-[10px] leading-relaxed text-fog">
               <MousePointerClick className="mt-0.5 h-3 w-3 shrink-0 text-hextech-400" />
               <span>
-                Use Tauri accelerator syntax:{" "}
-                <span className="font-mono text-slate-300">CommandOrControl+Shift+C</span>. Shortcuts are registered
-                globally by the desktop app.
+                Use Tauri accelerator syntax, e.g.{" "}
+                <span className="font-mono text-slate-300">Alt+X</span> or{" "}
+                <span className="font-mono text-slate-300">CommandOrControl+Shift+C</span>. Press{" "}
+                <span className="font-semibold text-slate-300">Apply &amp; test</span> to re-register immediately;
+                no restart is needed.
               </span>
             </p>
+            <div className="flex items-start gap-2 border border-gold-500/30 bg-gold-500/[0.06] px-2.5 py-2 text-[10px] leading-relaxed text-gold-300">
+              <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0" />
+              <span>
+                <span className="font-semibold">Windows / Riot Vanguard:</span> Windows cannot deliver a global
+                hotkey to a game running at a higher integrity level. If shortcuts do nothing while League is
+                focused, close HexCoach and run it as Administrator.
+              </span>
+            </div>
           </Panel>
 
           <Panel

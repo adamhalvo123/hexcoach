@@ -32,7 +32,7 @@ import { EmptyState, Panel, SmartImage, Spinner, TierBadge } from "@/components/
 
 function StatLine({ label, value, suffix }: { label: string; value: number | undefined; suffix?: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-white/[0.04] py-1 last:border-0">
+    <div className="flex items-center justify-between border-b border-line py-1 last:border-0">
       <span className="text-[10px] text-fog">{label}</span>
       <span className="font-mono text-[11px] text-slate-200">
         {value === undefined || !Number.isFinite(value)
@@ -58,7 +58,7 @@ function MetaStat({
   hint?: string;
 }) {
   return (
-    <div className="border-b border-white/[0.04] py-1 last:border-0">
+    <div className="border-b border-line py-1 last:border-0">
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-[10px] text-fog">{label}</span>
         <span className={cn("font-mono text-[11px] text-slate-200", tone)}>{value}</span>
@@ -210,7 +210,7 @@ export default function BuildsPage() {
                 <MetaScore recommendation={recommendation} />
               ) : null}
               {build ? (
-                <p className="rounded-md border border-white/[0.05] px-2 py-1 text-[9px] leading-relaxed text-fog">
+                <p className="rounded-md border border-line px-2 py-1 text-[9px] leading-relaxed text-fog">
                   {build.sourceDetail}
                 </p>
               ) : recommendation ? (
@@ -242,7 +242,7 @@ export default function BuildsPage() {
           }
         />
       ) : loading ? (
-        <div className="flex items-center justify-center gap-2 rounded-xl border border-white/[0.06] bg-panel/50 py-16 text-xs text-fog">
+        <div className="flex items-center justify-center gap-2 rounded-xl border border-line bg-panel/50 py-16 text-xs text-fog">
           <Spinner /> Building {champion}…
         </div>
       ) : build ? (
@@ -267,7 +267,7 @@ export default function BuildsPage() {
               core={build.coreItems}
               situational={build.situationalItems}
             />
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.05] pt-2.5">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-2.5">
               <DataSourceNote build={build} />
               <span className="text-[10px] text-fog">
                 {build.coreItems.length + build.situationalItems.length} purchase slots
@@ -389,7 +389,7 @@ export default function BuildsPage() {
                   hint={build.rank ? `Rank #${build.rank}${build.totalChampions ? ` of ${build.totalChampions}` : ""}` : undefined}
                 />
                 <MetaStat label="Provider" value={build.source} />
-                <p className="mt-2 border-t border-white/[0.05] pt-2 text-[9px] leading-relaxed text-fog">
+                <p className="mt-2 border-t border-line pt-2 text-[9px] leading-relaxed text-fog">
                   {build.sourceDetail}
                 </p>
                 <p className="mt-1 text-[9px] text-fog/80">
@@ -433,7 +433,7 @@ export default function BuildsPage() {
                 </Panel>
               ) : null}
 
-              <div className="rounded-lg border border-white/[0.05] bg-abyss/30 px-3 py-2 text-[10px] leading-relaxed text-fog">
+              <div className="rounded-lg border border-line bg-abyss/30 px-3 py-2 text-[10px] leading-relaxed text-fog">
                 <p className="flex items-center gap-1.5 text-hextech-300">
                   <Info className="h-3 w-3" />
                   One-click rune import
