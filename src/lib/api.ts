@@ -241,7 +241,7 @@ export async function refreshDdragon(): Promise<void> {
 
 export async function getAppInfo(): Promise<AppInfo> {
   if (isDesktop()) return invoke<AppInfo>("get_app_info");
-  return { version: "0.1.0", buildProfile: "web-preview" };
+  return { version: "0.1.1", buildProfile: "web-preview" };
 }
 
 export { EMPTY_LIVE, EMPTY_SELECT };

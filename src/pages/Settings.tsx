@@ -656,7 +656,7 @@ export default function SettingsPage() {
           <Panel icon={Info} title="About HexCoach" subtitle="Tauri v2 · Rust · React" bodyClassName="space-y-2 p-3">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-fog">Version</span>
-              <span className="font-mono text-slate-200">{appInfo?.version ?? "0.1.0"}</span>
+              <span className="font-mono text-slate-200">{appInfo?.version ?? "0.1.1"}</span>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-fog">Build</span>
